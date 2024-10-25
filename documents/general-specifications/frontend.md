@@ -1,0 +1,1 @@
+# Frontend general specifications
