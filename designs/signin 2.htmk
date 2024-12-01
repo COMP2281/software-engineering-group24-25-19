@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Domine:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+                rel="stylesheet">
+        <title>DurMetrics - Sign In</title>
+        <link rel="stylesheet" href="main.css">
+</head>
+
+<body class="signin">
+        <img src="logo.png" class="signin-logo">
+        <div class="signin-panel">
+                <div class="signin-panel-text">
+                        <div class="signin-title">Sign into DurMetrics with a login code</div>
+                        <div class="signin-subtitle">You may use either a view-code or an edit-code.</div>
+                        <img src="dcc-logo.png" class="signin-dcc-logo">
+                </div>
+                <div class="signin-panel-code">
+                        <div class="signin-code">
+                                <input class="code-char" id="code-1" />
+                                <input class="code-char" id="code-2" />
+                                <input class="code-char" id="code-3" />
+                                <input class="code-char" id="code-4" />
+                                <input class="code-char" id="code-5" />
+                                <input class="code-char" id="code-6" />
+                        </div>
+                        <div class="signin-submit signin-submit-disabled">
+                                Sign in
+                        </div>
+                </div>
+        </div>
+</body>
+
+</html>
