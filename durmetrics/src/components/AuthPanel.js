@@ -1,6 +1,17 @@
 import React from 'react';
+import CharacterInput from './CharacterInput';
 
 const AuthPanel = () => {
+        const handleCodeInput = () => {
+                const code = Array.from(document.getElementsByClassName('code-char')).map(input => input.value.trim()).join('');
+                const submitButton = document.getElementsByClassName('signin-submit')[0];
+                if (code.length == 6) {
+                        submitButton.classList.remove('signin-submit-disabled');
+                } else {
+                        submitButton.classList.add('signin-submit-disabled');
+                }
+        };
+
         return (
                 <div className="signin-panel">
                         <div className="signin-panel-text">
@@ -10,12 +21,7 @@ const AuthPanel = () => {
                         </div>
                         <div className="signin-panel-code">
                                 <div className="signin-code">
-                                        <input className="code-char" id="code-1" />
-                                        <input className="code-char" id="code-2" />
-                                        <input className="code-char" id="code-3" />
-                                        <input className="code-char" id="code-4" />
-                                        <input className="code-char" id="code-5" />
-                                        <input className="code-char" id="code-6" />
+                                        {[...Array(6)].map((_, i) => <CharacterInput index={i} handleCodeInput={handleCodeInput} />)}
                                 </div>
                                 <div className="signin-submit signin-submit-disabled">
                                         Sign in

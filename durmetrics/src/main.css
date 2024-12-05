@@ -249,7 +249,7 @@ a {
         border-radius: 2px;
 }
 
-body.signin {
+.signin {
         background-color: var(--green);
         display: flex;
         align-items: center;
