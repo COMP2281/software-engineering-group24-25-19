@@ -1,14 +1,17 @@
 import React from 'react';
 import MenuItem from './MenuItem';
+import MenuFooter from './MenuFooter';
 import { usePermissionsMenuContext } from '../contexts/PermissionsMenuContext';
 
 const Menu = () => {
         const { menuContent } = usePermissionsMenuContext();
-        console.log(menuContent)
 
         return (
                 <div className="menu">
-
+                        {menuContent.map((item) => {
+                                return <MenuItem key={item.route} item={item} />
+                        })}
+                        <MenuFooter />
                 </div>
         );
 };

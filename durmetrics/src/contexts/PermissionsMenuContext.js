@@ -13,12 +13,12 @@ export const PermissionsMenuContextProvider = (props) => {
                         {
                                 title: 'Tables',
                                 route: '/tables',
-                                icon: 'table'
+                                icon: 'tables'
                         },
                         {
                                 title: 'Insights',
                                 route: '/insights',
-                                icon: 'chart-column'
+                                icon: 'insights'
                         }
                 ]
         );
@@ -81,7 +81,7 @@ export const PermissionsMenuContextProvider = (props) => {
         }, [menuContent, loading]);
 
         // Render loading, error, or data
-        if (loading) return <p>Loading...</p>;
+        // if (loading) return <p>Loading...</p>;
         if (error) {
                 return (
                         <>

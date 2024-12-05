@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Interface from './pages/Interface';
-import Login from './pages/Login';
+import Auth from './pages/Auth';
 import './main.css';
 
 function App() {
@@ -45,8 +45,8 @@ function App() {
     <>
       {isSmallDevice ? (<>Use a desktop to access this app.</>) : (
         <Routes>
-          <Route path="/signin" element={<Login />} />
-          <Route path="/" element={isLoggedIn ? <Interface /> : <Login />} />
+          <Route path="/signin" element={<Auth />} />
+          <Route path="/" element={isLoggedIn ? <Interface /> : <Auth />} />
           <Route path="*" element={<Interface />} />
         </Routes>
       )}
