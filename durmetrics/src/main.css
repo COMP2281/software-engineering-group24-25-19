@@ -330,6 +330,10 @@ a {
         outline: none !important;
 }
 
+.code-char:focus {
+        outline: 1px solid var(--green) !important;
+}
+
 .signin-submit {
         margin-top: 12px;
         width: calc(6 * 30px + 5 * 4px);
@@ -351,4 +355,17 @@ a {
         background-color: #C5C5C5;
         color: #9C9A9A;
         cursor: not-allowed;
+}
+
+.signin-error {
+        border: 1px solid #8B0000;
+        border-radius: 2px;
+        background-color: #8b00000d;
+        font-family: "Inter";
+        font-size: 10px;
+        width: 100%;
+        padding: 6px 10px;
+        box-sizing: border-box;
+        margin-top: 15px;
+        color: #8B0000;
 }
