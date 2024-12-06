@@ -42,15 +42,20 @@ function App() {
   }, []);
 
   return (
-    <>
-      {isSmallDevice ? (<>Use a desktop to access this app.</>) : (
-        <Routes>
-          <Route path="/signin" element={<Auth />} />
-          <Route path="/" element={isLoggedIn ? <Interface /> : <Auth />} />
-          <Route path="*" element={<Interface />} />
-        </Routes>
-      )}
-    </>
+    // <>
+    //   {isSmallDevice ? (<>Use a desktop to access this app.</>) : (
+    //     <Routes>
+    //       <Route path="/signin" element={<Auth />} />
+    //       <Route path="/" element={isLoggedIn ? <Interface /> : <Auth />} />
+    //       <Route path="*" element={<Interface />} />
+    //     </Routes>
+    //   )}
+    // </>
+    <Routes>
+      <Route path="/signin" element={<Auth />} />
+      <Route path="/" element={isLoggedIn ? <Interface /> : <Auth />} />
+      <Route path="*" element={<Interface />} />
+    </Routes>
   );
 }
 
