@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import Interface from './pages/Interface';
 import Auth from './pages/Auth';
@@ -37,6 +37,7 @@ function App() {
 
     checkLoggedIn().then(isLoggedIn => {
       setIsLoggedIn(isLoggedIn);
+      // set default path
     });
 
   }, []);
