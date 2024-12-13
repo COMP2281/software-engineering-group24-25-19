@@ -1,6 +1,6 @@
 import React from 'react';
 import DataTable from './DataTable';
-// import SearchBar from './SearchBar';
+import SearchBar from './SearchBar';
 import Dropdown from './Dropdown';
 
 const Content = () => {
