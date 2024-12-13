@@ -4,17 +4,22 @@ import SearchBar from './SearchBar';
 import Dropdown from './Dropdown';
 
 const Content = () => {
-        const [tableRows, setTableRows] = React.useState([
-                { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-                { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-                { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-                { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-                { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-                { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-                { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-                { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-                { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+        const [tableColumns, setTableColumns] = React.useState([
+                { field: 'id', headerName: 'ID', width: 70 },
+                { field: 'siteName', headerName: 'Site Name', width: 200 },
+                { field: 'code', headerName: 'Code', width: 130 },
+                { field: 'floorArea', headerName: 'Floor Area', type: 'number', width: 130 },
+                { field: 'accountNumber', headerName: 'Account Number', width: 200 },
+                { field: 'kWh', headerName: 'kWh', width: 130 },
+                { field: 'cost', headerName: 'Cost', width: 130 },
         ]);
+        const [tableRows, setTableRows] = React.useState([
+                { id: 1, siteName: 'Annfield Plain Library', code: '0922S01', floorArea: 439, accountNumber: '6224653442', kWh: '13,123', cost: '5,404.60' },
+                { id: 2, siteName: 'Barnard Castle Library (new)/C.A.P building', code: '0923S01', floorArea: 554, accountNumber: '6813747837', kWh: '22,307', cost: '8,685.90' },
+                { id: 3, siteName: 'Belmont Library', code: '0949', floorArea: 227, accountNumber: '3259115544', kWh: '9,624', cost: '4,074.47' },
+        ]);
+
+
 
         const changeYears = (years) => {
                 console.log(years);
@@ -32,7 +37,7 @@ const Content = () => {
                                 <Dropdown rows={tableRows} changeYears={changeYears} />
                         </div>
                         <div className="table-container">
-                                <DataTable rows={tableRows} />
+                                <DataTable rows={tableRows} columns={tableColumns} />
                         </div>
                 </div>
         );

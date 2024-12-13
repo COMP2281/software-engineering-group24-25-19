@@ -16,18 +16,11 @@ const paginationModel = { page: 0, pageSize: 100 };
 
 
 const DataTable = (props) => {
-        let columns = [
-                { field: 'id', headerName: 'ID', width: 70 },
-                { field: 'firstName', headerName: 'First name', width: 130 },
-                { field: 'lastName', headerName: 'Last name', width: 130 },
-                { field: 'age', headerName: 'Age', type: 'number', width: 90 },
-        ];
-
         return (
                 <Paper sx={{ height: 400, width: '100%' }}>
                         <DataGrid
                                 rows={props.rows}
-                                columns={columns}
+                                columns={props.columns}
                                 initialState={{ pagination: { paginationModel } }}
                         //pageSizeOptions={[5, 10]}
                         />
