@@ -1,9 +1,17 @@
-use crate::structs::ApiError;
-use axum::{extract::Multipart, routing::post, Router};
+use crate::structs::{ApiError, AppState};
+use axum::{
+    extract::{Multipart, State},
+    routing::post,
+    Router,
+};
 use calamine::{open_workbook_from_rs, Reader, Xlsx};
 use std::io::Cursor;
+use std::sync::Arc;
 
-async fn upload(mut multipart: Multipart) -> Result<(), ApiError> {
+async fn upload(
+    State(state): State<Arc<AppState>>,
+    mut multipart: Multipart,
+) -> Result<(), ApiError> {
     while let Some(field) = multipart.next_field().await? {
         // TODO: validate the field against the API specification
 
@@ -24,6 +32,6 @@ async fn upload(mut multipart: Multipart) -> Result<(), ApiError> {
     Ok(())
 }
 
-pub fn router() -> Router {
+pub fn router() -> Router<Arc<AppState>> {
     Router::new().route("/", post(upload))
 }

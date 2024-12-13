@@ -2,6 +2,11 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use sea_orm::DatabaseConnection;
+
+pub struct AppState {
+    pub database_connection: DatabaseConnection,
+}
 
 #[derive(Debug)]
 pub struct ApiError(anyhow::Error);
