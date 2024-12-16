@@ -2,24 +2,35 @@ import React from 'react';
 import DataTable from './DataTable';
 import SearchBar from './SearchBar';
 import Dropdown from './Dropdown';
+import Papa from 'papaparse';
+import report from '../data/report.csv';
 
 const Content = () => {
-        const [tableColumns, setTableColumns] = React.useState([
-                { field: 'id', headerName: 'ID', width: 70 },
-                { field: 'siteName', headerName: 'Site Name', width: 200 },
-                { field: 'code', headerName: 'Code', width: 130 },
-                { field: 'floorArea', headerName: 'Floor Area', type: 'number', width: 130 },
-                { field: 'accountNumber', headerName: 'Account Number', width: 200 },
-                { field: 'kWh', headerName: 'kWh', width: 130 },
-                { field: 'cost', headerName: 'Cost', width: 130 },
-        ]);
-        const [tableRows, setTableRows] = React.useState([
-                { id: 1, siteName: 'Annfield Plain Library', code: '0922S01', floorArea: 439, accountNumber: '6224653442', kWh: '13,123', cost: '5,404.60' },
-                { id: 2, siteName: 'Barnard Castle Library (new)/C.A.P building', code: '0923S01', floorArea: 554, accountNumber: '6813747837', kWh: '22,307', cost: '8,685.90' },
-                { id: 3, siteName: 'Belmont Library', code: '0949', floorArea: 227, accountNumber: '3259115544', kWh: '9,624', cost: '4,074.47' },
-        ]);
+        React.useEffect(() => {
+                Papa.parse(report, {
+                        header: true,
+                        download: true,
+                        complete: (result) => {
+                                const columns = Object.keys(result.data[0]).map((key) => ({
+                                        title: key,
+                                        field: key,
+                                }));
+                                setTableColumns(columns);
 
+                                const rows = result.data.map((row, index) => {
+                                        const formattedRow = { id: index + 1 };
+                                        columns.forEach((col) => {
+                                                formattedRow[col.field] = row[col.title];
+                                        });
+                                        return formattedRow;
+                                });
+                                setTableRows(rows);
+                        },
+                });
+        }, []);
 
+        const [tableColumns, setTableColumns] = React.useState([]);
+        const [tableRows, setTableRows] = React.useState([]);
 
         const changeYears = (years) => {
                 console.log(years);
