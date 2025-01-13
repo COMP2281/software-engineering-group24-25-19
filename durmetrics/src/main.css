@@ -3,6 +3,11 @@
         src: url('fonts/Domine.ttf') format('truetype');
 }
 
+@font-face {
+        font-family: 'Roboto';
+        src: url('fonts/Roboto.ttf') format('truetype');
+}
+
 html,
 body,
 #root {
@@ -486,6 +491,7 @@ a {
         width: 100%;
         table-layout: fixed;
         border-collapse: collapse; /* Ensures borders collapse for cleaner lines */
+        font-family: "Roboto";
 }
 
 .data-table th,
