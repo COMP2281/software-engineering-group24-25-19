@@ -17,23 +17,26 @@ const DropdownFooter = ({ onDone }) => (
         </div>
 );
 
-const Dropdown = () => {
+const Dropdown = (props) => {
         const years = Array.from({ length: 2024 - 2017 + 1 }, (_, i) => 2024 - i);
         const [selectedYears, setSelectedYears] = useState([]);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
+        const changeYears = props.changeYears;
 
         const toggleYear = (year) => {
                 setSelectedYears((prev) =>
-                        prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
+                    prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
                 );
-        };
+            };
+        
+            const toggleAllYears = () => {
+                setSelectedYears((prev) => (prev.length === years.length ? [] : years));
+            };
 
-        const toggleAllYears = () => {
-                setSelectedYears((prev) =>
-                        prev.length === years.length ? [] : years
-                );
-        };
+        useEffect(() => {
+                changeYears(selectedYears);
+        }, [selectedYears]);
 
         const isAllSelected = selectedYears.length === years.length;
         const dropdownTitle = isAllSelected

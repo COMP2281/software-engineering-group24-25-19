@@ -7,6 +7,8 @@ import report from '../data/report.csv';
 import { TableVirtuoso } from 'react-virtuoso';
 
 const Content = () => {
+        const [selectedYears, setSelectedYears] = useState([]);
+
         const [tableColumns, setTableColumns] = useState([]);
         const [tableRows, setTableRows] = useState([]);
 
@@ -17,28 +19,31 @@ const Content = () => {
                         download: true,
                         complete: (result) => {
 
-                const columns = Object.keys(result.data[0] || {}).map((key) => ({
-                        title: key,
-                        field: key,
-                        width: Math.max(
-                                key.length * 15, // approximate width of header text
-                                ...result.data.map((row) => (row[key]?.length || 0) * 8) // width of content
-                        ),
-                        }));
-                        setTableColumns(columns);
+                                const columns = Object.keys(result.data[0] || {}).map((key) => ({
+                                        title: key,
+                                        field: key,
+                                        width: Math.max(
+                                                key.length * 15, // approximate width of header text
+                                                ...result.data.map((row) => (row[key]?.length || 0) * 8) // width of content
+                                        ),
+                                }));
+                                
+                                setTableColumns(columns);
 
-                // map rows with matching keys
-                const rows = result.data.map((row, index) => ({
-                        id: index + 1,
-                        ...row, // Spread row data
-                        }));
-                        setTableRows(rows);
-                },
-        });
-}, []);
+                                // map rows with matching keys
+                                const rows = result.data.map((row, index) => ({
+                                        id: index + 1,
+                                        ...row, // Spread row data
+                                        }));
+                                
+                                setTableRows(rows);
+                        },
+                });
+        }, []);
 
         const changeYears = (years) => {
-                console.log("Selected years:", years);
+                years = years.sort();
+                setSelectedYears(years);
         };
 
         return (
