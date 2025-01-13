@@ -341,3 +341,30 @@ body.signin {
         color: #9C9A9A;
         cursor: not-allowed;
 }
+
+.data-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse; /* Ensures borders collapse for cleaner lines */
+}
+
+.data-table th,
+.data-table td {
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 8px;
+        border: 1px solid #ddd; /* Adds lines between cells */
+}
+
+.data-table th {
+        background-color: #f4f4f4; /* Optional: Adds a subtle background for headers */
+        font-weight: bold;
+        border-bottom: 2px solid #ccc; /* Slightly thicker line for the header */
+}
+
+.data-table tr:nth-child(even) {
+        background-color: #f9f9f9; /* Optional: Alternating row colours for readability */
+}
+
