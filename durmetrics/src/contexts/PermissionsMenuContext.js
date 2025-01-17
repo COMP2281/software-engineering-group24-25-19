@@ -1,4 +1,5 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
+import Error from '../pages/Error';
 import axios from 'axios';
 
 export const PermissionsMenuContext = createContext();
@@ -56,6 +57,9 @@ export const PermissionsMenuContextProvider = (props) => {
                                                         icon: 'upload',
                                                 },
                                         ]);
+                                } else if (res <= 1) {
+                                        // Backend routing should cover this, but just in case
+                                        throw 401;
                                 }
                         } catch (err) {
                                 setError(err);
@@ -74,7 +78,7 @@ export const PermissionsMenuContextProvider = (props) => {
 
                         if (!pages.includes(window.location.pathname) && window.location.pathname !== '/') {
                                 setError(404);
-                        } else {
+                        } else if (!error) {
                                 setError(null);
                         }
                 }
@@ -83,11 +87,20 @@ export const PermissionsMenuContextProvider = (props) => {
         // Render loading, error, or data
         // if (loading) return <p>Loading...</p>;
         if (error) {
-                return (
-                        <>
-                                {error === 404 ? (<h2>404: Page not found</h2>) : <p>Error: {error}</p>}
-                        </>
-                )
+                switch (error) {
+                        case 404:
+                                return <Error
+                                        code={404}
+                                        title={"Page not found"}
+                                        message={"The page you are looking for could not be found."} />;
+                        case 401:
+                                return <Error
+                                        code={401}
+                                        title={"Unauthorised"}
+                                        message={"You do not have permission to view this page."} />;
+                        default:
+                                return <p>Error: {error}</p>;
+                }
         }
 
         return (
