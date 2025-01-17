@@ -35,6 +35,7 @@ const Dropdown = (props) => {
             };
 
         useEffect(() => {
+                console.log(changeYears)
                 changeYears(selectedYears);
         }, [selectedYears]);
 
