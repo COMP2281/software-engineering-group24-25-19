@@ -1,16 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-const Tabs = () => {
+const Tabs = (props) => {
+        const activeTab = props.activeTab;
+
+        useEffect(() => {
+                console.log(activeTab);
+                const activeTabElement = document.querySelector(`.tab[tab="${activeTab}"]`);
+                if (activeTabElement) {
+                        activeTabElement.classList.add('tab-selected');
+                }
+
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                                tabs.forEach(t => t.classList.remove('tab-selected'));
+                                tab.classList.add('tab-selected');
+                                props.setActiveTab(tab.getAttribute('tab'));
+                        });
+                });
+        }, [activeTab]);
+
         return (
                 <div className="header-tabs">
-                        <div className="tab tab-selected">Carbon Emissions</div>
-                        <div className="tab">Electricity</div>
-                        <div className="tab">Gas</div>
-                        <div className="tab">Carbon (%)</div>
-                        <div className="tab">Gas Sites (%)</div>
-                        <div className="tab">Electricity (%)</div>
-                        <div className="tab">kWh per HDD</div>
-                        <div className="tab">Site Information</div>
+                        <div className="tab tab-selected" tab="0" data-text="Carbon Emissions">Carbon Emissions</div>
+                        <div className="tab" tab="1" data-text="Electricity">Electricity</div>
+                        <div className="tab" tab="2" data-text="Gas">Gas</div>
+                        <div className="tab" tab="3" data-text="Carbon (%)">Carbon (%)</div>
+                        <div className="tab" tab="4" data-text="Gas Sites (%)">Gas Sites (%)</div>
+                        <div className="tab" tab="5" data-text="Electricity (%)">Electricity (%)</div>
+                        <div className="tab" tab="6" data-text="kWh per HDD">kWh per HDD</div>
+                        <div className="tab" tab="7" data-text="Site Information">Site Information</div>
                 </div>
         );
 };

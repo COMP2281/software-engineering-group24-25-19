@@ -110,6 +110,15 @@ a {
         font-weight: bold;
 }
 
+.tab::before {
+        content: attr(data-text);
+        font-weight: bold;
+        visibility: hidden;
+        display: block;
+        height: 0;
+}
+
+
 .lower {
         height: calc(100% - 18%);
         width: 100%;
@@ -268,7 +277,7 @@ a {
 .signin-logo {
         width: 168px;
         padding-bottom: 37px;
-        margin-top: -200px;
+        margin-top: -100px;
 }
 
 .signin-panel {
@@ -529,6 +538,7 @@ a {
         font-weight: bold;
         color: white;
         margin: 0;
+        margin-top: -50px;
 }
 
 .errorpage-title {

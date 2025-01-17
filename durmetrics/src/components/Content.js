@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import DataTable from './DataTable';
-import SearchBar from './SearchBar';
-import Dropdown from './Dropdown';
-import Papa from 'papaparse';
-import report from '../data/report.csv';
-import { TableVirtuoso } from 'react-virtuoso';
 
-const Content = () => {
+const Content = (props) => {
         return (
-        <div className="body">
-                <DataTable />
-        </div>
+                <div className="body">
+                        <DataTable activeTab={props.activeTab} />
+                </div>
         );
-};      
+};
 export default Content;

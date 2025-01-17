@@ -2,11 +2,11 @@ import React from 'react';
 import Menu from './Menu';
 import Content from './Content';
 
-const Body = () => {
+const Body = (props) => {
         return (
                 <div className="lower">
                         <Menu />
-                        <Content />
+                        <Content activeTab={props.activeTab} />
                 </div>
         );
 };

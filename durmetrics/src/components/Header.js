@@ -1,7 +1,8 @@
 import React from 'react';
 import { usePermissionsMenuContext } from '../contexts/PermissionsMenuContext';
+import Tabs from './Tabs';
 
-const Header = () => {
+const Header = (props) => {
         const { permissionLevel, menuContent } = usePermissionsMenuContext();
         const permissionsTags = { 2: "Edit", 1: "View", 0: "None" };
 
@@ -32,16 +33,7 @@ const Header = () => {
                         </div>
                         <div className="header-content">
                                 <div className="header-title">{pageTitle}</div>
-                                <div className="header-tabs">
-                                        <div className="tab tab-selected">Carbon Emissions</div>
-                                        <div className="tab">Electricity</div>
-                                        <div className="tab">Gas</div>
-                                        <div className="tab">Carbon (%)</div>
-                                        <div className="tab">Gas Sites (%)</div>
-                                        <div className="tab">Electricity (%)</div>
-                                        <div className="tab">kWh per HDD</div>
-                                        <div className="tab">Site Information</div>
-                                </div>
+                                <Tabs activeTab={props.activeTab} setActiveTab={props.setActiveTab} />
                         </div>
                 </div>
         );
