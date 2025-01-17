@@ -333,6 +333,7 @@ a {
         text-align: center;
         border-radius: 2px;
         border: none;
+        text-transform: uppercase;
         outline: none !important;
 }
 
@@ -490,7 +491,8 @@ a {
 .data-table {
         width: 100%;
         table-layout: fixed;
-        border-collapse: collapse; /* Ensures borders collapse for cleaner lines */
+        border-collapse: collapse;
+        /* Ensures borders collapse for cleaner lines */
         font-family: "Roboto";
 }
 
@@ -500,11 +502,44 @@ a {
         overflow: hidden;
         text-overflow: ellipsis;
         padding: 8px;
-        border: 1px solid #ddd; /* Adds lines between cells */
+        border: 1px solid #ddd;
+        /* Adds lines between cells */
 }
 
 .data-table th {
-        background-color: #f4f4f4; /* Optional: Adds a subtle background for headers */
+        background-color: #f4f4f4;
+        /* Optional: Adds a subtle background for headers */
         font-weight: bold;
-        border-bottom: 2px solid #ccc; /* Slightly thicker line for the header */
+        border-bottom: 2px solid #ccc;
+        /* Slightly thicker line for the header */
+}
+
+.errorpage {
+        height: 100%;
+        width: 100%;
+        background-color: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+}
+
+.errorpage-code {
+        font-size: 100px;
+        font-weight: bold;
+        color: white;
+        margin: 0;
+}
+
+.errorpage-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        margin-top: 1em;
+}
+
+.errorpage-message {
+        font-size: 14px;
+        color: white;
+        margin-top: 0.5em;
 }
