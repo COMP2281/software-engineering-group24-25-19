@@ -14,12 +14,13 @@ const paginationModel = { page: 0, pageSize: 100 };
 
 const DataTable = (props) => {
         const [selectedYears, setSelectedYears] = useState([]);
-
         const [tableColumns, setTableColumns] = useState([]);
         const [tableRows, setTableRows] = useState([]);
+        const [filteredRows, setFilteredRows] = useState([]);
+        const [searchText, setSearchText] = useState(''); 
 
         useEffect(() => {
-            // parse CSV and process data
+                // parse CSV and process data
                 Papa.parse(report, {
                         header: true,
                         download: true,
@@ -39,13 +40,37 @@ const DataTable = (props) => {
                                 // map rows with matching keys
                                 const rows = result.data.map((row, index) => ({
                                         id: index + 1,
-                                        ...row, // Spread row data
+                                        ...row,
                                         }));
                                 
                                 setTableRows(rows);
+                                setFilteredRows(rows);
                         },
                 });
         }, []);
+
+useEffect(() => {
+        // filter rows based on search text
+        if (searchText) {
+                setFilteredRows(
+                        tableRows.filter((row) => {
+                                const firstCol = Object.keys(row)[1]; // first column key (site name)
+                                const secondCol = Object.keys(row)[2]; // second column key (site code)
+
+                                return (
+                                        row[firstCol]?.toLowerCase().includes(searchText.toLowerCase()) ||
+                                        row[secondCol]?.toLowerCase().includes(searchText.toLowerCase())
+                                );
+                        })
+                );
+        } else {
+                setFilteredRows(tableRows); // reset to all rows if no search text
+        }
+}, [searchText, tableRows]);
+
+        const handleSearchChange = (event) => {
+                setSearchText(event.target.value);
+        };
 
         const changeYears = (years) => {
                 years = years.sort();
@@ -60,44 +85,51 @@ const DataTable = (props) => {
                                 <div className="search-icon-container">
                                         <img className="search-icon" src="search-icon.svg" alt="Search" />
                                 </div>
-                        <input className="search-bar" placeholder="Search sites by name or code..." />
+                        <input
+                        className="search-bar"
+                        placeholder="Search sites by name or code..."
+                        value={searchText}
+                        onChange={handleSearchChange}
+                        />
                         </div>
-                        <Dropdown rows={tableRows} changeYears={changeYears} />
+                <Dropdown rows={tableRows} changeYears={changeYears} />
                 </div>
+
 
                 {/* Table Section */}
                 <div className="table-container">
-                        <TableVirtuoso
-                        data={tableRows}
-                        totalCount={tableRows.length}
-                        fixedHeaderContent={() => (
-                                <thead>
-                                        <tr>
-                                                {tableColumns.map((col) => (
-                                                <th key={col.field} style={{ width: `${col.width}px` }}>
-                                                {col.title}
-                                                </th>
-                                                ))}
-                                        </tr>
-                                </thead>
-                        )}
+                <TableVirtuoso
+                data={filteredRows}
+                totalCount={filteredRows.length}
+                fixedHeaderContent={() => (
+                        <thead>
+                                <tr>
+                                        {tableColumns.map((col) => (
+                                        <th key={col.field} style={{ width: `${col.width}px` }}>
+                                        {col.title}
+                                        </th>
+                                        ))}
+                                </tr>
+                        </thead>
+                )}
+                        
                         itemContent={(index) => {
-                                const row = tableRows[index];
+                                const row = filteredRows[index];
                                 return (
                                 <>
                                         {tableColumns.map((col) => (
                                         <td key={col.field}>{row[col.field]}</td>
-                                ))}
+                                        ))}
                                 </>
-                        );
-                }}
+                                );
+                        }}
                         components={{
                                 Table: (props) => (
-                                        <table
-                                                {...props}
-                                                className="data-table"
-                                                style={{ tableLayout: "fixed", width: "100%" }}
-                                        />
+                                <table
+                                        {...props}
+                                        className="data-table"
+                                        style={{ tableLayout: 'fixed', width: '100%' }}
+                                />
                                 ),
                                 TableHead: (props) => (
                                 <thead {...props}>
@@ -112,8 +144,7 @@ const DataTable = (props) => {
                         }}
                         />
                 </div>
-        </>
+                </>
         );
 };
-
-export default DataTable;
+        export default DataTable;
