@@ -33,7 +33,7 @@ const Header = (props) => {
                         </div>
                         <div className="header-content">
                                 <div className="header-title">{pageTitle}</div>
-                                <Tabs activeTab={props.activeTab} setActiveTab={props.setActiveTab} />
+                                <Tabs activeTab={props.activeTab} setActiveTab={props.setActiveTab} page={window.location.pathname.split('/')[1]} />
                         </div>
                 </div>
         );
