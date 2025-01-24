@@ -1,3 +1,4 @@
+mod entities;
 mod routes;
 mod structs;
 
