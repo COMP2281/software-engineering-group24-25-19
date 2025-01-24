@@ -3,6 +3,13 @@ import React, { useEffect } from 'react';
 const Tabs = (props) => {
         const activeTab = props.activeTab;
 
+        const handleTabClick = (tab) => {
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(t => t.classList.remove('tab-selected'));
+                tab.classList.add('tab-selected');
+                props.setActiveTab(tab.getAttribute('tab'));
+        };
+
         useEffect(() => {
                 console.log(activeTab);
                 const activeTabElement = document.querySelector(`.tab[tab="${activeTab}"]`);
@@ -13,9 +20,7 @@ const Tabs = (props) => {
                 const tabs = document.querySelectorAll('.tab');
                 tabs.forEach(tab => {
                         tab.addEventListener('click', () => {
-                                tabs.forEach(t => t.classList.remove('tab-selected'));
-                                tab.classList.add('tab-selected');
-                                props.setActiveTab(tab.getAttribute('tab'));
+                                handleTabClick(tab);
                         });
                 });
         }, [activeTab]);

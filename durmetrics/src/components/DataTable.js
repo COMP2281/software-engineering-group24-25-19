@@ -19,7 +19,6 @@ const DataTable = (props) => {
         const [filteredRows, setFilteredRows] = useState([]);
         const [searchText, setSearchText] = useState('');
 
-
         useEffect(() => {
                 // parse CSV and process data
                 Papa.parse(report, {
@@ -82,17 +81,7 @@ const DataTable = (props) => {
                 <>
                         {/* Filters Section */}
                         <div className="table-filters">
-                                <div className="input-group">
-                                        <div className="search-icon-container">
-                                                <img className="search-icon" src="search-icon.svg" alt="Search" />
-                                        </div>
-                                        <input
-                                                className="search-bar"
-                                                placeholder="Search sites by name or code..."
-                                                value={searchText}
-                                                onChange={handleSearchChange}
-                                        />
-                                </div>
+                                <SearchBar searchTable={handleSearchChange} />
                                 <Dropdown rows={tableRows} changeYears={changeYears} />
                         </div>
 
