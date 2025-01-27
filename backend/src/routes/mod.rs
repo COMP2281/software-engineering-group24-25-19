@@ -1,4 +1,5 @@
 pub mod electricity_usage;
+pub mod emission_factors;
 pub mod gas_usage;
 pub mod sites;
 pub mod upload;
@@ -13,5 +14,6 @@ pub fn create_router(shared_state: Arc<AppState>) -> Router {
         .nest("/upload", upload::router())
         .nest("/gas-usage", gas_usage::router())
         .nest("/electricity-usage", electricity_usage::router())
+        .nest("/emission-factors", emission_factors::router())
         .with_state(shared_state)
 }
