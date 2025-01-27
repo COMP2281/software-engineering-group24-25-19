@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
+import DataTable from '../components/DataTable';
 
-const Tables = () => {
+const Tables = (props) => {
 
         useEffect(() => {
                 document.title = 'Tables - DurMetrics';
         }, []);
 
         return (
-                <>Tables</>
+                <DataTable activeTab={props.activeTab} />
         );
 };
 

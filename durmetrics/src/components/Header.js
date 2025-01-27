@@ -18,7 +18,6 @@ const Header = (props) => {
 
         const pageTitle = getPageTitle();
 
-
         return (
                 <div className="header">
                         <div className="header-side">
