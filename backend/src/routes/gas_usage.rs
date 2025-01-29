@@ -8,16 +8,16 @@ use std::sync::Arc;
 use tracing::debug;
 
 #[derive(Deserialize)]
-struct GasUsageParams {
+struct Params {
     #[serde(default)]
     site_ids: Vec<i32>,
     #[serde(default)]
     start_years: Vec<i32>,
 }
 
-async fn gas_usage(
+async fn handler(
     State(state): State<Arc<AppState>>,
-    Query(params): Query<GasUsageParams>,
+    Query(params): Query<Params>,
 ) -> Result<Json<Vec<gas_usage_record::Model>>, ApiError> {
     debug!(
         "params.site_ids={:?}, start_years={:?}",
@@ -43,5 +43,5 @@ async fn gas_usage(
 }
 
 pub fn router() -> Router<Arc<AppState>> {
-    Router::new().route("/", get(gas_usage))
+    Router::new().route("/", get(handler))
 }

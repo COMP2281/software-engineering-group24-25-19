@@ -8,14 +8,14 @@ use std::sync::Arc;
 use tracing::debug;
 
 #[derive(Deserialize)]
-struct SitesParams {
+struct Params {
     #[serde(default)]
     names: Vec<String>,
 }
 
-async fn sites(
+async fn handler(
     State(state): State<Arc<AppState>>,
-    Query(params): Query<SitesParams>,
+    Query(params): Query<Params>,
 ) -> Result<Json<Vec<site::Model>>, ApiError> {
     debug!("params.names={:?}", params.names);
 
@@ -33,5 +33,5 @@ async fn sites(
 }
 
 pub fn router() -> Router<Arc<AppState>> {
-    Router::new().route("/", get(sites))
+    Router::new().route("/", get(handler))
 }

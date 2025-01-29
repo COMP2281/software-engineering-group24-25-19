@@ -8,7 +8,7 @@ use calamine::{open_workbook_from_rs, Reader, Xlsx};
 use std::io::Cursor;
 use std::sync::Arc;
 
-async fn upload(
+async fn handler(
     State(state): State<Arc<AppState>>,
     mut multipart: Multipart,
 ) -> Result<(), ApiError> {
@@ -33,5 +33,5 @@ async fn upload(
 }
 
 pub fn router() -> Router<Arc<AppState>> {
-    Router::new().route("/", post(upload))
+    Router::new().route("/", post(handler))
 }

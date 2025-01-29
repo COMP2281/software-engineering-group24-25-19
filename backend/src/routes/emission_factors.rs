@@ -8,14 +8,14 @@ use std::sync::Arc;
 use tracing::debug;
 
 #[derive(Deserialize)]
-struct EmissionFactorsParams {
+struct Params {
     #[serde(default)]
     start_years: Vec<i32>,
 }
 
-async fn emission_factors(
+async fn handler(
     State(state): State<Arc<AppState>>,
-    Query(params): Query<EmissionFactorsParams>,
+    Query(params): Query<Params>,
 ) -> Result<Json<Vec<emission_factor::Model>>, ApiError> {
     debug!("params.names={:?}", params.start_years);
 
@@ -33,5 +33,5 @@ async fn emission_factors(
 }
 
 pub fn router() -> Router<Arc<AppState>> {
-    Router::new().route("/", get(emission_factors))
+    Router::new().route("/", get(handler))
 }
