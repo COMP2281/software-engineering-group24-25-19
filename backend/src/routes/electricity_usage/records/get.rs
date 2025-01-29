@@ -1,6 +1,8 @@
-use crate::entities::electricity_usage_record;
-use crate::structs::{ApiError, AppState};
-use axum::{extract::State, routing::get, Json, Router};
+use crate::{
+    entities::electricity_usage_record,
+    structs::{ApiError, AppState},
+};
+use axum::{extract::State, Json};
 use axum_extra::extract::Query;
 use sea_orm::{ColumnTrait as _, Condition, EntityTrait as _, QueryFilter as _};
 use serde::Deserialize;
@@ -8,14 +10,14 @@ use std::sync::Arc;
 use tracing::debug;
 
 #[derive(Deserialize)]
-struct Params {
+pub(super) struct Params {
     #[serde(default)]
     site_ids: Vec<i32>,
     #[serde(default)]
     start_years: Vec<i32>,
 }
 
-async fn handler(
+pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Query(params): Query<Params>,
 ) -> Result<Json<Vec<electricity_usage_record::Model>>, ApiError> {
@@ -41,8 +43,4 @@ async fn handler(
             .await?;
 
     Ok(Json(matched_records))
-}
-
-pub fn router() -> Router<Arc<AppState>> {
-    Router::new().route("/", get(handler))
 }

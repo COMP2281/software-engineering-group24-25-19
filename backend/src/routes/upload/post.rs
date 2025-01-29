@@ -1,14 +1,10 @@
 use crate::structs::{ApiError, AppState};
-use axum::{
-    extract::{Multipart, State},
-    routing::post,
-    Router,
-};
+use axum::extract::{Multipart, State};
 use calamine::{open_workbook_from_rs, Reader, Xlsx};
 use std::io::Cursor;
 use std::sync::Arc;
 
-async fn handler(
+pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     mut multipart: Multipart,
 ) -> Result<(), ApiError> {
@@ -30,8 +26,4 @@ async fn handler(
     }
 
     Ok(())
-}
-
-pub fn router() -> Router<Arc<AppState>> {
-    Router::new().route("/", post(handler))
 }

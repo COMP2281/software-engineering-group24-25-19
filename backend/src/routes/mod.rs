@@ -1,8 +1,8 @@
-pub mod electricity_usage;
-pub mod emission_factors;
-pub mod gas_usage;
-pub mod sites;
-pub mod upload;
+mod electricity_usage;
+mod emission_factors;
+mod gas_usage;
+mod sites;
+mod upload;
 
 use crate::structs::AppState;
 use axum::Router;
