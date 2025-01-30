@@ -9,19 +9,19 @@ use serde::Deserialize;
 use std::sync::Arc;
 use tracing::debug;
 
-#[derive(Deserialize)]
-pub(super) struct Params {
+#[derive(Debug, Deserialize)]
+pub(super) struct QueryParams {
     start_years: Option<Vec<i32>>,
 }
 
 pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
-    Query(params): Query<Params>,
+    Query(query_params): Query<QueryParams>,
 ) -> Result<Json<Vec<emission_factor::Model>>, ApiError> {
-    debug!("params.names={:?}", params.start_years);
+    debug!("query_params={:?}", query_params);
 
     let conditions = Condition::all().add_option(
-        params
+        query_params
             .start_years
             .map(|start_years| emission_factor::Column::StartYear.is_in(start_years)),
     );

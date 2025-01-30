@@ -10,7 +10,7 @@ use std::sync::Arc;
 use tracing::debug;
 
 #[derive(Debug, Deserialize)]
-pub(super) struct Params {
+pub(super) struct QueryParams {
     ids: Option<Vec<i32>>,
     name: Option<String>,
     floor_area_square_metre_min: Option<f64>,
@@ -21,34 +21,34 @@ pub(super) struct Params {
 
 pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
-    Query(params): Query<Params>,
+    Query(query_params): Query<QueryParams>,
 ) -> Result<Json<Vec<site::Model>>, ApiError> {
-    debug!("params = {:?}", params);
+    debug!("query_params = {:?}", query_params);
 
     let conditions = Condition::all()
-        .add_option(params.ids.map(|ids| site::Column::Id.is_in(ids)))
+        .add_option(query_params.ids.map(|ids| site::Column::Id.is_in(ids)))
         .add_option(
-            params
+            query_params
                 .name
                 .map(|search| site::Column::Name.contains(search)),
         )
         .add_option(
-            params
+            query_params
                 .floor_area_square_metre_min
                 .map(|min| site::Column::FloorAreaSquareMetre.gte(min)),
         )
         .add_option(
-            params
+            query_params
                 .floor_area_square_metre_max
                 .map(|max| site::Column::FloorAreaSquareMetre.lte(max)),
         )
         .add_option(
-            params
+            query_params
                 .unique_property_reference_number
                 .map(|search| site::Column::UniquePropertyReferenceNumber.contains(search)),
         )
         .add_option(
-            params
+            query_params
                 .ni185_energy_user
                 .map(|search| site::Column::Ni185EnergyUser.contains(search)),
         );
