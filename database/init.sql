@@ -9,7 +9,11 @@ CREATE DATABASE test;
 -- Create tables
 CREATE TABLE site (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    floor_area_square_metre FLOAT,
+    unique_property_reference_number TEXT,
+    ni185_energy_user TEXT,
+    comment TEXT
 );
 
 CREATE TABLE emission_factor (
@@ -39,16 +43,16 @@ CREATE TABLE electricity_usage_record (
 
 
 -- Insert test data into tables
-INSERT INTO site (name)
+INSERT INTO site (name, floor_area_square_metre, unique_property_reference_number, ni185_energy_user, comment)
 VALUES
-('Site A'),
-('Site B'),
-('Site C'),
-('Site D'),
-('Site E'),
-('Site F'),
-('Site G'),
-('Site H');
+('Site A', 120.5, 'UPRN001', 'Energy User A', 'Main office building'),
+('Site B', 85.0, 'UPRN002', 'Energy User B', NULL),
+('Site C', NULL, NULL, NULL, 'Under construction'),
+('Site D', 200.75, 'UPRN004', NULL, 'Large warehouse'),
+('Site E', 150.3, NULL, 'Energy User E', NULL),
+('Site F', NULL, 'UPRN006', NULL, NULL),
+('Site G', 95.6, NULL, 'Energy User G', 'Small retail space'),
+('Site H', 180.0, 'UPRN008', 'Energy User H', 'Research facility');
 
 INSERT INTO emission_factor (start_year, gas, electricity)
 VALUES
