@@ -1,7 +1,8 @@
+mod delete;
 mod get;
-mod post;
+mod patch;
 
-mod _id;
+mod path_params;
 
 use crate::structs::AppState;
 use axum::{routing, Router};
@@ -9,7 +10,7 @@ use std::sync::Arc;
 
 pub(super) fn router() -> Router<Arc<AppState>> {
     Router::new()
+        .route("/", routing::delete(delete::handler))
         .route("/", routing::get(get::handler))
-        .route("/", routing::post(post::handler))
-        .nest("/{id}", _id::router())
+        .route("/", routing::patch(patch::handler))
 }
