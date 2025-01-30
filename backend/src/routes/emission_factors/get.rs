@@ -11,8 +11,7 @@ use tracing::debug;
 
 #[derive(Deserialize)]
 pub(super) struct Params {
-    #[serde(default)]
-    start_years: Vec<i32>,
+    start_years: Option<Vec<i32>>,
 }
 
 pub(super) async fn handler(
@@ -21,10 +20,11 @@ pub(super) async fn handler(
 ) -> Result<Json<Vec<emission_factor::Model>>, ApiError> {
     debug!("params.names={:?}", params.start_years);
 
-    let conditions = Condition::all().add_option(match params.start_years.is_empty() {
-        true => None,
-        false => Some(emission_factor::Column::StartYear.is_in(params.start_years)),
-    });
+    let conditions = Condition::all().add_option(
+        params
+            .start_years
+            .map(|start_years| emission_factor::Column::StartYear.is_in(start_years)),
+    );
 
     let matched_records: Vec<emission_factor::Model> = emission_factor::Entity::find()
         .filter(conditions)

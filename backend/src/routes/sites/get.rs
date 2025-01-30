@@ -11,8 +11,7 @@ use tracing::debug;
 
 #[derive(Deserialize)]
 pub(super) struct Params {
-    #[serde(default)]
-    names: Vec<String>,
+    names: Option<Vec<String>>,
 }
 
 pub(super) async fn handler(
@@ -21,10 +20,8 @@ pub(super) async fn handler(
 ) -> Result<Json<Vec<site::Model>>, ApiError> {
     debug!("params.names={:?}", params.names);
 
-    let conditions = Condition::all().add_option(match params.names.is_empty() {
-        true => None,
-        false => Some(site::Column::Name.is_in(params.names)),
-    });
+    let conditions =
+        Condition::all().add_option(params.names.map(|names| site::Column::Name.is_in(names)));
 
     let matched_records: Vec<site::Model> = site::Entity::find()
         .filter(conditions)

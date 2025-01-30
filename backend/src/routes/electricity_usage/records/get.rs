@@ -11,10 +11,8 @@ use tracing::debug;
 
 #[derive(Deserialize)]
 pub(super) struct Params {
-    #[serde(default)]
-    site_ids: Vec<i32>,
-    #[serde(default)]
-    start_years: Vec<i32>,
+    site_ids: Option<Vec<i32>>,
+    start_years: Option<Vec<i32>>,
 }
 
 pub(super) async fn handler(
@@ -27,14 +25,16 @@ pub(super) async fn handler(
     );
 
     let conditions = Condition::all()
-        .add_option(match params.site_ids.is_empty() {
-            true => None,
-            false => Some(electricity_usage_record::Column::SiteId.is_in(params.site_ids)),
-        })
-        .add_option(match params.start_years.is_empty() {
-            true => None,
-            false => Some(electricity_usage_record::Column::StartYear.is_in(params.start_years)),
-        });
+        .add_option(
+            params
+                .site_ids
+                .map(|site_ids| electricity_usage_record::Column::SiteId.is_in(site_ids)),
+        )
+        .add_option(
+            params
+                .start_years
+                .map(|start_years| electricity_usage_record::Column::StartYear.is_in(start_years)),
+        );
 
     let matched_records: Vec<electricity_usage_record::Model> =
         electricity_usage_record::Entity::find()
