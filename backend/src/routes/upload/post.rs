@@ -5,7 +5,7 @@ use std::io::Cursor;
 use std::sync::Arc;
 
 pub(super) async fn handler(
-    State(state): State<Arc<AppState>>,
+    State(_state): State<Arc<AppState>>,
     mut multipart: Multipart,
 ) -> Result<(), ApiError> {
     while let Some(field) = multipart.next_field().await? {
