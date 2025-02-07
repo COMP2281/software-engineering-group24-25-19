@@ -7,6 +7,7 @@ use sea_orm::Database;
 use std::env;
 use std::sync::Arc;
 use structs::AppState;
+use tower_http::cors::{AllowOrigin, CorsLayer};
 use tracing::{info, instrument};
 
 #[tokio::main]
@@ -22,7 +23,8 @@ async fn main() -> Result<()> {
         database_connection,
     });
 
-    let app = routes::create_router(shared_state);
+    let app = routes::create_router(shared_state)
+        .layer(CorsLayer::new().allow_origin(AllowOrigin::any()));
 
     // TODO: make binding address configurable
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await?;
