@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import UploadConfiguration from '../components/UploadConfiguration';
+import UploadPreview from '../components/UploadPreview';
 
-const Upload = () => {
+const Upload = (props) => {
+        const [file, setFile] = React.useState(null);
+
         return (
-                <>Upload</>
+                <div className="upload-content">
+                        <UploadConfiguration setFile={setFile} />
+                        <UploadPreview file={file} />
+                </div>
         );
 };
 

@@ -57,8 +57,9 @@ export const PermissionsMenuContextProvider = (props) => {
                                                         icon: 'upload',
                                                 },
                                         ]);
-                                } else if (res <= 1) {
+                                } else if (res < 1) {
                                         // Backend routing should cover this, but just in case
+                                        setMenuContent([]);
                                         throw 401;
                                 }
                         } catch (err) {

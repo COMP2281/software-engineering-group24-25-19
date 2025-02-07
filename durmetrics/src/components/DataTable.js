@@ -17,7 +17,7 @@ const DataTable = (props) => {
         const [tableColumns, setTableColumns] = useState([]);
         const [tableRows, setTableRows] = useState([]);
         const [filteredRows, setFilteredRows] = useState([]);
-        const [searchText, setSearchText] = useState(''); 
+        const [searchText, setSearchText] = useState('');
 
         useEffect(() => {
                 // parse CSV and process data
@@ -34,39 +34,39 @@ const DataTable = (props) => {
                                                 ...result.data.map((row) => (row[key]?.length || 0) * 8) // width of content
                                         ),
                                 }));
-                                
+
                                 setTableColumns(columns);
 
                                 // map rows with matching keys
                                 const rows = result.data.map((row, index) => ({
                                         id: index + 1,
                                         ...row,
-                                        }));
-                                
+                                }));
+
                                 setTableRows(rows);
                                 setFilteredRows(rows);
                         },
                 });
         }, []);
 
-useEffect(() => {
-        // filter rows based on search text
-        if (searchText) {
-                setFilteredRows(
-                        tableRows.filter((row) => {
-                                const firstCol = Object.keys(row)[1]; // first column key (site name)
-                                const secondCol = Object.keys(row)[2]; // second column key (site code)
+        useEffect(() => {
+                // filter rows based on search text
+                if (searchText) {
+                        setFilteredRows(
+                                tableRows.filter((row) => {
+                                        const firstCol = Object.keys(row)[1]; // first column key (site name)
+                                        const secondCol = Object.keys(row)[2]; // second column key (site code)
 
-                                return (
-                                        row[firstCol]?.toLowerCase().includes(searchText.toLowerCase()) ||
-                                        row[secondCol]?.toLowerCase().includes(searchText.toLowerCase())
-                                );
-                        })
-                );
-        } else {
-                setFilteredRows(tableRows); // reset to all rows if no search text
-        }
-}, [searchText, tableRows]);
+                                        return (
+                                                row[firstCol]?.toLowerCase().includes(searchText.toLowerCase()) ||
+                                                row[secondCol]?.toLowerCase().includes(searchText.toLowerCase())
+                                        );
+                                })
+                        );
+                } else {
+                        setFilteredRows(tableRows); // reset to all rows if no search text
+                }
+        }, [searchText, tableRows]);
 
         const handleSearchChange = (event) => {
                 setSearchText(event.target.value);
@@ -78,73 +78,63 @@ useEffect(() => {
         };
 
         return (
-        <>
-                {/* Filters Section */}
-                <div className="table-filters">
-                        <div className="input-group">
-                                <div className="search-icon-container">
-                                        <img className="search-icon" src="search-icon.svg" alt="Search" />
-                                </div>
-                        <input
-                        className="search-bar"
-                        placeholder="Search sites by name or code..."
-                        value={searchText}
-                        onChange={handleSearchChange}
-                        />
+                <>
+                        {/* Filters Section */}
+                        <div className="table-filters">
+                                <SearchBar searchTable={handleSearchChange} />
+                                <Dropdown rows={tableRows} changeYears={changeYears} />
                         </div>
-                <Dropdown rows={tableRows} changeYears={changeYears} />
-                </div>
 
 
-                {/* Table Section */}
-                <div className="table-container">
-                <TableVirtuoso
-                data={filteredRows}
-                totalCount={filteredRows.length}
-                fixedHeaderContent={() => (
-                        <thead>
-                                <tr>
-                                        {tableColumns.map((col) => (
-                                        <th key={col.field} style={{ width: `${col.width}px` }}>
-                                        {col.title}
-                                        </th>
-                                        ))}
-                                </tr>
-                        </thead>
-                )}
-                        
-                        itemContent={(index) => {
-                                const row = filteredRows[index];
-                                return (
-                                <>
-                                        {tableColumns.map((col) => (
-                                        <td key={col.field}>{row[col.field]}</td>
-                                        ))}
-                                </>
-                                );
-                        }}
-                        components={{
-                                Table: (props) => (
-                                <table
-                                        {...props}
-                                        className="data-table"
-                                        style={{ tableLayout: 'fixed', width: '100%' }}
+                        {/* Table Section */}
+                        <div className="table-container">
+                                <TableVirtuoso
+                                        data={filteredRows}
+                                        totalCount={filteredRows.length}
+                                        fixedHeaderContent={() => (
+                                                <thead>
+                                                        <tr>
+                                                                {tableColumns.map((col) => (
+                                                                        <th key={col.field} style={{ width: `${col.width}px` }}>
+                                                                                {col.title}
+                                                                        </th>
+                                                                ))}
+                                                        </tr>
+                                                </thead>
+                                        )}
+
+                                        itemContent={(index) => {
+                                                const row = filteredRows[index];
+                                                return (
+                                                        <>
+                                                                {tableColumns.map((col) => (
+                                                                        <td key={col.field}>{row[col.field]}</td>
+                                                                ))}
+                                                        </>
+                                                );
+                                        }}
+                                        components={{
+                                                Table: (props) => (
+                                                        <table
+                                                                {...props}
+                                                                className="data-table"
+                                                                style={{ tableLayout: 'fixed', width: '100%' }}
+                                                        />
+                                                ),
+                                                TableHead: (props) => (
+                                                        <thead {...props}>
+                                                                <tr>
+                                                                        {tableColumns.map((col) => (
+                                                                                <th key={col.field}>{col.title}</th>
+                                                                        ))}
+                                                                </tr>
+                                                        </thead>
+                                                ),
+                                                TableRow: (props) => <tr {...props} />,
+                                        }}
                                 />
-                                ),
-                                TableHead: (props) => (
-                                <thead {...props}>
-                                        <tr>
-                                        {tableColumns.map((col) => (
-                                                <th key={col.field}>{col.title}</th>
-                                        ))}
-                                        </tr>
-                                </thead>
-                                ),
-                                TableRow: (props) => <tr {...props} />,
-                        }}
-                        />
-                </div>
+                        </div>
                 </>
         );
 };
-        export default DataTable;
+export default DataTable;

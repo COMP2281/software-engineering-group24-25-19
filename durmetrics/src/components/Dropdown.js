@@ -26,13 +26,13 @@ const Dropdown = (props) => {
 
         const toggleYear = (year) => {
                 setSelectedYears((prev) =>
-                    prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
+                        prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
                 );
-            };
-        
-            const toggleAllYears = () => {
+        };
+
+        const toggleAllYears = () => {
                 setSelectedYears((prev) => (prev.length === years.length ? [] : years));
-            };
+        };
 
         useEffect(() => {
                 console.log(changeYears)

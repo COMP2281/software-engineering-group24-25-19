@@ -1,8 +1,9 @@
 import React from 'react';
+import DataTable from '../components/DataTable';
 
-const Insights = () => {
+const Insights = (props) => {
         return (
-                <>Insights</>
+                <DataTable activeTab={props.activeTab} />
         );
 };
 
