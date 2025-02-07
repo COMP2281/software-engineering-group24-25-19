@@ -60,7 +60,7 @@ export const PermissionsMenuContextProvider = (props) => {
                                 } else if (res < 1) {
                                         // Backend routing should cover this, but just in case
                                         setMenuContent([]);
-                                        throw 401;
+                                        throw 403;
                                 }
                         } catch (err) {
                                 setError(err);
@@ -94,10 +94,10 @@ export const PermissionsMenuContextProvider = (props) => {
                                         code={404}
                                         title={"Page not found"}
                                         message={"The page you are looking for could not be found."} />;
-                        case 401:
+                        case 403:
                                 return <Error
-                                        code={401}
-                                        title={"Unauthorised"}
+                                        code={403}
+                                        title={"Forbidden"}
                                         message={"You do not have permission to view this page."} />;
                         default:
                                 return <p>Error: {error}</p>;

@@ -17,6 +17,10 @@ body,
         font-family: "Domine";
 }
 
+#root {
+        height: 100vh;
+}
+
 * {
         box-sizing: border-box;
 }
@@ -24,6 +28,10 @@ body,
 a {
         text-decoration: none;
         color: inherit;
+}
+
+pre {
+        margin: 0;
 }
 
 :root {
@@ -124,6 +132,7 @@ a {
         height: calc(100% - 18%);
         width: 100%;
         display: flex;
+        min-height: 0;
 }
 
 .menu {
@@ -193,6 +202,7 @@ a {
         padding: 20px 3.7em;
         font-family: "Inter";
         box-sizing: border-box;
+        min-height: 0;
 }
 
 .table-filters {
@@ -276,7 +286,7 @@ a {
 }
 
 .signin-logo {
-        width: 190px;
+        width: 168px;
         padding-bottom: 37px;
         margin-top: -140px;
 }
@@ -367,6 +377,10 @@ a {
         border-radius: 2px;
         cursor: pointer;
         transition: all 0.2s;
+}
+
+.signin-submit:hover {
+        background-color: var(--llgreen);
 }
 
 .signin-submit-disabled {
@@ -562,10 +576,15 @@ a {
 
 .upload-content {
         display: grid;
-        height: 100%;
-        width: 100%;
         grid-template-columns: 5fr 12fr;
+        grid-template-rows: 1fr;
         grid-gap: 1em;
+        width: 100%;
+        height: 100%;
+}
+
+.upload-content>* {
+        min-width: 0;
 }
 
 .upload-panel {
@@ -573,10 +592,15 @@ a {
         border: 1px solid #D2D2D2;
         height: 100%;
         border-radius: 2px;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        min-width: 0;
 }
 
 .upload-title {
         font-weight: 600;
+        display: flex;
 }
 
 .panel-bar {
@@ -592,6 +616,8 @@ a {
         align-items: center;
         justify-content: center;
         background-color: #F0F0F0;
+        flex-direction: column;
+        position: relative;
 }
 
 .file-upload-button {
@@ -610,4 +636,57 @@ a {
 
 .file-upload-button:active {
         filter: brightness(0.9);
+}
+
+.file-upload-name {
+        visibility: hidden;
+        font-size: 12px;
+        margin-top: 10px;
+        width: calc(100% - 16px);
+        padding: 5px 10px;
+        background-color: white;
+        position: absolute;
+        bottom: 8px;
+        text-align: center;
+}
+
+.selected-tick {
+        height: 10px;
+        margin-bottom: -0.5px;
+        margin-right: 2px;
+}
+
+.upload-preview {
+        flex: 1;
+        overflow-x: auto;
+        overflow-y: auto;
+        padding: 15px 20px;
+        background-color: #F0F0F0;
+        font-family: 'Courier New', Courier, monospace;
+        min-width: 0;
+        min-height: 0;
+}
+
+.upload-preview-name {
+        font-weight: 600;
+        margin-left: auto;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background-color: white;
+        border: 1px solid #F0F0F0;
+        padding: 0 20px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+}
+
+.upload-preview-file {
+        height: 13px;
+        padding-right: 7px;
+}
+
+.upload-preview>* {
+        max-width: 100%;
 }
