@@ -30,6 +30,7 @@ a {
         --dgreen: #023430;
         --green: #014E3D;
         --lgreen: #185E4E;
+        --llgreen: #2A6F5F;
 }
 
 .header {
@@ -266,14 +267,14 @@ a {
 }
 
 .signin-logo {
-        width: 168px;
+        width: 190px;
         padding-bottom: 37px;
-        margin-top: -200px;
+        margin-top: -140px;
 }
 
 .signin-panel {
-        width: 542.3px;
-        height: 267.3px;
+        width: 630px;
+        height: 300px;
         background-color: white;
         border-radius: 4px;
         display: grid;
@@ -304,18 +305,18 @@ a {
 
 .signin-title {
         font-weight: 500;
-        max-width: 161px;
-        font-size: 17px;
+        max-width: 180px;
+        font-size: 18px;
 }
 
 .signin-subtitle {
-        font-size: 12px;
+        font-size: 14px;
         margin-top: 14px;
-        max-width: 161px;
+        max-width: 180px;
 }
 
 .signin-dcc-logo {
-        width: 68px;
+        width: 80px;
         margin-top: auto;
         margin-bottom: -10px;
         margin-left: -7px;
@@ -328,8 +329,9 @@ a {
 
 .code-char {
         font-family: "Domine";
-        height: 30px;
-        width: 30px;
+        font-size: 17px;
+        height: 36px;
+        width: 36px;
         text-align: center;
         border-radius: 2px;
         border: none;
@@ -343,14 +345,14 @@ a {
 
 .signin-submit {
         margin-top: 12px;
-        width: calc(6 * 30px + 5 * 4px);
+        width: calc(6 * 36px + 5 * 4px);
         height: 30px;
         background-color: var(--green);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 11px;
+        font-size: 13px;
         font-family: "Inter";
         font-weight: 700;
         border-radius: 2px;
@@ -364,13 +366,17 @@ a {
         cursor: not-allowed;
 }
 
+.signin-submit:hover {
+        background-color: var(--llgreen);
+}
+
 .signin-error {
         border: 1px solid #8B0000;
         border-radius: 2px;
         background-color: #8b00000d;
         font-family: "Inter";
         font-size: 10px;
-        width: 100%;
+        width: 180px;
         padding: 6px 10px;
         box-sizing: border-box;
         margin-top: 15px;
@@ -481,7 +487,7 @@ a {
 }
 
 .dropdown-done-button:hover {
-        background: var(--lgreen);
+        background: var(--llgreen);
 }
 
 .dropdown-icon {
