@@ -17,6 +17,10 @@ body,
         font-family: "Domine";
 }
 
+#root {
+        height: 100vh;
+}
+
 * {
         box-sizing: border-box;
 }
@@ -26,10 +30,15 @@ a {
         color: inherit;
 }
 
+pre {
+        margin: 0;
+}
+
 :root {
         --dgreen: #023430;
         --green: #014E3D;
         --lgreen: #185E4E;
+        --llgreen: #2A6F5F;
 }
 
 .header {
@@ -123,6 +132,7 @@ a {
         height: calc(100% - 18%);
         width: 100%;
         display: flex;
+        min-height: 0;
 }
 
 .menu {
@@ -192,6 +202,7 @@ a {
         padding: 20px 3.7em;
         font-family: "Inter";
         box-sizing: border-box;
+        min-height: 0;
 }
 
 .table-filters {
@@ -275,14 +286,14 @@ a {
 }
 
 .signin-logo {
-        width: 168px;
+        width: 180px;
         padding-bottom: 37px;
-        margin-top: -100px;
+        margin-top: -140px;
 }
 
 .signin-panel {
-        width: 542.3px;
-        height: 267.3px;
+        width: 630px;
+        height: 300px;
         background-color: white;
         border-radius: 4px;
         display: grid;
@@ -313,18 +324,18 @@ a {
 
 .signin-title {
         font-weight: 500;
-        max-width: 161px;
-        font-size: 17px;
+        max-width: 180px;
+        font-size: 18px;
 }
 
 .signin-subtitle {
-        font-size: 12px;
+        font-size: 14px;
         margin-top: 14px;
-        max-width: 161px;
+        max-width: 180px;
 }
 
 .signin-dcc-logo {
-        width: 68px;
+        width: 80px;
         margin-top: auto;
         margin-bottom: -10px;
         margin-left: -7px;
@@ -337,8 +348,9 @@ a {
 
 .code-char {
         font-family: "Domine";
-        height: 30px;
-        width: 30px;
+        font-size: 17px;
+        height: 36px;
+        width: 36px;
         text-align: center;
         border-radius: 2px;
         border: none;
@@ -352,19 +364,23 @@ a {
 
 .signin-submit {
         margin-top: 12px;
-        width: calc(6 * 30px + 5 * 4px);
+        width: calc(6 * 36px + 5 * 4px);
         height: 30px;
         background-color: var(--green);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 11px;
+        font-size: 13px;
         font-family: "Inter";
         font-weight: 700;
         border-radius: 2px;
         cursor: pointer;
         transition: all 0.2s;
+}
+
+.signin-submit:hover {
+        background-color: var(--llgreen);
 }
 
 .signin-submit-disabled {
@@ -379,7 +395,7 @@ a {
         background-color: #8b00000d;
         font-family: "Inter";
         font-size: 10px;
-        width: 100%;
+        width: 180px;
         padding: 6px 10px;
         box-sizing: border-box;
         margin-top: 15px;
@@ -490,7 +506,7 @@ a {
 }
 
 .dropdown-done-button:hover {
-        background: var(--lgreen);
+        background: var(--llgreen);
 }
 
 .dropdown-icon {
@@ -556,10 +572,15 @@ a {
 
 .upload-content {
         display: grid;
-        height: 100%;
-        width: 100%;
         grid-template-columns: 5fr 12fr;
+        grid-template-rows: 1fr;
         grid-gap: 1em;
+        width: 100%;
+        height: 100%;
+}
+
+.upload-content>* {
+        min-width: 0;
 }
 
 .upload-panel {
@@ -567,10 +588,15 @@ a {
         border: 1px solid #D2D2D2;
         height: 100%;
         border-radius: 2px;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        min-width: 0;
 }
 
 .upload-title {
         font-weight: 600;
+        display: flex;
 }
 
 .panel-bar {
@@ -586,6 +612,8 @@ a {
         align-items: center;
         justify-content: center;
         background-color: #F0F0F0;
+        flex-direction: column;
+        position: relative;
 }
 
 .file-upload-button {
@@ -604,4 +632,57 @@ a {
 
 .file-upload-button:active {
         filter: brightness(0.9);
+}
+
+.file-upload-name {
+        visibility: hidden;
+        font-size: 12px;
+        margin-top: 10px;
+        width: calc(100% - 16px);
+        padding: 5px 10px;
+        background-color: white;
+        position: absolute;
+        bottom: 8px;
+        text-align: center;
+}
+
+.selected-tick {
+        height: 10px;
+        margin-bottom: -0.5px;
+        margin-right: 2px;
+}
+
+.upload-preview {
+        flex: 1;
+        overflow-x: auto;
+        overflow-y: auto;
+        padding: 15px 20px;
+        background-color: #F0F0F0;
+        font-family: 'Courier New', Courier, monospace;
+        min-width: 0;
+        min-height: 0;
+}
+
+.upload-preview-name {
+        font-weight: 600;
+        margin-left: auto;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background-color: white;
+        border: 1px solid #F0F0F0;
+        padding: 0 20px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+}
+
+.upload-preview-file {
+        height: 13px;
+        padding-right: 7px;
+}
+
+.upload-preview>* {
+        max-width: 100%;
 }

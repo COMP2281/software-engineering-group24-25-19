@@ -18,7 +18,8 @@ const DropdownFooter = ({ onDone }) => (
 );
 
 const Dropdown = (props) => {
-        const years = Array.from({ length: 2024 - 2017 + 1 }, (_, i) => 2024 - i);
+        const currentYear = new Date().getFullYear();
+        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
         const [selectedYears, setSelectedYears] = useState([]);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);

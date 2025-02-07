@@ -8,9 +8,7 @@ import { TableVirtuoso } from 'react-virtuoso';
 import Papa from 'papaparse';
 import { useEffect, useState } from 'react';
 
-
 const paginationModel = { page: 0, pageSize: 100 };
-
 
 const DataTable = (props) => {
         const [selectedYears, setSelectedYears] = useState([]);
@@ -19,8 +17,7 @@ const DataTable = (props) => {
         const [filteredRows, setFilteredRows] = useState([]);
         const [searchText, setSearchText] = useState('');
 
-        useEffect(() => {
-                // parse CSV and process data
+        const parseCSV = async (report) => {
                 Papa.parse(report, {
                         header: true,
                         download: true,
@@ -47,6 +44,11 @@ const DataTable = (props) => {
                                 setFilteredRows(rows);
                         },
                 });
+        }
+
+        useEffect(() => {
+                // parse CSV and process data
+                parseCSV(report);
         }, []);
 
         useEffect(() => {
