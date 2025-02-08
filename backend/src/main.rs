@@ -3,6 +3,7 @@ mod routes;
 mod structs;
 
 use anyhow::Result;
+use axum::http::header::CONTENT_TYPE;
 use sea_orm::Database;
 use std::env;
 use std::sync::Arc;
@@ -25,6 +26,7 @@ async fn main() -> Result<()> {
 
     let app = routes::create_router(shared_state).layer(
         CorsLayer::new()
+            .allow_headers([CONTENT_TYPE])
             .allow_methods(AllowMethods::any())
             .allow_origin(AllowOrigin::any()),
     );
