@@ -3,6 +3,19 @@ import FileUpload from './FileUpload';
 import Dropdown from './Dropdown';
 
 const UploadConfiguration = (props) => {
+        const currentYear = new Date().getFullYear();
+        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
+        const sheets = [
+                "Carbon Emissions",
+                "Electricity",
+                "Gas",
+                "Carbon (%)",
+                "Gas Sites (%)",
+                "Electricity (%)",
+                "kwH per HDD",
+                "Site Information"
+        ];
+
         return (
                 <div className="upload-panel">
                         <div className="upload-title">Upload data</div>
@@ -12,11 +25,21 @@ const UploadConfiguration = (props) => {
                         <div className="panel-bar"></div>
                         <div className="upload-config-item">
                                 <div className="upload-config-label">Year of data</div>
-                                DROPDOWN_1
+                                <Dropdown items={years} onSelect={props.setDataYear} label="Select Year" />
                         </div>
                         <div className="upload-config-item">
                                 <div className="upload-config-label">Relevant sheet</div>
-                                DROPDOWN_2
+                                <Dropdown items={sheets} onSelect={props.setDataType} label="Select Sheet" size="large" />
+                        </div>
+                        <div className="upload-warning">
+                                <div className="upload-warning-header">
+                                        <img src="warning-icon.svg" className="upload-warning-icon" />
+                                        Warning
+                                </div>
+                                Uploading data will overwrite any previous data with the same configurations.
+                        </div>
+                        <div className={`upload-button ${!props.stepsComplete ? 'upload-button-disabled' : ''}`}>
+                                Upload data
                         </div>
                 </div>
         );

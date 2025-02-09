@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DropdownItem from './DropdownItem';
 import DropdownFooter from './DropdownFooter';
 
-const Dropdown = ({ items, onSelect, label = "Select an option" }) => {
+const Dropdown = ({ items, onSelect, label = "Select an option", size = "regular" }) => {
         const [selectedItem, setSelectedItem] = useState(null);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -29,9 +29,9 @@ const Dropdown = ({ items, onSelect, label = "Select an option" }) => {
         const dropdownTitle = selectedItem || label;
 
         return (
-                <div className="dropdown-wrapper" ref={dropdownRef}>
+                <div className={`dropdown-wrapper dropdown-${size}`} ref={dropdownRef}>
                         <button
-                                className="dropdown-button"
+                                className={`dropdown-button dropdown-single dropdown-${size}`}
                                 onClick={() => setIsOpen((prev) => !prev)}
                         >
                                 <span>{dropdownTitle}</span>
@@ -43,7 +43,7 @@ const Dropdown = ({ items, onSelect, label = "Select an option" }) => {
                         </button>
 
                         {/* Dropdown container, same structure as MultiDropdown */}
-                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'}`}>
+                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`}>
                                 <div className="dropdown-scrollable">
                                         {items.map((item) => (
                                                 <DropdownItem
@@ -55,7 +55,7 @@ const Dropdown = ({ items, onSelect, label = "Select an option" }) => {
                                         ))}
                                 </div>
                         </div>
-                </div>
+                </div >
         );
 };
 
