@@ -1,4 +1,4 @@
-use crate::structs::{ApiError, AppState};
+use crate::{api_error::ApiError, app_state::AppState};
 use axum::{
     extract::{Multipart, State},
     http::StatusCode,
@@ -10,7 +10,7 @@ use std::sync::Arc;
 pub(super) async fn handler(
     State(_state): State<Arc<AppState>>,
     mut multipart: Multipart,
-) -> Result<StatusCode, AppError> {
+) -> Result<StatusCode, ApiError> {
     while let Some(field) = multipart.next_field().await? {
         // TODO: validate the field against the API specification
 

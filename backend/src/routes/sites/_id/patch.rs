@@ -1,17 +1,15 @@
 use super::path_params::PathParams;
 use crate::{
+    api_error::ApiError,
+    app_state::AppState,
+    custom_extractors::{Json, Path},
     entities::site,
-    structs::{ApiError, AppState},
 };
-use axum::{
-    extract::{Path, State},
-    http::StatusCode,
-    Json,
-};
+use axum::{extract::State, http::StatusCode};
 use sea_orm::{
     ActiveModelTrait as _,
     ActiveValue::{NotSet, Set},
-    EntityTrait as _,
+    DbErr, EntityTrait as _,
 };
 use serde::Deserialize;
 use std::sync::Arc;
@@ -37,8 +35,10 @@ pub(super) async fn handler(
     let mut matched_record: site::ActiveModel = site::Entity::find_by_id(path_params.id)
         .one(&state.database_connection)
         .await?
-        // TODO: error handling for no matching record
-        .unwrap()
+        .ok_or(DbErr::RecordNotFound(format!(
+            "`site` entity with id `{}` not found",
+            path_params.id
+        )))?
         .into();
 
     matched_record.name = match payload.name {

@@ -3,7 +3,7 @@ mod post;
 
 mod _id;
 
-use crate::structs::AppState;
+use crate::app_state::AppState;
 use axum::{routing, Router};
 use std::sync::Arc;
 

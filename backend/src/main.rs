@@ -1,13 +1,15 @@
+mod api_error;
+mod app_state;
+mod custom_extractors;
 mod entities;
 mod routes;
-mod structs;
 
+use crate::app_state::AppState;
 use anyhow::Result;
 use axum::http::header::CONTENT_TYPE;
 use sea_orm::Database;
 use std::env;
 use std::sync::Arc;
-use structs::AppState;
 use tower_http::cors::{AllowMethods, AllowOrigin, CorsLayer};
 use tracing::{info, instrument};
 

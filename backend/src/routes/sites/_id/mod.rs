@@ -4,7 +4,7 @@ mod patch;
 
 mod path_params;
 
-use crate::structs::AppState;
+use crate::app_state::AppState;
 use axum::{routing, Router};
 use std::sync::Arc;
 

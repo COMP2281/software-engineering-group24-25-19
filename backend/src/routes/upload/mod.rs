@@ -1,6 +1,6 @@
 mod post;
 
-use crate::structs::AppState;
+use crate::app_state::AppState;
 use axum::{routing, Router};
 use std::sync::Arc;
 

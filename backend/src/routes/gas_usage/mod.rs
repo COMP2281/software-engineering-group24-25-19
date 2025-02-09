@@ -1,6 +1,6 @@
 mod records;
 
-use crate::structs::AppState;
+use crate::app_state::AppState;
 use axum::Router;
 use std::sync::Arc;
 

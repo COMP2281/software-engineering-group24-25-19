@@ -1,12 +1,6 @@
 use super::path_params::PathParams;
-use crate::{
-    entities::site,
-    structs::{ApiError, AppState},
-};
-use axum::{
-    extract::{Path, State},
-    http::StatusCode,
-};
+use crate::{api_error::ApiError, app_state::AppState, custom_extractors::Path, entities::site};
+use axum::{extract::State, http::StatusCode};
 use sea_orm::EntityTrait as _;
 use std::sync::Arc;
 use tracing::debug;
