@@ -5,6 +5,7 @@ use crate::{
 };
 use axum::{
     extract::{Path, State},
+    http::StatusCode,
     Json,
 };
 use sea_orm::{
@@ -29,7 +30,7 @@ pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Path(path_params): Path<PathParams>,
     Json(payload): Json<Payload>,
-) -> Result<(), ApiError> {
+) -> Result<(StatusCode, Json<site::Model>), ApiError> {
     debug!("path_params = {:?}", path_params);
     debug!("payload = {:?}", payload);
 
@@ -66,7 +67,7 @@ pub(super) async fn handler(
         None => NotSet,
     };
 
-    matched_record.update(&state.database_connection).await?;
+    let matched_record = matched_record.update(&state.database_connection).await?;
 
-    Ok(())
+    Ok((StatusCode::OK, Json(matched_record)))
 }

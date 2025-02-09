@@ -1,5 +1,8 @@
 use crate::structs::{ApiError, AppState};
-use axum::extract::{Multipart, State};
+use axum::{
+    extract::{Multipart, State},
+    http::StatusCode,
+};
 use calamine::{open_workbook_from_rs, Reader, Xlsx};
 use std::io::Cursor;
 use std::sync::Arc;
@@ -7,7 +10,7 @@ use std::sync::Arc;
 pub(super) async fn handler(
     State(_state): State<Arc<AppState>>,
     mut multipart: Multipart,
-) -> Result<(), ApiError> {
+) -> Result<StatusCode, AppError> {
     while let Some(field) = multipart.next_field().await? {
         // TODO: validate the field against the API specification
 
@@ -25,5 +28,5 @@ pub(super) async fn handler(
         // TODO: data cleansing and save to database
     }
 
-    Ok(())
+    Ok(StatusCode::CREATED)
 }

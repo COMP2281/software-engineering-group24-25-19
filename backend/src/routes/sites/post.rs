@@ -2,7 +2,7 @@ use crate::{
     entities::site,
     structs::{ApiError, AppState},
 };
-use axum::{extract::State, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use sea_orm::{ActiveModelTrait as _, ActiveValue::Set};
 use serde::Deserialize;
 use std::sync::Arc;
@@ -20,7 +20,7 @@ pub(super) struct Payload {
 pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<Payload>,
-) -> Result<(), ApiError> {
+) -> Result<(StatusCode, Json<site::Model>), ApiError> {
     debug!("payload = {:?}", payload);
 
     let new_site = site::ActiveModel {
@@ -32,7 +32,7 @@ pub(super) async fn handler(
         ..Default::default()
     };
 
-    new_site.insert(&state.database_connection).await?;
+    let new_site = new_site.insert(&state.database_connection).await?;
 
-    Ok(())
+    Ok((StatusCode::CREATED, Json(new_site)))
 }

@@ -2,7 +2,7 @@ use crate::{
     entities::site,
     structs::{ApiError, AppState},
 };
-use axum::{extract::State, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use axum_extra::extract::Query;
 use sea_orm::{ColumnTrait as _, Condition, EntityTrait as _, QueryFilter as _};
 use serde::Deserialize;
@@ -22,7 +22,7 @@ pub(super) struct QueryParams {
 pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Query(query_params): Query<QueryParams>,
-) -> Result<Json<Vec<site::Model>>, ApiError> {
+) -> Result<(StatusCode, Json<Vec<site::Model>>), ApiError> {
     debug!("query_params = {:?}", query_params);
 
     let conditions = Condition::all()
@@ -58,5 +58,5 @@ pub(super) async fn handler(
         .all(&state.database_connection)
         .await?;
 
-    Ok(Json(matched_records))
+    Ok((StatusCode::OK, Json(matched_records)))
 }
