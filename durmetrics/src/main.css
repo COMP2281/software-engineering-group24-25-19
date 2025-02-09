@@ -700,6 +700,14 @@ pre {
         max-width: 100%;
 }
 
+.upload-preview-disallowed {
+        background-color: #f6f6f6;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+}
+
 .upload-preview-image-container {
         display: flex;
         align-items: center;
@@ -709,7 +717,12 @@ pre {
 }
 
 .upload-preview-image {
-        height: 170px;
+        height: 140px;
+}
+
+.upload-preview-image-text {
+        font-size: 14px;
+        margin-top: 20px;
 }
 
 .upload-config-item {
