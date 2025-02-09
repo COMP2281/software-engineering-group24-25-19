@@ -1,20 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
-import DropdownItem from './DropdownItem';
+import React, { useState, useRef, useEffect } from 'react';
 import DropdownFooter from './DropdownFooter';
+import DropdownItem from './DropdownItem';
 
-const Dropdown = ({ items, onSelect, label = "Select an option" }) => {
-        const [selectedItem, setSelectedItem] = useState(null);
+const MultiDropdown = ({ items, changeSelection, label = "Items" }) => {
+        const [selectedItems, setSelectedItems] = useState([]);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
 
-        // Handles selecting a single item and auto-closing the dropdown
-        const handleSelectItem = (item) => {
-                setSelectedItem(item);
-                if (onSelect) onSelect(item);
-                setIsOpen(false); // Auto-close after picking
+        const toggleItem = (item) => {
+                setSelectedItems((prev) =>
+                        prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+                );
         };
 
-        // Close the dropdown if the user clicks outside of it
+        const toggleAllItems = () => {
+                setSelectedItems((prev) => (prev.length === items.length ? [] : items));
+        };
+
+        useEffect(() => {
+                changeSelection(selectedItems);
+        }, [selectedItems]);
+
+        const isAllSelected = selectedItems.length === items.length;
+        const dropdownTitle = isAllSelected
+                ? `All ${label}`
+                : selectedItems.length > 0
+                        ? `${selectedItems.length} Selected`
+                        : `Select ${label}`;
+
         useEffect(() => {
                 const handleClickOutside = (event) => {
                         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -25,15 +38,9 @@ const Dropdown = ({ items, onSelect, label = "Select an option" }) => {
                 return () => document.removeEventListener('mousedown', handleClickOutside);
         }, []);
 
-        // Title for the dropdown button
-        const dropdownTitle = selectedItem || label;
-
         return (
                 <div className="dropdown-wrapper" ref={dropdownRef}>
-                        <button
-                                className="dropdown-button"
-                                onClick={() => setIsOpen((prev) => !prev)}
-                        >
+                        <button className="dropdown-button" onClick={() => setIsOpen((prev) => !prev)}>
                                 <span>{dropdownTitle}</span>
                                 <img
                                         src={isOpen ? '/arrow-up.svg' : '/arrow-down.svg'}
@@ -41,22 +48,27 @@ const Dropdown = ({ items, onSelect, label = "Select an option" }) => {
                                         className="dropdown-icon"
                                 />
                         </button>
-
-                        {/* Dropdown container, same structure as MultiDropdown */}
                         <div className={`dropdown-container ${isOpen ? 'open' : 'closed'}`}>
                                 <div className="dropdown-scrollable">
+                                        <DropdownItem
+                                                label={`All ${label}`}
+                                                onClick={toggleAllItems}
+                                                selected={isAllSelected}
+                                        />
                                         {items.map((item) => (
                                                 <DropdownItem
                                                         key={item}
                                                         label={item}
-                                                        onClick={() => handleSelectItem(item)}
-                                                        selected={item === selectedItem}
+                                                        onClick={() => toggleItem(item)}
+                                                        selected={selectedItems.includes(item)}
                                                 />
                                         ))}
                                 </div>
+                                <DropdownFooter onDone={() => setIsOpen(false)} />
                         </div>
                 </div>
         );
 };
 
-export default Dropdown;
+
+export default MultiDropdown;

@@ -2,7 +2,7 @@ import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import SearchBar from './SearchBar';
-import Dropdown from './Dropdown';
+import MultiDropdown from './MultiDropdown';
 import report from '../data/report.csv';
 import { TableVirtuoso } from 'react-virtuoso';
 import Papa from 'papaparse';
@@ -16,6 +16,10 @@ const DataTable = (props) => {
         const [tableRows, setTableRows] = useState([]);
         const [filteredRows, setFilteredRows] = useState([]);
         const [searchText, setSearchText] = useState('');
+
+        // Dropdown filter data
+        const currentYear = new Date().getFullYear();
+        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
         const parseCSV = async (report) => {
                 Papa.parse(report, {
@@ -84,7 +88,7 @@ const DataTable = (props) => {
                         {/* Filters Section */}
                         <div className="table-filters">
                                 <SearchBar searchTable={handleSearchChange} />
-                                <Dropdown rows={tableRows} changeYears={changeYears} />
+                                <MultiDropdown items={years} changeSelection={setSelectedYears} label="Years" />
                         </div>
 
 

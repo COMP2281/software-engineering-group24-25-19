@@ -32,6 +32,7 @@ a {
 
 pre {
         margin: 0;
+        font-size: 12px;
 }
 
 :root {
@@ -599,6 +600,11 @@ pre {
         display: flex;
 }
 
+.upload-subtitle {
+        margin-top: 25px;
+        font-size: 14px;
+}
+
 .panel-bar {
         width: 100%;
         border: 0.5px solid #D2D2D2;
@@ -646,6 +652,12 @@ pre {
         text-align: center;
 }
 
+.file-upload-text {
+        font-size: 12px;
+        margin-top: 5px;
+        margin-bottom: -17px;
+}
+
 .selected-tick {
         height: 10px;
         margin-bottom: -0.5px;
@@ -685,4 +697,23 @@ pre {
 
 .upload-preview>* {
         max-width: 100%;
+}
+
+.upload-preview-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter";
+        flex-direction: column;
+}
+
+.upload-preview-image {
+        height: 170px;
+}
+
+.upload-config-item {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
 }

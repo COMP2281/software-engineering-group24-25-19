@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import UploadConfiguration from '../components/UploadConfiguration';
 import UploadPreview from '../components/UploadPreview';
 import Papa from 'papaparse';
 
 const Upload = (props) => {
-        const [file, setFile] = React.useState(null);
-        const [fileContentsJSON, setFileContentsJSON] = React.useState(null);
+        const [file, setFile] = useState(null);
+        const [fileContentsJSON, setFileContentsJSON] = useState(null);
 
         const parseFile = (file) => {
                 if (!file) {

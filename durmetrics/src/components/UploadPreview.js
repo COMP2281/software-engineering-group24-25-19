@@ -26,7 +26,12 @@ const UploadPreview = (props) => {
                                         {props.file.name}
                                 </span>
                                 <div className="upload-preview">
-                                        <pre>{props.file.type == "text/csv" ? fileContent : "Preview of XLSX files not supported."}</pre>
+                                        <pre>{props.file.type == "text/csv" ? fileContent :
+                                                <div className="upload-preview-image-container">
+                                                        <img class="upload-preview-image" src="no-preview.svg" />
+                                                        <span class="upload-preview-image-text">Preview not available for this file type.</span>
+                                                </div>
+                                        }</pre>
                                 </div>
                         </>}
                 </div>
