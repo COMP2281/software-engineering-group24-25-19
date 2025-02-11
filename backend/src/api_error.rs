@@ -34,6 +34,8 @@ pub enum ApiError {
     ExcelFailure(#[from] XlsxError),
     #[error("DatabaseError")]
     DatabaseFailure(#[from] DbErr),
+    #[error("RouteNotFound")]
+    RouteNotFound,
 }
 
 impl IntoResponse for ApiError {
@@ -48,6 +50,7 @@ impl IntoResponse for ApiError {
                 DbErr::RecordNotFound(_) => StatusCode::NOT_FOUND,
                 _ => StatusCode::INTERNAL_SERVER_ERROR,
             },
+            ApiError::RouteNotFound => StatusCode::NOT_FOUND,
         };
 
         (
