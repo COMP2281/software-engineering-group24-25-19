@@ -5,7 +5,7 @@ use sea_orm::{DbErr, EntityTrait as _};
 use std::sync::Arc;
 use tracing::debug;
 
-pub async fn handler(
+pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Path(path_params): Path<PathParams>,
 ) -> Result<(StatusCode, Json<site::Model>), ApiError> {
