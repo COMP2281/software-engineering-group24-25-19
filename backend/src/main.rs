@@ -10,8 +10,29 @@ use axum::http::header::CONTENT_TYPE;
 use sea_orm::Database;
 use std::env;
 use std::sync::Arc;
+use tokio::signal;
 use tower_http::cors::{AllowMethods, AllowOrigin, CorsLayer};
 use tracing::{info, instrument};
+
+async fn shutdown_signal() {
+    let sigint = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install SIGINT handler");
+    };
+
+    let sigterm = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install SIGTERM handler")
+            .recv()
+            .await;
+    };
+
+    tokio::select! {
+        _ = sigint => {},
+        _ = sigterm => {},
+    }
+}
 
 #[tokio::main]
 #[instrument]
@@ -37,7 +58,9 @@ async fn main() -> Result<()> {
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await?;
 
     info!("Serving API endpoints at {}", listener.local_addr()?);
-    axum::serve(listener, app).await?;
+    axum::serve(listener, app)
+        .with_graceful_shutdown(shutdown_signal())
+        .await?;
 
     Ok(())
 }
