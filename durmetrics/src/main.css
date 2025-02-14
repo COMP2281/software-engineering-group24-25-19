@@ -112,6 +112,7 @@ pre {
 .tab:hover {
         background-color: var(--lgreen);
         color: white;
+        transition: all 0.2s;
 }
 
 .tab-selected {
@@ -171,6 +172,7 @@ pre {
 
 .menu-item:hover:not(.menu-item-selected) {
         background-color: #F5F5F5;
+        transition: all 0.2s;
 }
 
 .menu-footer {
@@ -382,6 +384,7 @@ pre {
 
 .signin-submit:not(.signin-submit-disabled):hover {
         filter: brightness(1.25);
+        transition: all 0.2s;
 }
 
 .signin-submit-disabled {
@@ -392,6 +395,7 @@ pre {
 
 .signin-submit:hover {
         background-color: var(--llgreen);
+        transition: all 0.2s;
 }
 
 .signin-error {
@@ -487,6 +491,7 @@ pre {
 
 .dropdown-item:hover {
         background: #f0f0f0;
+        transition: all 0.2s;
 }
 
 .dropdown-item.selected {
@@ -512,6 +517,7 @@ pre {
 
 .dropdown-done-button:hover {
         background: var(--llgreen);
+        transition: all 0.2s;
 }
 
 .dropdown-icon {
@@ -639,6 +645,7 @@ pre {
 .file-upload-button:hover,
 .upload-button:not(.upload-button-disabled):hover {
         filter: brightness(1.15);
+        transition: all 0.2s;
 }
 
 .file-upload-button:active {
@@ -791,4 +798,30 @@ pre {
         background-color: #d3d3d3;
         color: #9C9A9A;
         cursor: not-allowed;
+}
+
+.export-icon {
+        height: 16px;
+        margin-right: 10px;
+}
+
+.header-export-button {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        margin-left: auto;
+        margin-right: 50px;
+        height: 45px;
+        font-family: "Inter";
+        font-size: medium;
+        padding: 0 20px;
+        background-color: #185E4E;
+        border-color: #ffffff1a;
+        color: white;
+        border-radius: 2px;
+}
+
+.header-export-button:hover {
+        background-color: #2A6F5F;
+        transition: all 0.2s;
 }

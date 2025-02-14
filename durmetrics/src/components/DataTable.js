@@ -1,6 +1,4 @@
 import React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import Paper from '@mui/material/Paper';
 import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
 import report from '../data/report.csv';
@@ -17,7 +15,7 @@ const DataTable = (props) => {
         const [filteredRows, setFilteredRows] = useState([]);
         const [searchText, setSearchText] = useState('');
 
-        // Dropdown filter data
+        // dropdown filter data
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
