@@ -1,52 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import DropdownItem from './DropdownItem';
+import DropdownFooter from './DropdownFooter';
 
-const DropdownItem = ({ label, onClick, selected }) => (
-        <div
-                className={`dropdown-item ${selected ? 'selected' : ''}`}
-                onClick={onClick}
-        >
-                {label}
-        </div>
-);
-
-const DropdownFooter = ({ onDone }) => (
-        <div className="dropdown-footer">
-                <button className="dropdown-done-button" onClick={onDone}>
-                        Done
-                </button>
-        </div>
-);
-
-const Dropdown = (props) => {
-        const currentYear = new Date().getFullYear();
-        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
-        const [selectedYears, setSelectedYears] = useState([]);
+const Dropdown = ({ items, onSelect, label = "Select an option", size = "regular" }) => {
+        const [selectedItem, setSelectedItem] = useState(null);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
-        const changeYears = props.changeYears;
 
-        const toggleYear = (year) => {
-                setSelectedYears((prev) =>
-                        prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
-                );
+        // Handles selecting a single item and auto-closing the dropdown
+        const handleSelectItem = (item) => {
+                setSelectedItem(item);
+                if (onSelect) onSelect(item);
+                setIsOpen(false); // Auto-close after picking
         };
 
-        const toggleAllYears = () => {
-                setSelectedYears((prev) => (prev.length === years.length ? [] : years));
-        };
-
-        useEffect(() => {
-                console.log(changeYears)
-                changeYears(selectedYears);
-        }, [selectedYears]);
-
-        const isAllSelected = selectedYears.length === years.length;
-        const dropdownTitle = isAllSelected
-                ? 'All Years'
-                : selectedYears.length > 0
-                        ? `${selectedYears.length} Selected`
-                        : 'Select Years';
-
+        // Close the dropdown if the user clicks outside of it
         useEffect(() => {
                 const handleClickOutside = (event) => {
                         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -57,9 +25,15 @@ const Dropdown = (props) => {
                 return () => document.removeEventListener('mousedown', handleClickOutside);
         }, []);
 
+        // Title for the dropdown button
+        const dropdownTitle = selectedItem || label;
+
         return (
-                <div className="dropdown-wrapper" ref={dropdownRef}>
-                        <button className="dropdown-button" onClick={() => setIsOpen((prev) => !prev)}>
+                <div className={`dropdown-wrapper dropdown-${size}`} ref={dropdownRef}>
+                        <button
+                                className={`dropdown-button dropdown-single dropdown-${size}`}
+                                onClick={() => setIsOpen((prev) => !prev)}
+                        >
                                 <span>{dropdownTitle}</span>
                                 <img
                                         src={isOpen ? '/arrow-up.svg' : '/arrow-down.svg'}
@@ -67,25 +41,21 @@ const Dropdown = (props) => {
                                         className="dropdown-icon"
                                 />
                         </button>
-                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'}`}>
+
+                        {/* Dropdown container, same structure as MultiDropdown */}
+                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`}>
                                 <div className="dropdown-scrollable">
-                                        <DropdownItem
-                                                label="All Years"
-                                                onClick={toggleAllYears}
-                                                selected={isAllSelected}
-                                        />
-                                        {years.map((year) => (
+                                        {items.map((item) => (
                                                 <DropdownItem
-                                                        key={year}
-                                                        label={year}
-                                                        onClick={() => toggleYear(year)}
-                                                        selected={selectedYears.includes(year)}
+                                                        key={item}
+                                                        label={item}
+                                                        onClick={() => handleSelectItem(item)}
+                                                        selected={item === selectedItem}
                                                 />
                                         ))}
                                 </div>
-                                <DropdownFooter onDone={() => setIsOpen(false)} />
                         </div>
-                </div>
+                </div >
         );
 };
 

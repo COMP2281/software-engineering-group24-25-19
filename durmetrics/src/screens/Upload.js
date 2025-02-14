@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import UploadConfiguration from '../components/UploadConfiguration';
 import UploadPreview from '../components/UploadPreview';
 import Papa from 'papaparse';
 
 const Upload = (props) => {
-        const [file, setFile] = React.useState(null);
-        const [fileContentsJSON, setFileContentsJSON] = React.useState(null);
+        const [file, setFile] = useState(null);
+        const [fileContentsJSON, setFileContentsJSON] = useState(null);
+        const [dataYear, setDataYear] = useState(null);
+        const [dataType, setDataType] = useState(null);
+        const [stepsComplete, setStepsComplete] = useState(false);
 
         const parseFile = (file) => {
                 if (!file) {
@@ -114,12 +117,20 @@ const Upload = (props) => {
         }, [file]);
 
         useEffect(() => {
+                if (fileContentsJSON && dataYear && dataType) {
+                        setStepsComplete(true);
+                } else {
+                        setStepsComplete(false);
+                }
+        }, [fileContentsJSON, dataYear, dataType])
+
+        useEffect(() => {
                 document.title = 'Upload - DurMetrics';
         }, []);
 
         return (
                 <div className="upload-content">
-                        <UploadConfiguration setFile={setFile} />
+                        <UploadConfiguration setFile={setFile} setDataYear={setDataYear} setDataType={setDataType} stepsComplete={stepsComplete} />
                         <UploadPreview file={file} />
                 </div>
         );

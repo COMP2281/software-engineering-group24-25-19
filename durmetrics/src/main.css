@@ -32,6 +32,7 @@ a {
 
 pre {
         margin: 0;
+        font-size: 12px;
 }
 
 :root {
@@ -379,8 +380,8 @@ pre {
         transition: all 0.2s;
 }
 
-.signin-submit:hover {
-        background-color: var(--llgreen);
+.signin-submit:not(.signin-submit-disabled):hover {
+        filter: brightness(1.25);
 }
 
 .signin-submit-disabled {
@@ -603,6 +604,11 @@ pre {
         display: flex;
 }
 
+.upload-subtitle {
+        margin-top: 25px;
+        font-size: 14px;
+}
+
 .panel-bar {
         width: 100%;
         border: 0.5px solid #D2D2D2;
@@ -630,7 +636,8 @@ pre {
         cursor: pointer;
 }
 
-.file-upload-button:hover {
+.file-upload-button:hover,
+.upload-button:not(.upload-button-disabled):hover {
         filter: brightness(1.15);
 }
 
@@ -648,6 +655,12 @@ pre {
         position: absolute;
         bottom: 8px;
         text-align: center;
+}
+
+.file-upload-text {
+        font-size: 12px;
+        margin-top: 5px;
+        margin-bottom: -17px;
 }
 
 .selected-tick {
@@ -689,4 +702,93 @@ pre {
 
 .upload-preview>* {
         max-width: 100%;
+}
+
+.upload-preview-disallowed {
+        background-color: #f6f6f6;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+}
+
+.upload-preview-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter";
+        flex-direction: column;
+}
+
+.upload-preview-image {
+        height: 140px;
+}
+
+.upload-preview-image-text {
+        font-size: 14px;
+        margin-top: 20px;
+}
+
+.upload-config-item {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+}
+
+.upload-config-label {
+        font-size: 14px;
+        font-weight: 600;
+}
+
+.dropdown-single {
+        padding: 4px 0;
+        /* width: fit-content; */
+}
+
+.dropdown-large {
+        width: 150px;
+}
+
+.upload-warning {
+        font-size: 12px;
+        padding: 13px 12px 12px 12px;
+        background-color: #E6EDEC;
+        margin-top: auto;
+        border-radius: 2px;
+}
+
+.upload-warning-header {
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        padding-bottom: 10px;
+}
+
+.upload-warning-icon {
+        margin-right: 10px;
+        height: 15px;
+}
+
+.upload-button {
+        margin-top: 10px;
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        border-radius: 2px;
+        background-color: var(--green);
+        font-weight: 700;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+}
+
+.upload-button-disabled {
+        background-color: #d3d3d3;
+        color: #9C9A9A;
+        cursor: not-allowed;
 }
