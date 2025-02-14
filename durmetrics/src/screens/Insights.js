@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import DataTable from '../components/DataTable';
 
-const Insights = () => {
+const Insights = (props) => {
+        useEffect(() => {
+                document.title = 'Insights - DurMetrics';
+        }, []);
+
         return (
-                <>Insights</>
+                <DataTable activeTab={props.activeTab} />
         );
 };
 
