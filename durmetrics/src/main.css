@@ -825,3 +825,44 @@ pre {
         background-color: #2A6F5F;
         transition: all 0.2s;
 }
+
+.graph-filters {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        height: 90px;
+}
+
+.graph-filter {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        border: 1px solid #D2D2D2;
+        border-radius: 2px;
+        flex-direction: column;
+        padding: 0 16px;
+}
+
+.gf-title {
+        font-weight: 600;
+        font-size: 14px;
+        padding-bottom: 3px;
+}
+
+.gf-subtitle {
+        font-size: 12px;
+}
+
+.gf-select {
+        margin-top: 7px;
+        font-size: 14px;
+}
+
+.gf-chevron {
+        padding: 0 16px;
+}
+
+.gf-disabled {
+        background-color: #f0f0f0;
+        color: #9C9A9A;
+}
