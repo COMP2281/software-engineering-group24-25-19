@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import DropdownFooter from './DropdownFooter';
 import DropdownItem from './DropdownItem';
 
-const MultiDropdown = ({ items, changeSelection, label = "Items" }) => {
+const MultiDropdown = ({ items, changeSelection, label = "Items", align = "middle", type = "classic", width = "" }) => {
         const [selectedItems, setSelectedItems] = useState([]);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -39,8 +39,8 @@ const MultiDropdown = ({ items, changeSelection, label = "Items" }) => {
         }, []);
 
         return (
-                <div className="dropdown-wrapper" ref={dropdownRef}>
-                        <button className="dropdown-button" onClick={() => setIsOpen((prev) => !prev)}>
+                <div className={`dropdown-wrapper align-${align}`} ref={dropdownRef} style={{ width }}>
+                        <button className={`dropdown-button align-${align} dropdown-${type}`} style={{ width }} onClick={() => setIsOpen((prev) => !prev)}>
                                 <span>{dropdownTitle}</span>
                                 <img
                                         src={isOpen ? '/arrow-up.svg' : '/arrow-down.svg'}
@@ -48,7 +48,7 @@ const MultiDropdown = ({ items, changeSelection, label = "Items" }) => {
                                         className="dropdown-icon"
                                 />
                         </button>
-                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'}`}>
+                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'}`} style={{ width }}>
                                 <div className="dropdown-scrollable">
                                         <DropdownItem
                                                 label={`All ${label}`}

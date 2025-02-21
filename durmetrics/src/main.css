@@ -442,6 +442,18 @@ pre {
         margin-left: auto;
 }
 
+.dropdown-button.align-left,
+.dropdown-wrapper.align-left {
+        justify-content: flex-start;
+        width: fit-content;
+        margin-left: 0px;
+}
+
+.dropdown-button.align-left {
+        padding-left: 10px;
+        padding-right: 10px;
+}
+
 .dropdown-container {
         position: absolute;
         margin-top: 35px;
@@ -749,9 +761,13 @@ pre {
         font-weight: 600;
 }
 
-.dropdown-single {
+.dropdown-single,
+.dropdown-filter {
         padding: 4px 0;
-        /* width: fit-content; */
+}
+
+.dropdown-small {
+        width: 80px;
 }
 
 .dropdown-large {
@@ -830,7 +846,7 @@ pre {
         width: 100%;
         display: flex;
         align-items: center;
-        height: 90px;
+        height: 100px;
 }
 
 .graph-filter {
@@ -851,6 +867,7 @@ pre {
 
 .gf-subtitle {
         font-size: 12px;
+        padding-bottom: 7px;
 }
 
 .gf-select {
