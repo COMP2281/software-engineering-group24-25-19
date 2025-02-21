@@ -15,7 +15,7 @@ use serde::Deserialize;
 use std::sync::Arc;
 use tracing::debug;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 pub(super) struct Payload {
     pub name: Option<String>,
     pub floor_area_square_metre: Option<f64>,
@@ -70,4 +70,68 @@ pub(super) async fn handler(
     let matched_record = matched_record.update(&state.database_connection).await?;
 
     Ok((StatusCode::OK, Json(matched_record)))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::response::IntoResponse;
+    use sea_orm::{DatabaseBackend, MockDatabase, MockExecResult};
+
+    #[tokio::test]
+    async fn test_existing_record() {
+        let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
+            .append_query_results(vec![
+                vec![site::Model {
+                    id: 1,
+                    name: "Site A".to_owned(),
+                    ..Default::default()
+                }],
+                vec![site::Model {
+                    id: 1,
+                    name: "Site A".to_owned(),
+                    comment: Some("To be refurbished".to_owned()),
+                    ..Default::default()
+                }],
+            ])
+            .append_exec_results(vec![MockExecResult::default()])
+            .into_connection();
+
+        let state = State(Arc::new(AppState {
+            database_connection,
+        }));
+        let query = Path(PathParams { id: 1 });
+        let json = Json(Payload {
+            comment: Some("To be refurbished".to_owned()),
+            ..Default::default()
+        });
+
+        let response = handler(state, query, json)
+            .await
+            .expect("handler should not fail with existing record")
+            .into_response();
+        assert_eq!(StatusCode::OK, response.status());
+    }
+
+    #[tokio::test]
+    async fn test_non_existing_record() {
+        let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
+            .append_query_errors(vec![DbErr::RecordNotFound(
+                "`site` entity with id `404` not found".to_owned(),
+            )])
+            .into_connection();
+
+        let state = State(Arc::new(AppState {
+            database_connection,
+        }));
+        let query = Path(PathParams { id: 404 });
+        let json = Json(Payload::default());
+
+        let response = handler(state, query, json)
+            .await
+            .expect_err("handler should fail with non existing record")
+            .into_response();
+
+        assert_eq!(StatusCode::NOT_FOUND, response.status());
+    }
 }

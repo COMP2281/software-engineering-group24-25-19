@@ -10,7 +10,7 @@ use serde::Deserialize;
 use std::sync::Arc;
 use tracing::debug;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 pub(super) struct QueryParams {
     ids: Option<Vec<i32>>,
     name: Option<String>,
@@ -60,4 +60,66 @@ pub(super) async fn handler(
         .await?;
 
     Ok((StatusCode::OK, Json(matched_records)))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::response::IntoResponse;
+    use sea_orm::{DatabaseBackend, MockDatabase};
+
+    #[tokio::test]
+    async fn test_without_query_parameters() {
+        let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
+            .append_query_results(vec![vec![site::Model {
+                id: 1,
+                name: "Site A".to_owned(),
+                ..Default::default()
+            }]])
+            .into_connection();
+
+        let state = State(Arc::new(AppState {
+            database_connection,
+        }));
+        let query = Query(QueryParams::default());
+
+        let response = handler(state, query)
+            .await
+            .expect("handler should not fail with no query parameters")
+            .into_response();
+        assert_eq!(StatusCode::OK, response.status());
+    }
+
+    #[tokio::test]
+    async fn test_with_query_parameters() {
+        let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
+            .append_query_results(vec![vec![site::Model {
+                id: 1,
+                name: "Site A".to_owned(),
+                floor_area_square_metre: Some(75.0),
+                unique_property_reference_number: Some("ABC123".to_owned()),
+                ni185_energy_user: Some("User A".to_owned()),
+                comment: Some("To be refurbished".to_owned()),
+            }]])
+            .into_connection();
+
+        let state = State(Arc::new(AppState {
+            database_connection,
+        }));
+        let query = Query(QueryParams {
+            ids: Some(vec![1, 2, 3]),
+            name: Some("A".to_owned()),
+            floor_area_square_metre_min: Some(50.0),
+            floor_area_square_metre_max: Some(100.0),
+            unique_property_reference_number: Some("ABC".to_owned()),
+            ni185_energy_user: Some("User A".to_owned()),
+        });
+
+        let response = handler(state, query)
+            .await
+            .expect("handler should not fail with query parameters")
+            .into_response();
+
+        assert_eq!(StatusCode::OK, response.status());
+    }
 }

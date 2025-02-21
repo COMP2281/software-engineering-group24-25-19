@@ -21,3 +21,53 @@ pub(super) async fn handler(
 
     Ok((StatusCode::OK, Json(matched_record)))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::response::IntoResponse;
+    use sea_orm::{DatabaseBackend, MockDatabase};
+
+    #[tokio::test]
+    async fn test_existing_record() {
+        let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
+            .append_query_results(vec![vec![site::Model {
+                id: 1,
+                name: "Site A".to_owned(),
+                ..Default::default()
+            }]])
+            .into_connection();
+
+        let state = State(Arc::new(AppState {
+            database_connection,
+        }));
+        let query = Path(PathParams { id: 1 });
+
+        let response = handler(state, query)
+            .await
+            .expect("handler should not fail with existing record")
+            .into_response();
+        assert_eq!(StatusCode::OK, response.status());
+    }
+
+    #[tokio::test]
+    async fn test_non_existing_record() {
+        let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
+            .append_query_errors(vec![DbErr::RecordNotFound(
+                "`site` entity with id `404` not found".to_owned(),
+            )])
+            .into_connection();
+
+        let state = State(Arc::new(AppState {
+            database_connection,
+        }));
+        let query = Path(PathParams { id: 404 });
+
+        let response = handler(state, query)
+            .await
+            .expect_err("handler should fail with non existing record")
+            .into_response();
+
+        assert_eq!(StatusCode::NOT_FOUND, response.status());
+    }
+}

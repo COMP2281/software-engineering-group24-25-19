@@ -6,7 +6,7 @@ use axum::{
 };
 use serde::de::DeserializeOwned;
 
-#[derive(FromRequest)]
+#[derive(Debug, FromRequest)]
 #[from_request(via(axum::extract::Path), rejection(ApiError))]
 pub struct Path<T>(pub T);
 
@@ -25,7 +25,7 @@ where
     }
 }
 
-#[derive(FromRequest)]
+#[derive(Debug, FromRequest)]
 #[from_request(via(axum_extra::extract::Query), rejection(ApiError))]
 pub struct Query<T>(pub T);
 
@@ -44,7 +44,7 @@ where
     }
 }
 
-#[derive(FromRequest)]
+#[derive(Debug, FromRequest)]
 #[from_request(via(axum::Json), rejection(ApiError))]
 pub struct Json<T>(pub T);
 
