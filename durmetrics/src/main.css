@@ -803,6 +803,7 @@ pre {
 .export-icon {
         height: 16px;
         margin-right: 10px;
+        transition: filter 0.2s ease-in-out;
 }
 
 .header-export-button {
@@ -816,14 +817,25 @@ pre {
         font-size: medium;
         padding: 0 20px;
         background-color: #185E4E;
-        border-color: #ffffff1a;
+        border: 2px solid #ffffff1a;
         color: white;
         border-radius: 2px;
+        cursor: pointer;
+        outline: none;
 }
 
 .header-export-button:hover {
         background-color: #2A6F5F;
         transition: all 0.2s;
+}
+
+.header-export-button:active .export-icon {
+        filter: brightness(0) saturate(100%) invert(21%) sepia(47%) saturate(555%) hue-rotate(128deg) brightness(92%) contrast(92%);
+}
+
+.header-export-button:active {
+        background-color: #ffffff;
+        color: #185E4E;
 }
 
 .graph-filters {
