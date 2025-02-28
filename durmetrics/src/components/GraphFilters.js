@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import MultiDropdown from './MultiDropdown';
 import Dropdown from './Dropdown';
 
-const GraphFilters = (props) => {
+const GraphFilters = ({ setData }) => {
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
         const categories = ["Carbon Emissions", "Electricity", "Gas", "Carbon (%)", "Gas Sites (%)", "Electricity (%)", "kwH per HDD", "Site Information"];
@@ -31,30 +31,35 @@ const GraphFilters = (props) => {
                 setChart(null);
         };
 
+        const handleChartChange = (selectedChart) => {
+                setChart(selectedChart);
+                setData(dataYears, category, type, selectedChart);
+        };
+
         return (
                 <div className="graph-filters">
                         <div className="graph-filter">
                                 <div className="gf-title">Data year(s)</div>
-                                <div className="gf-subtitle">Test description goes right here</div>
+                                <div className="gf-subtitle">Select the range of years for insights</div>
                                 <MultiDropdown items={years} changeSelection={handleYearChange} label="Years" align="left" type="filter" width="120px" />
                         </div>
                         <img className="gf-chevron" src="right-icon.svg" />
                         <div className={`graph-filter ${dataYears.length > 0 ? '' : 'gf-disabled'}`}>
                                 <div className="gf-title">Category</div>
-                                <div className="gf-subtitle">Test description goes right here</div>
+                                <div className="gf-subtitle">Choose from the available data categories</div>
                                 <Dropdown key={dataYears.length > 0 ? 'category-enabled' : 'category-disabled'} items={categories} onSelect={handleCategoryChange} label={category ? category : "Select Category"} size="large" align="left" disabled={dataYears.length === 0} />
                         </div>
                         <img className="gf-chevron" src="right-icon.svg" />
                         <div className={`graph-filter ${category ? '' : 'gf-disabled'}`}>
                                 <div className="gf-title">Type</div>
-                                <div className="gf-subtitle">Test description goes right here</div>
+                                <div className="gf-subtitle">Select the formatting type of the data</div>
                                 <Dropdown key={category ? 'type-enabled' : 'type-disabled'} items={types} onSelect={handleTypeChange} label={type ? type : "Select Type"} align="left" disabled={!category} />
                         </div>
                         <img className="gf-chevron" src="right-icon.svg" />
                         <div className={`graph-filter ${type ? '' : 'gf-disabled'}`}>
                                 <div className="gf-title">Chart</div>
-                                <div className="gf-subtitle">Test description goes right here</div>
-                                <Dropdown key={type ? 'chart-enabled' : 'chart-disabled'} items={charts} onSelect={setChart} label={chart ? chart : "Select Chart"} align="left" disabled={!type} />
+                                <div className="gf-subtitle">Choose the layout style of the chart</div>
+                                <Dropdown key={type ? 'chart-enabled' : 'chart-disabled'} items={charts} onSelect={handleChartChange} label={chart ? chart : "Select Chart"} align="left" disabled={!type} />
                         </div>
                 </div>
         );

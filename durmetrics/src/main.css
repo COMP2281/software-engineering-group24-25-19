@@ -901,3 +901,10 @@ pre {
         cursor: not-allowed;
         opacity: 0.4;
 }
+
+.insights-container {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+}
