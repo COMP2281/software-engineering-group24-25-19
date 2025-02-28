@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import DropdownFooter from './DropdownFooter';
 import DropdownItem from './DropdownItem';
 
-const MultiDropdown = ({ items, changeSelection, label = "Items", align = "middle", type = "classic", width = "" }) => {
+const MultiDropdown = ({ items, changeSelection, label = "Items", align = "middle", type = "classic", width = "", scrollWidth = "", disabled = false }) => {
         const [selectedItems, setSelectedItems] = useState([]);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -40,7 +40,12 @@ const MultiDropdown = ({ items, changeSelection, label = "Items", align = "middl
 
         return (
                 <div className={`dropdown-wrapper align-${align}`} ref={dropdownRef} style={{ width }}>
-                        <button className={`dropdown-button align-${align} dropdown-${type}`} style={{ width }} onClick={() => setIsOpen((prev) => !prev)}>
+                        <button className={`dropdown-button align-${align} dropdown-${type}`} style={{ width }} onClick={
+                                () => {
+                                        if (disabled) return;
+                                        setIsOpen((prev) => !prev)
+                                }
+                        }>
                                 <span>{dropdownTitle}</span>
                                 <img
                                         src={isOpen ? '/arrow-up.svg' : '/arrow-down.svg'}
@@ -48,7 +53,7 @@ const MultiDropdown = ({ items, changeSelection, label = "Items", align = "middl
                                         className="dropdown-icon"
                                 />
                         </button>
-                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'}`} style={{ width }}>
+                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'}`} style={{ width: scrollWidth || width }}>
                                 <div className="dropdown-scrollable">
                                         <DropdownItem
                                                 label={`All ${label}`}

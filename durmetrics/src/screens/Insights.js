@@ -18,19 +18,19 @@ const Insights = (props) => {
         }
 
         useEffect(() => {
-                if (years.length > 0 && category && type && chart) {
-                        const fetchData = async () => {
-                                try {
-                                        let result = await axios.get(`https://durmetrics-api.sglre6355.net/${category}/records`);
-                                        console.log(result);
+                // if (years.length > 0 && category && type && chart) {
+                //         const fetchData = async () => {
+                //                 try {
+                //                         let result = await axios.get(`https://durmetrics-api.sglre6355.net/${category}/records`);
+                //                         console.log(result);
 
-                                } catch (error) {
-                                        alert("[Error] Could not fetch data: ", error);
-                                }
-                        };
+                //                 } catch (error) {
+                //                         alert("[Error] Could not fetch data: ", error);
+                //                 }
+                //         };
 
-                        fetchData();
-                }
+                //         fetchData();
+                // }
         }, [years, category, type, chart]);
 
         return (

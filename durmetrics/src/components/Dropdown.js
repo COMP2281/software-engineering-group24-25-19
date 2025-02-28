@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DropdownItem from './DropdownItem';
 import DropdownFooter from './DropdownFooter';
 
-const Dropdown = ({ items, onSelect, label = "Select an option", size = "regular", align = "middle", disabled = false }) => {
+const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align = "middle", disabled = false }) => {
         const [selectedItem, setSelectedItem] = useState(null);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
