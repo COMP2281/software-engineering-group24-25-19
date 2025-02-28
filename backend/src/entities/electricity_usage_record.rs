@@ -5,14 +5,13 @@ use serde::Serialize;
 #[derive(Clone, Debug, Default, PartialEq, DeriveEntityModel, Serialize)]
 #[sea_orm(table_name = "electricity_usage_record")]
 pub struct Model {
-    #[sea_orm(primary_key)] 
-    pub id: i32, 
-    pub site_id: i32, 
-    pub start_year: i32, 
-    pub end_year: i32, 
-    pub energy_usage_kwh: i32, 
+    #[sea_orm(primary_key)]
+    pub id: i32,
+    pub site_id: i32,
+    pub start_year: i32,
+    pub end_year: i32,
+    pub energy_usage_kwh: i32,
     pub cost_gbp: Option<f64>,
-
 }
 // define the primary key
 // define the site_id column in 32-bit integer format
@@ -20,7 +19,6 @@ pub struct Model {
 // define the end_year column in 32-bit integer format
 // define the energy_usage_kwh column in 32-bit integer format
 // define the cost_gbp column in 64-bit floating point format
-
 
 // create an enum that represents the relations of the electricity_usage_record table
 
