@@ -5,7 +5,7 @@ Filters are:
 1. Chart type (line, bar, pie)
 2. Year range
 3. Data category (Emissions, Electricity, Gas)
-4. Type (figures, %)
+4. Site
 
 Flows:
 

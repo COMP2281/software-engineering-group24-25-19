@@ -6,37 +6,27 @@ import Graph from '../components/Graph';
 const Insights = (props) => {
 
         const [years, setYears] = useState([]);
-        const [category, setCategory] = useState("");
-        const [type, setType] = useState("");
+        const [categories, setCategories] = useState("");
+        const [sites, setSites] = useState("");
         const [chart, setChart] = useState("");
 
-        const setData = (years, category, type, chart) => {
+        const setData = (years, categories, sites, chart) => {
                 setYears(years);
-                setCategory(category);
-                setType(type);
+                setCategories(categories);
+                setSites(sites);
                 setChart(chart);
         }
 
         useEffect(() => {
-                // if (years.length > 0 && category && type && chart) {
-                //         const fetchData = async () => {
-                //                 try {
-                //                         let result = await axios.get(`https://durmetrics-api.sglre6355.net/${category}/records`);
-                //                         console.log(result);
-
-                //                 } catch (error) {
-                //                         alert("[Error] Could not fetch data: ", error);
-                //                 }
-                //         };
-
-                //         fetchData();
-                // }
-        }, [years, category, type, chart]);
+                if (years.length > 0 && categories && sites && chart) {
+                        return;
+                }
+        }, [years, categories, sites, chart]);
 
         return (
                 <div className="insights-container">
                         <GraphFilters setData={setData} />
-                        <Graph />
+                        <Graph isAvailable={years.length > 0 && categories && sites && chart} years={years} categories={categories} sites={sites} chart={chart} />
                 </div>
         );
 }
@@ -74,3 +64,18 @@ export default Insights
 //         setTableRows(rows);
 
 // }, []);
+
+
+// if (years.length > 0 && category && type && chart) {
+//         const fetchData = async () => {
+//                 try {
+//                         let result = await axios.get(`https://durmetrics-api.sglre6355.net/${category}/records`);
+//                         console.log(result);
+
+//                 } catch (error) {
+//                         alert("[Error] Could not fetch data: ", error);
+//                 }
+//         };
+
+//         fetchData();
+// }

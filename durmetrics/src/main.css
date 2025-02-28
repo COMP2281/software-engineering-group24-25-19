@@ -644,7 +644,8 @@ pre {
         position: relative;
 }
 
-.file-upload-button {
+.file-upload-button,
+.generate-button {
         padding: 6px 16px;
         background-color: var(--green);
         font-weight: 700;
@@ -655,12 +656,14 @@ pre {
 }
 
 .file-upload-button:hover,
-.upload-button:not(.upload-button-disabled):hover {
+.upload-button:not(.upload-button-disabled):hover,
+.generate-button:hover {
         filter: brightness(1.15);
         transition: all 0.2s;
 }
 
-.file-upload-button:active {
+.file-upload-button:active,
+.generate-button:active {
         filter: brightness(0.9);
 }
 
@@ -912,4 +915,17 @@ pre {
 
 .chart {
         margin-top: 30px;
+}
+
+.insights-unavailable {
+        color: #7b7b7b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 400px;
+}
+
+.generate-button {
+        margin-top: calc(200px - 15px);
+        outline: none;
 }

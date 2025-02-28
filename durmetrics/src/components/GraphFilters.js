@@ -19,26 +19,25 @@ const GraphFilters = ({ setData }) => {
         const categories = ["Carbon Emissions", "Electricity", "Gas"];
         const types = ["Figures", "% Change", "% of Total"];
         const charts = ["Line", "Bar", "Pie"];
-        const [sites, setSites] = useState([]);
+        const [sites, setSites] = useState(["test"]);
 
         useEffect(() => {
-                getSites().then(data => {
-                        setSites(data.map(site => site.name));
-                });
+                // getSites().then(data => {
+                //         setSites(data.map(site => site.name));
+                // });
         }, []);
 
         const [chart, setChart] = useState(null);
         const [dataYears, setDataYears] = useState([]);
-        const [category, setCategory] = useState(null);
-        const [site, setSite] = useState(null);
-
+        const [dataCategories, setDataCategories] = useState([]);
+        const [dataSites, setDataSites] = useState([]);
 
         const handleChartChange = (selectedChart) => {
                 setChart(selectedChart);
                 setDataYears([]);
-                setCategory(null);
-                setSite(null);
-        }
+                setDataCategories([]);
+                setDataSites([]);
+        };
 
         const handleYearChange = (selectedYears) => {
                 if (Array.isArray(selectedYears)) {
@@ -46,19 +45,29 @@ const GraphFilters = ({ setData }) => {
                 } else {
                         setDataYears([selectedYears]);
                 }
-                setCategory(null);
-                setSite(null);
-                console.log(dataYears)
+                setDataCategories([]);
+                setDataSites([]);
         };
 
-        const handleCategoryChange = (selectedCategory) => {
-                setCategory(selectedCategory);
-                setSite(null);
+        const handleCategoryChange = (selectedCategories) => {
+                if (!Array.isArray(selectedCategories)) selectedCategories = [selectedCategories];
+
+                if (selectedCategories.length === 0) {
+                        setDataCategories([]);
+                } else {
+                        setDataCategories(selectedCategories);
+                }
+
+                setDataSites([]);
         };
 
-        const handleSiteChange = (selectedSite) => {
-                setSite(selectedSite);
-                setData(dataYears, category, selectedSite, chart);
+        const handleSiteChange = (selectedSites) => {
+                if (selectedSites.length === 0) {
+                        setDataSites([]);
+                } else {
+                        setDataSites(selectedSites);
+                }
+                setData(dataYears, dataCategories, selectedSites, chart);
         };
 
         return (
@@ -74,22 +83,22 @@ const GraphFilters = ({ setData }) => {
                                 <div className="gf-subtitle">
                                         {chart != "Pie" ? "Select the range of years for insights" : "Select the year for insights"}
                                 </div>
-                                {chart != "Pie" && <MultiDropdown items={years} changeSelection={handleYearChange} label="Years" align="left" type="filter" width="fit-content" scrollWidth="100px" disabled={!chart} />}
-                                {chart == "Pie" && <Dropdown items={years} onSelect={handleYearChange} label="Select Year" align="left" disabled={!chart} />}
+                                {chart != "Pie" && <MultiDropdown key={chart} items={years} changeSelection={handleYearChange} label="Years" align="left" type="filter" width="fit-content" scrollWidth="100px" disabled={!chart} />}
+                                {chart == "Pie" && <Dropdown key={chart} items={years} onSelect={handleYearChange} label="Select Year" align="left" disabled={!chart} />}
                         </div>
                         <img className="gf-chevron" src="right-icon.svg" />
                         <div className={`graph-filter ${dataYears.length > 0 ? '' : 'gf-disabled'}`}>
                                 <div className="gf-title">Categor{chart == "Bar" ? "ies" : "y"}</div>
                                 <div className="gf-subtitle">Choose the categor{chart == "Bar" ? "ies" : "y"} of the data</div>
-                                {chart == "Bar" && <MultiDropdown items={categories} changeSelection={handleCategoryChange} label="Categories" align="left" type="filter" width="fit-content" scrollWidth="150px" disabled={dataYears.length === 0} />}
-                                {chart != "Bar" && <Dropdown key={dataYears.length > 0 ? 'category-enabled' : 'category-disabled'} items={categories} onSelect={handleCategoryChange} label={category ? category : "Select Category"} size="large" align="left" disabled={dataYears.length === 0} />}
+                                {chart == "Bar" && <MultiDropdown key={dataYears.join("-")} items={categories} changeSelection={handleCategoryChange} label="Categories" align="left" type="filter" width="fit-content" scrollWidth="150px" disabled={dataYears.length === 0} />}
+                                {chart != "Bar" && <Dropdown key={dataYears.join("-")} items={categories} onSelect={handleCategoryChange} label={dataCategories.length > 0 ? dataCategories[0] : "Select Category"} size="large" align="left" disabled={dataYears.length === 0} />}
                         </div>
                         <img className="gf-chevron" src="right-icon.svg" />
-                        <div className={`graph-filter ${category ? '' : 'gf-disabled'}`}>
+                        <div className={`graph-filter ${dataCategories.length > 0 ? '' : 'gf-disabled'}`}>
                                 <div className="gf-title">Site{chart == "Pie" ? "s" : ""}</div>
                                 <div className="gf-subtitle">Select the site{chart == "Pie" ? "s" : ""} relevant to the query</div>
-                                {chart == "Pie" && <MultiDropdown items={sites} changeSelection={handleSiteChange} label="Sites" align="left" type="filter" width="fit-content" disabled={!category} />}
-                                {chart != "Pie" && <Dropdown key={category ? 'site-enabled' : 'site-disabled'} items={sites} onSelect={handleSiteChange} label={site ? site : "Select Site"} align="left" disabled={!category} />}
+                                {chart == "Pie" && <MultiDropdown key={dataCategories.join("-")} items={sites} changeSelection={handleSiteChange} label="Sites" align="left" type="filter" width="fit-content" disabled={dataCategories.length === 0} />}
+                                {chart != "Pie" && <Dropdown key={dataCategories.join("-")} items={sites} onSelect={handleSiteChange} label={dataSites.length > 0 ? dataSites[0] : "Select Site"} align="left" disabled={dataCategories.length === 0} />}
                         </div>
                 </div>
         );

@@ -30,7 +30,7 @@ const Tabs = (props) => {
                         {props.page === "upload" ?
                                 <div className="tab tab-selected" tab="0" data-text="Upload Data">Data Manager</div>
                                 : props.page == "insights" ?
-                                        <div className="tab tab-selected" tab="0" data-text="Upload Data">Graph Board</div>
+                                        <div className="tab tab-selected" tab="0" data-text="Upload Data">Graph Studio</div>
                                         :
                                         <>
                                                 <div className="tab tab-selected" tab="0" data-text="Carbon Emissions">Carbon Emissions</div>
