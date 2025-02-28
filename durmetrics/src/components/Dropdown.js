@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DropdownItem from './DropdownItem';
 import DropdownFooter from './DropdownFooter';
 
-const Dropdown = ({ items, onSelect, label = "Select an option", size = "regular", align = "middle" }) => {
+const Dropdown = ({ items, onSelect, label = "Select an option", size = "regular", align = "middle", disabled = false }) => {
         const [selectedItem, setSelectedItem] = useState(null);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -32,7 +32,10 @@ const Dropdown = ({ items, onSelect, label = "Select an option", size = "regular
                 <div className={`dropdown-wrapper dropdown-${size} align-${align}`} ref={dropdownRef}>
                         <button
                                 className={`dropdown-button dropdown-single dropdown-${size} align-${align}`}
-                                onClick={() => setIsOpen((prev) => !prev)}
+                                onClick={() => {
+                                        if (disabled) return;
+                                        setIsOpen((prev) => !prev)
+                                }}
                         >
                                 <span>{dropdownTitle}</span>
                                 <img
