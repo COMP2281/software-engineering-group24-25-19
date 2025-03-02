@@ -13,18 +13,17 @@ const getSites = async () => {
         }
 };
 
-const GraphFilters = ({ setData }) => {
+const GraphFilters = ({ setData, setRenderGraph }) => {
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
-        const categories = ["Carbon Emissions", "Electricity", "Gas"];
-        const types = ["Figures", "% Change", "% of Total"];
+        const [categories, setCategories] = useState(["Electricity (kWh)", "Electricity (£)", "Gas (kWh)", "Gas (£)"]);
         const charts = ["Line", "Bar", "Pie"];
         const [sites, setSites] = useState(["test"]);
 
         useEffect(() => {
-                // getSites().then(data => {
-                //         setSites(data.map(site => site.name));
-                // });
+                getSites().then(data => {
+                        setSites(data.map(site => site.name));
+                });
         }, []);
 
         const [chart, setChart] = useState(null);
@@ -37,16 +36,25 @@ const GraphFilters = ({ setData }) => {
                 setDataYears([]);
                 setDataCategories([]);
                 setDataSites([]);
+
+                // Allow for cumulative line?
+                // if (selectedChart == "Line") {
+                //         setCategories(["Carbon Emissions", "Electricity (kWh)", "Electricity (kWh)", "Electricity (£)", "Gas (kWh)", "Gas (£)"]);
+                // }
         };
 
         const handleYearChange = (selectedYears) => {
-                if (Array.isArray(selectedYears)) {
-                        setDataYears(selectedYears);
+                if (!Array.isArray(selectedYears)) selectedYears = [selectedYears];
+
+                if (selectedYears.length === 0) {
+                        setDataYears([]);
                 } else {
-                        setDataYears([selectedYears]);
+                        setDataYears(selectedYears);
                 }
+
                 setDataCategories([]);
                 setDataSites([]);
+                setData(dataYears, [], [], chart);
         };
 
         const handleCategoryChange = (selectedCategories) => {
@@ -59,14 +67,19 @@ const GraphFilters = ({ setData }) => {
                 }
 
                 setDataSites([]);
+                setData(dataYears, selectedCategories, [], chart);
         };
 
         const handleSiteChange = (selectedSites) => {
+                setRenderGraph(false);
+                if (!Array.isArray(selectedSites)) selectedSites = [selectedSites];
+
                 if (selectedSites.length === 0) {
                         setDataSites([]);
                 } else {
                         setDataSites(selectedSites);
                 }
+
                 setData(dataYears, dataCategories, selectedSites, chart);
         };
 
@@ -95,10 +108,10 @@ const GraphFilters = ({ setData }) => {
                         </div>
                         <img className="gf-chevron" src="right-icon.svg" />
                         <div className={`graph-filter ${dataCategories.length > 0 ? '' : 'gf-disabled'}`}>
-                                <div className="gf-title">Site{chart == "Pie" ? "s" : ""}</div>
-                                <div className="gf-subtitle">Select the site{chart == "Pie" ? "s" : ""} relevant to the query</div>
-                                {chart == "Pie" && <MultiDropdown key={dataCategories.join("-")} items={sites} changeSelection={handleSiteChange} label="Sites" align="left" type="filter" width="fit-content" disabled={dataCategories.length === 0} />}
-                                {chart != "Pie" && <Dropdown key={dataCategories.join("-")} items={sites} onSelect={handleSiteChange} label={dataSites.length > 0 ? dataSites[0] : "Select Site"} align="left" disabled={dataCategories.length === 0} />}
+                                <div className="gf-title">Site{chart != "Bar" ? "s" : ""}</div>
+                                <div className="gf-subtitle">Select the site{chart != "Bar" ? "s" : ""} relevant to the query</div>
+                                {chart != "Bar" && <MultiDropdown key={dataCategories.join("-")} items={sites} changeSelection={handleSiteChange} label="Sites" align="left" type="filter" width="fit-content" disabled={dataCategories.length === 0} />}
+                                {chart == "Bar" && <Dropdown key={dataCategories.join("-")} items={sites} onSelect={handleSiteChange} label={dataSites.length > 0 ? dataSites[0] : "Select Site"} align="left" disabled={dataCategories.length === 0} />}
                         </div>
                 </div>
         );

@@ -4,12 +4,12 @@ Filters are:
 
 1. Chart type (line, bar, pie)
 2. Year range
-3. Data category (Emissions, Electricity, Gas)
+3. Data category (Emissions?, Electricity, Gas)
 4. Site
 
 Flows:
 
-- Line -> Years (**plural**)  -> Category (**singular**) -> Site (**singular**)
+- Line -> Years (**plural**)  -> Category (**singular**) -> Sites (**plural**)
 - Bar -> Year (**plural**) -> Categories (**plural**) -> Site (**singular**)
 - Pie -> Year (**singular**) -> Category (**singular**) -> Sites (**plural**)
 

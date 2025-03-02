@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import GraphFilters from '../components/GraphFilters';
 import Graph from '../components/Graph';
 
 const Insights = (props) => {
+        const [renderGraph, setRenderGraph] = React.useState(false);
 
         const [years, setYears] = useState([]);
         const [categories, setCategories] = useState("");
@@ -15,18 +16,17 @@ const Insights = (props) => {
                 setCategories(categories);
                 setSites(sites);
                 setChart(chart);
-        }
+        };
 
-        useEffect(() => {
-                if (years.length > 0 && categories && sites && chart) {
-                        return;
-                }
-        }, [years, categories, sites, chart]);
+        const isAvailable = () => {
+                return years.length > 0 && categories.length > 0 && sites.length > 0 && chart;
+        }
 
         return (
                 <div className="insights-container">
-                        <GraphFilters setData={setData} />
-                        <Graph isAvailable={years.length > 0 && categories && sites && chart} years={years} categories={categories} sites={sites} chart={chart} />
+                        {console.log("Refreshing")}
+                        <GraphFilters setData={setData} setRenderGraph={setRenderGraph} />
+                        <Graph isAvailable={isAvailable()} years={years} categories={categories} sites={sites} chart={chart} renderGraph={renderGraph} setRenderGraph={setRenderGraph} />
                 </div>
         );
 }

@@ -929,3 +929,30 @@ pre {
         margin-top: calc(200px - 15px);
         outline: none;
 }
+
+/* .MuiChartsAxis-directionX>.MuiChartsAxis-tickContainer:nth-of-type(even) {
+        display: none;
+} */
+
+@keyframes delayShow {
+        0% {
+                opacity: 0;
+        }
+
+        100% {
+                opacity: 1;
+        }
+}
+
+.css-1akrvkz-MuiResponsiveChart-container {
+        animation: delayShow 0.3s;
+}
+
+.css-1akrvkz-MuiResponsiveChart-container,
+.css-1evyvmv-MuiChartsSurface-root {
+        overflow: visible !important;
+}
+
+.MuiChartsAxis-directionY .MuiChartsAxis-label {
+        transform: translateX(-40px) !important;
+}
