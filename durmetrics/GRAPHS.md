@@ -14,3 +14,20 @@ Flows:
 - Pie -> Year (**singular**) -> Category (**singular**) -> Sites (**plural**)
 
 
+## Line
+Comparing usage for multiple sites over a period of time for one category.
+
+
+## Bar
+Comparing usage over multiple categories over a period of time for one site.
+
+
+## Pie
+Comparing usage for one category over one year over multiple sites.
+
+
+
+
+
+
+

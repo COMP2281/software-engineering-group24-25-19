@@ -45,7 +45,6 @@ const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align =
                                 />
                         </button>
 
-                        {/* Dropdown container, same structure as MultiDropdown */}
                         <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`}>
                                 <div className="dropdown-scrollable">
                                         {items.map((item) => (

@@ -939,13 +939,17 @@ pre {
                 opacity: 0;
         }
 
+        70% {
+                opacity: 0;
+        }
+
         100% {
                 opacity: 1;
         }
 }
 
 .css-1akrvkz-MuiResponsiveChart-container {
-        animation: delayShow 0.3s;
+        animation: delayShow 1s;
 }
 
 .css-1akrvkz-MuiResponsiveChart-container,

@@ -84,6 +84,7 @@ const Graph = (props) => {
 
                         const xAxis = [{
                                 label: "Year",
+                                type: "band",
                                 data: [],
                                 valueFormatter: (val) => `${Math.floor(val)}`,
                         }];
@@ -123,9 +124,81 @@ const Graph = (props) => {
                 }
         };
 
-        const generateBarChartData = () => {
-                return;
+        const generateBarChartData = async () => {
+                try {
+                        if (!props.sites || props.sites.length === 0) {
+                                alert("[Error] Please select a site for the Bar Chart");
+                                return { xAxis: [], yAxis: [], series: [] };
+                        }
+
+                        const chosenSiteName = props.sites[0];
+
+                        const sitesResp = await axios.get("https://durmetrics-api.sglre6355.net/sites");
+                        const allSites = sitesResp.data || [];
+
+                        const chosenSite = allSites.find((site) => site.name === chosenSiteName);
+                        console.log("Chosen site:", chosenSite);
+                        if (!chosenSite) {
+                                alert("[Error] The site name you selected wasn't found in the database.");
+                                return { xAxis: [], yAxis: [], series: [] };
+                        }
+                        const chosenSiteID = chosenSite.id;
+
+                        const xAxis = [
+                                {
+                                        label: "Year",
+                                        type: "band",
+                                        scaleType: 'band',
+                                        data: props.years.sort(),
+                                        valueFormatter: (val) => `${Math.floor(val)}`,
+                                }
+                        ];
+
+                        const yAxis = [
+                                {
+                                        label: "Usage/Cost",
+                                }
+                        ];
+
+                        const series = [];
+
+                        for (const category of props.categories) {
+                                const usageEndpoint = categoryURLMap[category];
+                                const usageKey = categoryDataMap[category];
+
+                                const usageResp = await axios.get(
+                                        `https://durmetrics-api.sglre6355.net/${usageEndpoint}/records`
+                                );
+                                const usageData = usageResp.data || [];
+
+                                console.log("Fetched:", category, usageResp);
+
+                                const barData = xAxis[0].data.map((year) => {
+                                        const matchingRecords = usageData.filter(
+                                                (r) => r.site_id === chosenSiteID && r.start_year === year
+                                        );
+
+                                        if (matchingRecords.length === 0) {
+                                                return 0;
+                                        }
+
+                                        // If multiple records for the same (site, year), sum them up
+                                        return matchingRecords.reduce((acc, rec) => acc + rec[usageKey], 0);
+                                });
+
+                                series.push({
+                                        label: category,
+                                        data: barData,
+                                });
+                        }
+
+                        return { xAxis, yAxis, series };
+                } catch (error) {
+                        alert("[Error] Could not fetch bar chart data.");
+                        return { xAxis: [], yAxis: [], series: [] };
+                }
         };
+
 
         const generatePieChartData = () => {
                 return;
@@ -134,9 +207,11 @@ const Graph = (props) => {
         const generateGraph = async () => {
                 if (!props.isAvailable) return;
 
+                let data;
+
                 switch (props.chart) {
                         case "Line": {
-                                const data = await generateLineChartData();
+                                data = await generateLineChartData();
                                 setGraph(
                                         <LineChart
                                                 className="chart"
@@ -157,10 +232,28 @@ const Graph = (props) => {
                                 break;
                         }
                         case "Bar":
-                                generateBarChartData();
+                                data = await generateBarChartData();
+                                setGraph(
+                                        <BarChart
+                                                className="chart"
+                                                xAxis={data.xAxis}
+                                                yAxis={data.yAxis}
+                                                series={data.series}
+                                                width={1000}
+                                                height={450}
+                                                slotProps={{
+                                                        legend: {
+                                                                hidden: false,
+                                                                direction: "row",
+                                                                position: { vertical: 'top', horizontal: 'middle' },
+                                                        },
+                                                }}
+                                        />
+                                );
                                 break;
                         case "Pie":
-                                generatePieChartData();
+                                data = await generatePieChartData();
+
                                 break;
                         default:
                                 break;
