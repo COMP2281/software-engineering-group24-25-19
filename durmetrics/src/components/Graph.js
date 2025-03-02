@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { LineChart } from "@mui/x-charts/LineChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { legendClasses } from '@mui/x-charts/ChartsLegend';
 import axios from "axios";
 
 const Graph = (props) => {
@@ -200,8 +201,58 @@ const Graph = (props) => {
         };
 
 
-        const generatePieChartData = () => {
-                return;
+        const generatePieChartData = async () => {
+                try {
+                        const chosenCategory = props.categories[0];
+                        const chosenYear = props.years[0];
+
+                        const sitesResp = await axios.get("https://durmetrics-api.sglre6355.net/sites");
+                        const allSitesData = sitesResp.data || [];
+
+                        const siteMap = {};
+                        allSitesData.forEach((s) => {
+                                siteMap[s.name] = s.id;
+                        });
+
+                        const usageEndpoint = categoryURLMap[chosenCategory];
+                        const usageKey = categoryDataMap[chosenCategory];
+
+                        const usageResp = await axios.get(
+                                `https://durmetrics-api.sglre6355.net/${usageEndpoint}/records`
+                        );
+                        const usageData = usageResp.data || [];
+
+                        // For each selected site, find usage for the chosen year and sum it
+                        const pieData = props.sites.map((siteName) => {
+                                const siteId = siteMap[siteName];
+                                console.log(siteMap)
+                                if (!siteId) {
+                                        return { id: siteName, value: 0 };
+                                }
+
+                                const matching = usageData.filter(
+                                        (r) => r.site_id === siteId && r.start_year === chosenYear
+                                );
+                                if (matching.length === 0) {
+                                        return { id: siteName, value: 0 };
+                                }
+                                // Sum the usage key
+                                const sum = matching.reduce((acc, rec) => acc + rec[usageKey], 0);
+                                return { label: siteName, id: siteName, value: sum };
+                        });
+
+                        const series = [
+                                {
+                                        data: pieData,
+                                },
+                        ];
+
+                        return { series };
+                } catch (error) {
+                        console.error(error);
+                        alert("[Error] Could not fetch pie chart data.");
+                        return { series: [] };
+                }
         };
 
         const generateGraph = async () => {
@@ -253,7 +304,32 @@ const Graph = (props) => {
                                 break;
                         case "Pie":
                                 data = await generatePieChartData();
-
+                                const otherProps = {
+                                        sx: {
+                                                [`.${legendClasses.root}`]: {
+                                                        transform: 'translate(-20px, 0)',
+                                                },
+                                        },
+                                        pie: {
+                                                colorMode: 'item',
+                                        },
+                                }
+                                setGraph(
+                                        <PieChart
+                                                className="chart"
+                                                series={data.series}
+                                                width={1000}
+                                                height={450}
+                                                slotProps={{
+                                                        legend: {
+                                                                hidden: false,
+                                                                direction: "column",
+                                                                position: { vertical: 'middle', horizontal: 'right' },
+                                                        },
+                                                }}
+                                                {...otherProps}
+                                        />
+                                );
                                 break;
                         default:
                                 break;
