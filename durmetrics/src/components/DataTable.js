@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
-import report from '../data/report.csv';
 import { TableVirtuoso } from 'react-virtuoso';
-import Papa from 'papaparse';
-import { useEffect, useState } from 'react';
 
-const DataTable = (props) => {
+const DataTable = ({ data }) => {
         const [selectedYears, setSelectedYears] = useState([]);
         const [tableColumns, setTableColumns] = useState([]);
         const [tableRows, setTableRows] = useState([]);
@@ -17,39 +14,29 @@ const DataTable = (props) => {
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
-        const parseCSV = async (report) => {
-                Papa.parse(report, {
-                        header: true,
-                        download: true,
-                        complete: (result) => {
-
-                                const columns = Object.keys(result.data[0] || {}).map((key) => ({
-                                        title: key,
-                                        field: key,
-                                        width: Math.max(
-                                                key.length * 15, // approximate width of header text
-                                                ...result.data.map((row) => (row[key]?.length || 0) * 8) // width of content
-                                        ),
-                                }));
-
-                                setTableColumns(columns);
-
-                                // map rows with matching keys
-                                const rows = result.data.map((row, index) => ({
-                                        id: index + 1,
-                                        ...row,
-                                }));
-
-                                setTableRows(rows);
-                                setFilteredRows(rows);
-                        },
-                });
-        }
-
         useEffect(() => {
-                // parse CSV and process data
-                parseCSV(report);
-        }, []);
+                if (data && data.length > 0) {
+                        const columns = Object.keys(data[0]).map((key) => ({
+                                title: key,
+                                field: key,
+                                width: Math.max(
+                                        key.length * 15, // approximate width of header text
+                                        ...data.map((row) => (row[key]?.length || 0) * 8) // width of content
+                                ),
+                        }));
+
+                        setTableColumns(columns);
+
+                        // map rows with matching keys
+                        const rows = data.map((row, index) => ({
+                                id: index + 1,
+                                ...row,
+                        }));
+
+                        setTableRows(rows);
+                        setFilteredRows(rows);
+                }
+        }, [data]);
 
         useEffect(() => {
                 // filter rows based on search text
@@ -66,7 +53,7 @@ const DataTable = (props) => {
                                 })
                         );
                 } else {
-                        setFilteredRows(tableRows); // reset to all rows if no search text
+                        setFilteredRows(tableRows);
                 }
         }, [searchText, tableRows]);
 
@@ -81,14 +68,11 @@ const DataTable = (props) => {
 
         return (
                 <>
-                        {/* Filters Section */}
                         <div className="table-filters">
                                 <SearchBar searchTable={handleSearchChange} />
                                 <MultiDropdown items={years} changeSelection={setSelectedYears} label="Years" />
                         </div>
 
-
-                        {/* Table Section */}
                         <div className="table-container">
                                 <TableVirtuoso
                                         data={filteredRows}
@@ -104,7 +88,6 @@ const DataTable = (props) => {
                                                         </tr>
                                                 </thead>
                                         )}
-
                                         itemContent={(index) => {
                                                 const row = filteredRows[index];
                                                 return (
@@ -139,4 +122,5 @@ const DataTable = (props) => {
                 </>
         );
 };
+
 export default DataTable;

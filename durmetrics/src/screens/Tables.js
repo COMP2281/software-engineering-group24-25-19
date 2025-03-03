@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import DataTable from '../components/DataTable';
+import report from '../data/report.json';
 
 const Tables = (props) => {
         const [data, setData] = React.useState([]);
 
+        useEffect(() => {
+                setData(report.data);
+        }, []);
 
         useEffect(() => {
                 document.title = 'Tables - DurMetrics';
         }, []);
-
-
-
 
 
         return (

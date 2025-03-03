@@ -1,0 +1,268 @@
+{
+        "data": [
+                {
+                        "Site Name": "Annfield Plain Library",
+                        "Code": "0922S01",
+                        "Floor Area (sq mtrs)": 439,
+                        "Account Number": "6224653442",
+                        "kWh": 13123,
+                        "Cost(£)": 5404.60
+                },
+                {
+                        "Site Name": "Barnard Castle Library (new)/C.A.P building",
+                        "Code": "0923S01",
+                        "Floor Area (sq mtrs)": 554,
+                        "Account Number": "6813747837",
+                        "kWh": 22307,
+                        "Cost(£)": 8685.90
+                },
+                {
+                        "Site Name": "Belmont Library",
+                        "Code": "0949",
+                        "Floor Area (sq mtrs)": 227,
+                        "Account Number": "3259115544",
+                        "kWh": 9624,
+                        "Cost(£)": 4074.47
+                },
+                {
+                        "Site Name": "Bishop Auckland Town Hall & Library",
+                        "Code": "90178S01",
+                        "Floor Area (sq mtrs)": 2339,
+                        "Account Number": "9807370102",
+                        "kWh": 144437,
+                        "Cost(£)": 56822.10
+                },
+                {
+                        "Site Name": "Blackhall Colliery Library",
+                        "Code": "0925",
+                        "Floor Area (sq mtrs)": 152,
+                        "Account Number": "4353180729",
+                        "kWh": 5365,
+                        "Cost(£)": 2288.41
+                },
+                {
+                        "Site Name": "Bowburn Library",
+                        "Code": "0951",
+                        "Floor Area (sq mtrs)": 172,
+                        "Account Number": "7227010288",
+                        "kWh": 4992,
+                        "Cost(£)": 2326.10
+                },
+                {
+                        "Site Name": "Brandon Library",
+                        "Code": "0926",
+                        "Floor Area (sq mtrs)": 165.16,
+                        "Account Number": "6204142055",
+                        "kWh": 6554,
+                        "Cost(£)": 2696.67
+                },
+                {
+                        "Site Name": "Brandon Library",
+                        "Code": "0926",
+                        "Floor Area (sq mtrs)": 165.16,
+                        "Account Number": "8088384622",
+                        "kWh": 16222,
+                        "Cost(£)": 7000.38
+                },
+                {
+                        "Site Name": "Chester le Street Library",
+                        "Code": "0927S01",
+                        "Floor Area (sq mtrs)": 536,
+                        "Account Number": "4385863846",
+                        "kWh": 17867,
+                        "Cost(£)": 7553.82
+                },
+                {
+                        "Site Name": "Chilton Library",
+                        "Code": "0953",
+                        "Floor Area (sq mtrs)": 165,
+                        "Account Number": "2484621331",
+                        "kWh": 5395,
+                        "Cost(£)": 2434.42
+                },
+                {
+                        "Site Name": "Clayport Library",
+                        "Code": "3309S01",
+                        "Floor Area (sq mtrs)": 1660,
+                        "Account Number": "5413795222",
+                        "kWh": 100385,
+                        "Cost(£)": 40458.83
+                },
+                {
+                        "Site Name": "Consett Library",
+                        "Code": "0928S01",
+                        "Floor Area (sq mtrs)": 449,
+                        "Account Number": "8420990777",
+                        "kWh": 9601,
+                        "Cost(£)": 4098.00
+                },
+                {
+                        "Site Name": "Easington Colliery Library",
+                        "Code": "0960",
+                        "Floor Area (sq mtrs)": 157,
+                        "Account Number": "1860277590",
+                        "kWh": 5950,
+                        "Cost(£)": 2699.50
+                },
+                {
+                        "Site Name": "Ferryhill Library",
+                        "Code": "0931",
+                        "Floor Area (sq mtrs)": 190,
+                        "Account Number": "0653849117",
+                        "kWh": 6154,
+                        "Cost(£)": 2721.76
+                },
+                {
+                        "Site Name": "Horden Library",
+                        "Code": "0932",
+                        "Floor Area (sq mtrs)": 213,
+                        "Account Number": "5550660294",
+                        "kWh": 7222,
+                        "Cost(£)": 2927.01
+                },
+                {
+                        "Site Name": "Lanchester Library",
+                        "Code": "0957",
+                        "Floor Area (sq mtrs)": 227,
+                        "Account Number": "1423943881",
+                        "kWh": 3944,
+                        "Cost(£)": 1917.94
+                },
+                {
+                        "Site Name": "Murton Library",
+                        "Code": "0933",
+                        "Floor Area (sq mtrs)": 176,
+                        "Account Number": "5595934966",
+                        "kWh": 5269,
+                        "Cost(£)": 2448.03
+                },
+                {
+                        "Site Name": "Newton Hall Library",
+                        "Code": "0952S01",
+                        "Floor Area (sq mtrs)": 303,
+                        "Account Number": "8726943157",
+                        "kWh": 6463,
+                        "Cost(£)": 2847.07
+                },
+                {
+                        "Site Name": "Pelton Library (New)",
+                        "Code": "30302S01",
+                        "Floor Area (sq mtrs)": 304,
+                        "Account Number": "0699332564",
+                        "kWh": 13308,
+                        "Cost(£)": 5931.72
+                },
+                {
+                        "Site Name": "Sacriston Library",
+                        "Code": "0945",
+                        "Floor Area (sq mtrs)": 142,
+                        "Account Number": "1285240464",
+                        "kWh": 5089,
+                        "Cost(£)": 2388.99
+                },
+                {
+                        "Site Name": "Sedgefield Library",
+                        "Code": "0950",
+                        "Floor Area (sq mtrs)": 204,
+                        "Account Number": "1802724060",
+                        "kWh": 8595,
+                        "Cost(£)": 3627.22
+                },
+                {
+                        "Site Name": "Shildon Library",
+                        "Code": "0937S01",
+                        "Floor Area (sq mtrs)": 353,
+                        "Account Number": "5768745887",
+                        "kWh": 13940,
+                        "Cost(£)": 5478.19
+                },
+                {
+                        "Site Name": "Shotton Library",
+                        "Code": "0938",
+                        "Floor Area (sq mtrs)": 197,
+                        "Account Number": "3434628161",
+                        "kWh": 7386,
+                        "Cost(£)": 3244.16
+                },
+                {
+                        "Site Name": "South Moor Library",
+                        "Code": "0956",
+                        "Floor Area (sq mtrs)": 202,
+                        "Account Number": "7905153611",
+                        "kWh": 6889,
+                        "Cost(£)": 3056.83
+                },
+                {
+                        "Site Name": "Spennymoor Library - closed",
+                        "Code": "0939",
+                        "Floor Area (sq mtrs)": 419,
+                        "Account Number": "3008276997",
+                        "kWh": 3871,
+                        "Cost(£)": 1810.17
+                },
+                {
+                        "Site Name": "Thornley Library",
+                        "Code": "0946",
+                        "Floor Area (sq mtrs)": 151,
+                        "Account Number": "7732764042",
+                        "kWh": 6297,
+                        "Cost(£)": 2794.46
+                },
+                {
+                        "Site Name": "Trimdon Library",
+                        "Code": "3371",
+                        "Floor Area (sq mtrs)": 150,
+                        "Account Number": "5195525034",
+                        "kWh": 7839,
+                        "Cost(£)": 3368.97
+                },
+                {
+                        "Site Name": "West Cornforth Library",
+                        "Code": "0959",
+                        "Floor Area (sq mtrs)": 190,
+                        "Account Number": "7903802497",
+                        "kWh": 6945,
+                        "Cost(£)": 3022.10
+                },
+                {
+                        "Site Name": "Willington Library",
+                        "Code": "0942",
+                        "Floor Area (sq mtrs)": 285,
+                        "Account Number": "3666864955",
+                        "kWh": 8520,
+                        "Cost(£)": 3642.12
+                },
+                {
+                        "Site Name": "Wingate Library",
+                        "Code": "3310",
+                        "Floor Area (sq mtrs)": 180,
+                        "Account Number": "4673419107",
+                        "kWh": 5542,
+                        "Cost(£)": 2523.43
+                },
+                {
+                        "Site Name": "Wolsingham Library",
+                        "Code": "0958",
+                        "Floor Area (sq mtrs)": 141,
+                        "Account Number": "2366673081",
+                        "kWh": 3695,
+                        "Cost(£)": 1706.75
+                },
+                {
+                        "Site Name": "Woodhouse Close Library",
+                        "Code": "0948",
+                        "Floor Area (sq mtrs)": 211,
+                        "Account Number": "2731322655",
+                        "kWh": 7947,
+                        "Cost(£)": 3437.92
+                },
+                {
+                        "Site Name": "32",
+                        "Code": "",
+                        "Floor Area (sq mtrs)": "",
+                        "Account Number": "",
+                        "kWh": 496737,
+                        "Cost(£)": 205438.03
+                }
+        ]
+}
