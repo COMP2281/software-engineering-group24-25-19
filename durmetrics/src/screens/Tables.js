@@ -1,13 +1,39 @@
 import React, { useEffect } from 'react';
 import DataTable from '../components/DataTable';
-import report from '../data/report.json';
+import report from '../data/report.json'; // For now
+import axios from 'axios';
 
 const Tables = (props) => {
         const [data, setData] = React.useState([]);
 
+        const tabRouteMap = {
+                0: "carbon-emissions",
+                1: "electricity-usage",
+                2: "gas-usage",
+                3: "carbon-percentage",
+                4: "gas-sites-percentage",
+                5: "electricity-percentage",
+                6: "kwh-per-hdd",
+                7: "site-information"
+        };
+
         useEffect(() => {
                 setData(report.data);
         }, []);
+
+        useEffect(() => {
+                const fetchData = async () => {
+                        try {
+                                const route = tabRouteMap[props.activeTab];
+                                const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records`);
+                                setData(result.data);
+                        } catch (error) {
+                                console.error("Error fetching data:", error);
+                        }
+                };
+
+                fetchData();
+        }, [props.activeTab]);
 
         useEffect(() => {
                 document.title = 'Tables - DurMetrics';
