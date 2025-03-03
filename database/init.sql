@@ -8,7 +8,7 @@ CREATE DATABASE test;
 
 -- Create tables
 CREATE TABLE site (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name TEXT NOT NULL,
     floor_area_square_metre FLOAT,
     unique_property_reference_number TEXT,
@@ -24,7 +24,7 @@ CREATE TABLE emission_factor (
 );
 
 CREATE TABLE gas_usage_record (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     site_id INTEGER REFERENCES site(id),
     start_year INTEGER NOT NULL,
     end_year INTEGER GENERATED ALWAYS AS (start_year + 1) STORED,
@@ -33,7 +33,7 @@ CREATE TABLE gas_usage_record (
 );
 
 CREATE TABLE electricity_usage_record (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     site_id INTEGER REFERENCES site(id),
     start_year INTEGER NOT NULL,
     end_year INTEGER GENERATED ALWAYS AS (start_year + 1) STORED,
