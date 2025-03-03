@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const Tables = (props) => {
         const [data, setData] = React.useState([]);
+        const [dataForExport, setDataForExport] = React.useState([]);
 
         const tabRouteMap = {
                 0: "carbon-emissions",
@@ -36,12 +37,26 @@ const Tables = (props) => {
         }, [props.activeTab]);
 
         useEffect(() => {
+                if (props.wantsExport) {
+                        const headers = Object.keys(dataForExport[0] || {}).join(',');
+                        const csv = [headers, ...dataForExport.map(row => Object.values(row).join(','))].join('\n');
+                        const blob = new Blob([csv], { type: 'text/csv' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'data.csv';
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        props.setWantsExport(false);
+                }
+        }, [props.wantsExport]);
+
+        useEffect(() => {
                 document.title = 'Tables - DurMetrics';
         }, []);
 
-
         return (
-                <DataTable activeTab={props.activeTab} data={data} />
+                <DataTable activeTab={props.activeTab} data={data} setDataForExport={setDataForExport} />
         );
 };
 

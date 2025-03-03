@@ -823,7 +823,7 @@ pre {
 .export-icon {
         height: 14px;
         margin-right: 10px;
-        transition: filter 0.2s ease-in-out;
+        transition: all 0.2s;
 }
 
 .header-export-button {
@@ -845,17 +845,17 @@ pre {
 }
 
 .header-export-button:hover {
-        background-color: #2A6F5F;
+        background-color: #ffffff;
+        color: #185E4E;
         transition: all 0.2s;
 }
 
-.header-export-button:active .export-icon {
+.header-export-button:hover .export-icon {
         filter: brightness(0) saturate(100%) invert(21%) sepia(47%) saturate(555%) hue-rotate(128deg) brightness(92%) contrast(92%);
 }
 
 .header-export-button:active {
-        background-color: #ffffff;
-        color: #185E4E;
+        filter: brightness(0.7);
 }
 
 .graph-filters {

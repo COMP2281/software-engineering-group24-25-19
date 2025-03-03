@@ -34,7 +34,7 @@ const Header = (props) => {
                                 <div className="header-title">{pageTitle}</div>
                                 <Tabs activeTab={props.activeTab} setActiveTab={props.setActiveTab} page={window.location.pathname.split('/')[1]} />
                                 {pageTitle == "Tables" &&
-                                        <button className="header-export-button" onClick={props.onButtonClick}>
+                                        <button className="header-export-button" onClick={() => { props.setWantsExport(true) }}>
                                                 <img src="export-icon.svg" alt="Export" className="export-icon" />
                                                 Export table
                                         </button>}

@@ -6,7 +6,7 @@ const Body = (props) => {
         return (
                 <div className="lower">
                         <Menu />
-                        <Content activeTab={props.activeTab} />
+                        <Content activeTab={props.activeTab} wantsExport={props.wantsExport} setWantsExport={props.setWantsExport} />
                 </div>
         );
 };

@@ -3,7 +3,7 @@ import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
 import { TableVirtuoso } from 'react-virtuoso';
 
-const DataTable = ({ data }) => {
+const DataTable = ({ data, setDataForExport }) => {
         const [selectedYears, setSelectedYears] = useState([]);
         const [tableColumns, setTableColumns] = useState([]);
         const [tableRows, setTableRows] = useState([]);
@@ -35,27 +35,27 @@ const DataTable = ({ data }) => {
 
                         setTableRows(rows);
                         setFilteredRows(rows);
+                        setDataForExport(rows); // set filtered data initially
                 }
-        }, [data]);
+        }, [data, setDataForExport]);
 
         useEffect(() => {
                 // filter rows based on search text
+                let filtered = tableRows;
                 if (searchText) {
-                        setFilteredRows(
-                                tableRows.filter((row) => {
-                                        const firstCol = Object.keys(row)[1]; // first column key (site name)
-                                        const secondCol = Object.keys(row)[2]; // second column key (site code)
+                        filtered = tableRows.filter((row) => {
+                                const firstCol = Object.keys(row)[1]; // first column key (site name)
+                                const secondCol = Object.keys(row)[2]; // second column key (site code)
 
-                                        return (
-                                                row[firstCol]?.toLowerCase().includes(searchText.toLowerCase()) ||
-                                                row[secondCol]?.toLowerCase().includes(searchText.toLowerCase())
-                                        );
-                                })
-                        );
-                } else {
-                        setFilteredRows(tableRows);
+                                return (
+                                        row[firstCol].toString().toLowerCase().includes(searchText.toLowerCase()) ||
+                                        row[secondCol].toString().toLowerCase().includes(searchText.toLowerCase())
+                                );
+                        });
                 }
-        }, [searchText, tableRows]);
+                setFilteredRows(filtered);
+                setDataForExport(filtered); // set filtered data after search
+        }, [searchText, tableRows, setDataForExport]);
 
         const handleSearchChange = (event) => {
                 setSearchText(event.target.value);
