@@ -2,12 +2,19 @@ import React, { useEffect } from 'react';
 import DataTable from '../components/DataTable';
 
 const Tables = (props) => {
+        const [data, setData] = React.useState([]);
+
+
         useEffect(() => {
                 document.title = 'Tables - DurMetrics';
         }, []);
 
+
+
+
+
         return (
-                <DataTable activeTab={props.activeTab} />
+                <DataTable activeTab={props.activeTab} data={data} />
         );
 };
 
@@ -48,10 +55,3 @@ export default Tables;
 //         setTableRows(rows);
 
 // }, []);
-
-// return (
-//         <>
-//                 <GraphFilters />
-//                 <Graph />
-//         </>
-// );

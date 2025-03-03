@@ -22,7 +22,7 @@ const Header = (props) => {
                 <div className="header">
                         <div className="header-side">
                                 <div className="header-logo-container">
-                                        <img className="header-logo" src="logo.png"/>
+                                        <img className="header-logo" src="logo.png" />
                                 </div>
                                 <div className="header-access-level">
                                         <div className="access-level">Access Level&nbsp;&nbsp;&nbsp;
@@ -33,10 +33,10 @@ const Header = (props) => {
                         <div className="header-content">
                                 <div className="header-title">{pageTitle}</div>
                                 <Tabs activeTab={props.activeTab} setActiveTab={props.setActiveTab} page={window.location.pathname.split('/')[1]} />
-                                {pageTitle == "Tables" && 
+                                {pageTitle == "Tables" &&
                                         <button className="header-export-button" onClick={props.onButtonClick}>
                                                 <img src="export-icon.svg" alt="Export" className="export-icon" />
-                                                Export Table
+                                                Export table
                                         </button>}
                         </div>
                 </div>

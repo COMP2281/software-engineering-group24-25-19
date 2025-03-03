@@ -6,8 +6,6 @@ import { TableVirtuoso } from 'react-virtuoso';
 import Papa from 'papaparse';
 import { useEffect, useState } from 'react';
 
-const paginationModel = { page: 0, pageSize: 100 };
-
 const DataTable = (props) => {
         const [selectedYears, setSelectedYears] = useState([]);
         const [tableColumns, setTableColumns] = useState([]);
@@ -15,7 +13,7 @@ const DataTable = (props) => {
         const [filteredRows, setFilteredRows] = useState([]);
         const [searchText, setSearchText] = useState('');
 
-        // dropdown filter data
+        // Dropdown filter data
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
