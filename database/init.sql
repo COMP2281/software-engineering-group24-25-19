@@ -29,7 +29,8 @@ CREATE TABLE gas_usage_record (
     start_year INTEGER NOT NULL,
     end_year INTEGER GENERATED ALWAYS AS (start_year + 1) STORED,
     energy_usage_kwh INTEGER NOT NULL,
-    cost_gbp FLOAT
+    cost_gbp FLOAT,
+    UNIQUE(site_id, start_year, end_year)
 );
 
 CREATE TABLE electricity_usage_record (
@@ -38,7 +39,8 @@ CREATE TABLE electricity_usage_record (
     start_year INTEGER NOT NULL,
     end_year INTEGER GENERATED ALWAYS AS (start_year + 1) STORED,
     energy_usage_kwh INTEGER NOT NULL,
-    cost_gbp FLOAT
+    cost_gbp FLOAT,
+    UNIQUE(site_id, start_year, end_year)
 );
 
 
@@ -85,5 +87,4 @@ VALUES
 (6, 2018, 7000, 1050.75),
 (7, 2022, 3000, 400.00),
 (8, 2017, 8000, NULL),
-(1, 2015, 25000, 3200.00),
-(2, 2023, 4000, 600.50);
+(1, 2015, 25000, 3200.00);
