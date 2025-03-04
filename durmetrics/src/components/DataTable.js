@@ -57,6 +57,12 @@ const DataTable = ({ data, setDataForExport }) => {
                 setDataForExport(filtered); // set filtered data after search
         }, [searchText, tableRows, setDataForExport]);
 
+        useEffect(() => {
+                if (filteredRows.length === 0) {
+                        setFilteredRows([{ id: 'no-results', message: `No results found for ${searchText}.` }]);
+                }
+        }, [filteredRows]);
+
         const handleSearchChange = (event) => {
                 setSearchText(event.target.value);
         };
@@ -90,6 +96,13 @@ const DataTable = ({ data, setDataForExport }) => {
                                         )}
                                         itemContent={(index) => {
                                                 const row = filteredRows[index];
+                                                if (row.id === 'no-results') {
+                                                        return (
+                                                                <div className="no-results">
+                                                                        {row.message}
+                                                                </div>
+                                                        );
+                                                }
                                                 return (
                                                         <>
                                                                 {tableColumns.map((col) => (

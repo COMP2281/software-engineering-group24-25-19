@@ -961,3 +961,8 @@ pre {
 .MuiChartsAxis-directionY .MuiChartsAxis-label {
         transform: translateX(-40px) !important;
 }
+
+.no-results {
+        width: 300%;
+        padding: 10px;
+}
