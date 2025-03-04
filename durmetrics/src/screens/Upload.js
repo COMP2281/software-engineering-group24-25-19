@@ -25,11 +25,13 @@ const Upload = (props) => {
 
                 if (!allowedTypes.includes(file.type)) {
                         console.error("Invalid file type. Please upload a CSV or Excel file.");
+                        alert("Invalid file type. Please upload a CSV or Excel file.");
                         return;
                 }
 
                 if (file.size > maxFileSizeMB * 1024 * 1024) {
                         console.error(`File too large. Maximum allowed size is ${maxFileSizeMB}MB.`);
+                        alert(`File too large. Maximum allowed size is ${maxFileSizeMB}MB.`);
                         return;
                 }
 
@@ -47,6 +49,7 @@ const Upload = (props) => {
                                                 if (!meta.fields || meta.fields.length === 0) {
                                                         console.error("CSV file has no headers.");
                                                         setFileContentsJSON(null);
+                                                        alert("Could not process the data: TCSV file has no headers.");
                                                         return;
                                                 }
 
@@ -62,6 +65,8 @@ const Upload = (props) => {
 
                                                 if (!isValidCSV) {
                                                         console.error("CSV file has inconsistent row lengths.");
+                                                        alert("Could not process the data: CSV file has inconsistent row lengths.");
+                                                        setFile(null);
                                                         setFileContentsJSON(null);
                                                         return;
                                                 }
@@ -79,6 +84,7 @@ const Upload = (props) => {
 
                                 if (json.length === 0) {
                                         console.error("Excel file is empty.");
+                                        alert("Could not process the data: Excel file is empty.");
                                         setFileContentsJSON(null);
                                         return;
                                 }
@@ -95,6 +101,7 @@ const Upload = (props) => {
 
                                 if (!isValidExcel) {
                                         console.error("Excel file has inconsistent row structures.");
+                                        alert("Could not process the data: Excel file has inconsistent row lengths.");
                                         setFileContentsJSON(null);
                                         return;
                                 }
@@ -130,7 +137,7 @@ const Upload = (props) => {
 
         return (
                 <div className="upload-content">
-                        <UploadConfiguration setFile={setFile} setDataYear={setDataYear} setDataType={setDataType} stepsComplete={stepsComplete} />
+                        <UploadConfiguration file={file} setFile={setFile} setDataYear={setDataYear} setDataType={setDataType} stepsComplete={stepsComplete} />
                         <UploadPreview file={file} />
                 </div>
         );

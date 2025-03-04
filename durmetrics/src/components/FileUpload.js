@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 const FileUpload = (props) => {
         const fileInputRef = useRef(null);
@@ -24,7 +24,6 @@ const FileUpload = (props) => {
                 if (file) {
                         if (!isValidFile(file)) {
                                 alert('Invalid file type. Please upload a CSV, XLS, or XLSX file.');
-                                // Optionally, clear the file input
                                 event.target.value = null;
                                 return;
                         }
@@ -70,6 +69,15 @@ const FileUpload = (props) => {
                         fileNameRef.current.style.visibility = 'visible';
                 }
         };
+
+        useEffect(() => {
+                if (props.file) {
+                        fileNameRef.current.innerHTML = `<img src="green-tick.svg" class="selected-tick"> Selected <b>${props.file.name}</b>`;
+                        fileNameRef.current.style.visibility = 'visible';
+                } else {
+                        fileNameRef.current.style.visibility = 'hidden';
+                }
+        }, [props.file]);
 
         return (
                 <div

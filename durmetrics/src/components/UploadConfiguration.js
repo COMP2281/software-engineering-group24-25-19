@@ -20,7 +20,7 @@ const UploadConfiguration = (props) => {
                 <div className="upload-panel">
                         <div className="upload-title">Upload data</div>
                         <div className="panel-bar"></div>
-                        <FileUpload setFile={props.setFile} />
+                        <FileUpload file={props.file} setFile={props.setFile} />
                         <div className="upload-title upload-subtitle">Configuration</div>
                         <div className="panel-bar"></div>
                         <div className="upload-config-item">
