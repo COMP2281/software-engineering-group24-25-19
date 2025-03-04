@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import DataTable from '../components/DataTable';
 import report from '../data/report.json'; // For now
 import axios from 'axios';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const Tables = (props) => {
         const [data, setData] = React.useState([]);
@@ -16,6 +18,53 @@ const Tables = (props) => {
                 5: "electricity-percentage",
                 6: "kwh-per-hdd",
                 7: "site-information"
+        };
+
+        const exportToExcel = async () => {
+                if (!dataForExport.length) {
+                        alert("No data to export!");
+                        return;
+                }
+
+                try {
+                        const workbook = new ExcelJS.Workbook();
+
+                        const worksheet = workbook.addWorksheet('Data');
+
+                        const headers = Object.keys(dataForExport[0]);
+                        worksheet.columns = headers.map((key) => ({
+                                header: key,
+                                key: key,
+                        }));
+
+                        dataForExport.forEach((obj) => {
+                                worksheet.addRow(obj);
+                        });
+
+                        // Make  first row (headers) bold
+                        const headerRow = worksheet.getRow(1);
+                        headerRow.font = { bold: true };
+
+                        const buffer = await workbook.xlsx.writeBuffer();
+
+                        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        saveAs(blob, 'data.xlsx');
+
+                } catch (error) {
+                        console.error("Excel export failed:", error);
+                }
+        };
+
+        const exportToCSV = () => {
+                const headers = Object.keys(dataForExport[0] || {}).join(',');
+                const csv = [headers, ...dataForExport.map(row => Object.values(row).join(','))].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data.csv';
+                a.click();
+                window.URL.revokeObjectURL(url);
         };
 
         useEffect(() => {
@@ -37,19 +86,12 @@ const Tables = (props) => {
         }, [props.activeTab]);
 
         useEffect(() => {
-                if (props.wantsExport) {
-                        const headers = Object.keys(dataForExport[0] || {}).join(',');
-                        const csv = [headers, ...dataForExport.map(row => Object.values(row).join(','))].join('\n');
-                        const blob = new Blob([csv], { type: 'text/csv' });
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'data.csv';
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        props.setWantsExport(false);
-                }
-        }, [props.wantsExport]);
+                if (props.wantsCSVExport) exportToCSV();
+                if (props.wantsExcelExport) exportToExcel();
+
+                props.setWantsCSVExport(false);
+                props.setWantsExcelExport(false);
+        }, [props.wantsCSVExport, props.wantsExcelExport]);
 
         useEffect(() => {
                 document.title = 'Tables - DurMetrics';

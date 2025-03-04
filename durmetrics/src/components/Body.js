@@ -6,7 +6,13 @@ const Body = (props) => {
         return (
                 <div className="lower">
                         <Menu />
-                        <Content activeTab={props.activeTab} wantsExport={props.wantsExport} setWantsExport={props.setWantsExport} />
+                        <Content
+                                activeTab={props.activeTab}
+                                wantsCSVExport={props.wantsCSVExport}
+                                setWantsCSVExport={props.setWantsCSVExport}
+                                wantsExcelExport={props.wantsExcelExport}
+                                setWantsExcelExport={props.setWantsExcelExport}
+                        />
                 </div>
         );
 };

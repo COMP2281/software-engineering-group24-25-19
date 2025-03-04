@@ -6,12 +6,26 @@ import { PermissionsMenuContextProvider } from '../contexts/PermissionsMenuConte
 const Interface = () => {
         // Tabs numbered from 0 to 7
         const [activeTab, setActiveTab] = React.useState(0);
-        const [wantsExport, setWantsExport] = React.useState(false);
+        const [wantsCSVExport, setWantsCSVExport] = React.useState(false);
+        const [wantsExcelExport, setWantsExcelExport] = React.useState(false);
 
         return (
                 <PermissionsMenuContextProvider>
-                        <Header activeTab={activeTab} setActiveTab={setActiveTab} setWantsExport={setWantsExport} />
-                        <Body activeTab={activeTab} wantsExport={wantsExport} setWantsExport={setWantsExport} />
+                        <Header
+                                activeTab={activeTab}
+                                setActiveTab={setActiveTab}
+                                wantsCSVExport={wantsCSVExport}
+                                setWantsCSVExport={setWantsCSVExport}
+                                wantsExcelExport={wantsExcelExport}
+                                setWantsExcelExport={setWantsExcelExport}
+                        />
+                        <Body
+                                activeTab={activeTab}
+                                wantsCSVExport={wantsCSVExport}
+                                setWantsCSVExport={setWantsCSVExport}
+                                wantsExcelExport={wantsExcelExport}
+                                setWantsExcelExport={setWantsExcelExport}
+                        />
                 </PermissionsMenuContextProvider>
         );
 };

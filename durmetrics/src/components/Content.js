@@ -8,8 +8,8 @@ const Content = (props) => {
         return (
                 <div className="body">
                         <Routes>
-                                <Route path="/" element={<Tables activeTab={props.activeTab} wantsExport={props.wantsExport} setWantsExport={props.setWantsExport} />} />
-                                <Route path="/tables" element={<Tables activeTab={props.activeTab} wantsExport={props.wantsExport} setWantsExport={props.setWantsExport} />} />
+                                <Route path="/" element={<Tables activeTab={props.activeTab} wantsCSVExport={props.wantsCSVExport} setWantsCSVExport={props.setWantsCSVExport} wantsExcelExport={props.wantsExcelExport} setWantsExcelExport={props.setWantsExcelExport} />} />
+                                <Route path="/tables" element={<Tables activeTab={props.activeTab} wantsCSVExport={props.wantsCSVExport} setWantsCSVExport={props.setWantsCSVExport} wantsExcelExport={props.wantsExcelExport} setWantsExcelExport={props.setWantsExcelExport} />} />
                                 <Route path="/insights" element={<Insights activeTab={props.activeTab} />} />
                                 <Route path="/upload" element={<Upload activeTab={props.activeTab} />} />
                         </Routes>

@@ -844,6 +844,14 @@ pre {
         font-weight: 600;
 }
 
+.header-export-button:not(:first-of-type) {
+        margin-left: 20px;
+}
+
+.header-export-button:first-of-type {
+        margin-right: 0px;
+}
+
 .header-export-button:hover {
         background-color: #ffffff;
         color: #185E4E;
