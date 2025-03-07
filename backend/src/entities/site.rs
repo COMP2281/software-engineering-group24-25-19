@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, PartialEq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "site")]
-
 pub struct Model {
     #[sea_orm(primary_key)]
     #[serde(skip_deserializing)]
@@ -28,4 +27,3 @@ impl Related<super::electricity_usage_record::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-
