@@ -43,6 +43,23 @@ CREATE TABLE electricity_usage_record (
     UNIQUE(site_id, start_year, end_year)
 );
 
+CREATE TABLE heating_degree_day (
+    start_year INTEGER PRIMARY KEY,
+    end_year INTEGER GENERATED ALWAYS AS (start_year + 1) STORED,
+    april INTEGER,
+    may INTEGER,
+    june INTEGER,
+    july INTEGER,
+    august INTEGER,
+    september INTEGER,
+    october INTEGER,
+    november INTEGER,
+    december INTEGER,
+    january INTEGER,
+    february INTEGER,
+    march INTEGER,
+    total INTEGER GENERATED ALWAYS AS (COALESCE(april, 0) + COALESCE(may, 0) + COALESCE(june, 0) + COALESCE(july, 0) + COALESCE(august, 0) + COALESCE(september, 0) + COALESCE(october, 0) + COALESCE(november, 0) + COALESCE(december, 0) + COALESCE(january, 0) + COALESCE(february, 0) + COALESCE(march, 0)) STORED
+);
 
 -- Insert test data into tables
 INSERT INTO site (name, floor_area_square_metre, unique_property_reference_number, ni185_energy_user, comment)
@@ -88,3 +105,13 @@ VALUES
 (7, 2022, 3000, 400.00),
 (8, 2017, 8000, NULL),
 (1, 2015, 25000, 3200.00);
+
+INSERT INTO heating_degree_day (start_year, april, may, june, july, august, september, october, november, december, january, february, march)
+VALUES
+(2017, 216, 141, 82, 69, 71, 98, 108, 276, 325, 312, 330, 350),
+(2018, 213, 141, 82, 42, 47, 97, 161, 216, 298, 334, 254, 292),
+(2019, 244, 178, 72, 42, 59, 81, 186, 238, 308, 327, 315, 341),
+(2020, 232, 181, 84, 49, 109, 106, 209, 222, 310, 345, 320, 274),
+(2021, 231, 123, 61, 52, 58, 71, 148, 211, 305, 327, 277, 279),
+(2022, 229, 138, 66, 28, 60, 78, 179, 252, 300, 314, 280, 273),
+(2023, 238, 133, 70, 47, 54, 85, 186, 250, 306, NULL, NULL, NULL);
