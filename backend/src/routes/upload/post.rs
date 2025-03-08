@@ -21,7 +21,7 @@ pub(super) async fn handler(
         // quick test code to see if the data is properly received
         if let Ok(r) = workbook.worksheet_range("Sheet") {
             for row in r.rows() {
-                println!("row={:?}, row[0]={:?}", row, row[0])
+                println!("row={:?}, row[0]={:?}", row, row[0]);
             }
         }
 

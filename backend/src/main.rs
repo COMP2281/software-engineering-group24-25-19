@@ -29,8 +29,8 @@ async fn shutdown_signal() {
     };
 
     tokio::select! {
-        _ = sigint => {},
-        _ = sigterm => {},
+        () = sigint => {},
+        () = sigterm => {},
     }
 }
 
