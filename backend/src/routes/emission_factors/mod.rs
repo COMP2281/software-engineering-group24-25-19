@@ -6,4 +6,6 @@ use std::sync::Arc;
 
 pub(super) fn router() -> Router<Arc<AppState>> {
     Router::new().route("/", routing::get(get::handler))
+    // create a new Router instance and define a route for the emission factors endpoint
+    // the route uses the GET method and the handler function from the get module
 }
