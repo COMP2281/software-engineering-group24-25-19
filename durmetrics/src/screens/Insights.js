@@ -22,11 +22,28 @@ const Insights = (props) => {
                 return years.length > 0 && categories.length > 0 && sites.length > 0 && chart;
         }
 
+        const [containerWidth, setContainerWidth] = useState(0);
+
+        useEffect(() => {
+                const updateWidth = () => {
+                        const container = document.querySelector('.insights-container');
+                        if (container) {
+                                setContainerWidth(container.offsetWidth);
+                        }
+                };
+
+                updateWidth();
+                window.addEventListener('resize', updateWidth);
+
+                return () => {
+                        window.removeEventListener('resize', updateWidth);
+                };
+        }, []);
+
         return (
                 <div className="insights-container">
-                        {console.log("Refreshing")}
                         <GraphFilters setData={setData} setRenderGraph={setRenderGraph} />
-                        <Graph isAvailable={isAvailable()} years={years} categories={categories} sites={sites} chart={chart} renderGraph={renderGraph} setRenderGraph={setRenderGraph} />
+                        <Graph isAvailable={isAvailable()} years={years} categories={categories} sites={sites} chart={chart} renderGraph={renderGraph} setRenderGraph={setRenderGraph} containerWidth={containerWidth} />
                 </div>
         );
 }

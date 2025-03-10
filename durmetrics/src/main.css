@@ -42,6 +42,10 @@ pre {
         --llgreen: #2A6F5F;
 }
 
+::-webkit-scrollbar {
+        display: none;
+}
+
 .header {
         background-color: var(--green);
         color: white;
@@ -654,6 +658,11 @@ pre {
         border-radius: 2px;
         font-size: 14px;
         cursor: pointer;
+        width: fit-content;
+}
+
+.generate-button {
+        justify-self: center;
 }
 
 .file-upload-button:hover,
@@ -973,4 +982,35 @@ pre {
 .no-results {
         width: 300%;
         padding: 10px;
+}
+
+.custom-legend {
+        display: flex;
+        white-space: nowrap;
+        padding: 8px;
+        min-width: max-content;
+        justify-content: center;
+        animation: delayShow 1s;
+}
+
+.MuiBox-root.css-1yuhvjn {
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        flex-direction: column;
+}
+
+.legend-vertical {
+        flex-direction: column;
+}
+
+.legend-container-vertical {
+        transform: translateX(-200px);
+        height: 450px !important;
+        display: flex;
+        align-items: safe center;
+}
+
+.css-1akrvkz-MuiResponsiveChart-container {
+        justify-self: center;
 }
