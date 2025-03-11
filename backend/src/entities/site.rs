@@ -24,8 +24,18 @@ pub struct Model {
 /// Defines relations for the site table
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(has_many = "super::gas_usage_record::Entity")]
+    GasUsageRecord,
+
     #[sea_orm(has_many = "super::electricity_usage_record::Entity")]
     ElectricityUsageRecord,
+}
+
+/// Implements the Related trait for gas usage records
+impl Related<super::gas_usage_record::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::GasUsageRecord.def()
+    }
 }
 
 /// Implements the Related trait for electricity usage records
