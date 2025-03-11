@@ -82,14 +82,36 @@ const Tables = (props) => {
                 try {
                         const route = tabRouteMap[props.activeTab];
                         const yearsParameters = years.map(year => `start_years=${year}`).join('&');
-                        console.log(dataForExport)
                         const sitesParameters = dataForExport.map(row => `site_ids=${row.site_id}`).join('&');
+
                         const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records?${yearsParameters}&${sitesParameters}`);
-                        setData(result.data);
+
+                        // Aggregate data by site_id
+                        const aggregatedData = result.data.reduce((acc, row) => {
+                                const siteId = row.site_id;
+                                const yearRange = `${row.start_year.toString().slice(-2)}-${row.end_year.toString().slice(-2)}`;
+
+                                if (!acc[siteId]) {
+                                        acc[siteId] = {
+                                                site_id: siteId,
+                                                site_name: row.site_name,
+                                        };
+                                }
+
+                                acc[siteId][`Electricity ${yearRange}`] = row.energy_usage_kwh;
+                                acc[siteId][`Cost (£) for ${yearRange}`] = row.cost_gbp;
+
+                                return acc;
+                        }, {});
+
+                        const transformedData = Object.values(aggregatedData);
+
+                        setData(transformedData);
                 } catch (error) {
                         console.error("Error fetching data:", error);
                 }
         };
+
 
         useEffect(() => {
                 setData(report.data);
