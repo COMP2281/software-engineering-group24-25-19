@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import DataTable from '../components/DataTable';
 import report from '../data/report.json'; // For now
 import axios from 'axios';
@@ -7,8 +7,10 @@ import { saveAs } from 'file-saver';
 
 const Tables = (props) => {
         const [data, setData] = React.useState([]);
+        const [unchangedData, setUnchangedData] = React.useState([]);
         const [dataForExport, setDataForExport] = React.useState([]);
         const [selectedYears, setSelectedYears] = React.useState([]);
+        const stableSetSelectedYears = useCallback(setSelectedYears, []);
 
         const tabRouteMap = {
                 0: "carbon-emissions",
@@ -72,6 +74,7 @@ const Tables = (props) => {
                 try {
                         const route = tabRouteMap[props.activeTab];
                         const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records`);
+                        setUnchangedData(result.data);
                         setData(result.data);
                 } catch (error) {
                         console.error("Error fetching data:", error);
@@ -143,7 +146,8 @@ const Tables = (props) => {
                         data={data}
                         setDataForExport={setDataForExport}
                         selectedYears={selectedYears}
-                        setSelectedYears={setSelectedYears}
+                        setSelectedYears={stableSetSelectedYears}
+                        unchangedData={unchangedData}
                 />
         );
 };

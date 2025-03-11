@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import DropdownFooter from './DropdownFooter';
 import DropdownItem from './DropdownItem';
 
-const MultiDropdown = ({ items, changeSelection, label = "Items", align = "middle", type = "classic", width = "", scrollWidth = "", disabled = false }) => {
+const MultiDropdown = ({ items, changeSelection, selectedYears, newSheetLoaded, label = "Items", align = "middle", type = "classic", width = "", scrollWidth = "", disabled = false }) => {
         const [selectedItems, setSelectedItems] = useState([]);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -20,6 +20,12 @@ const MultiDropdown = ({ items, changeSelection, label = "Items", align = "middl
         useEffect(() => {
                 changeSelection(selectedItems);
         }, [selectedItems]);
+
+        useEffect(() => {
+                if (JSON.stringify(selectedYears) !== JSON.stringify(selectedItems) && newSheetLoaded) {
+                        setSelectedItems(selectedYears);
+                }
+        }, [selectedYears]);
 
         const isAllSelected = selectedItems.length === items.length;
         const dropdownTitle = isAllSelected
