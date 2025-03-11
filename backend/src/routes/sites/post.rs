@@ -5,6 +5,9 @@ use serde::Deserialize;
 use std::sync::Arc;
 use tracing::debug;
 
+/// Payload for creating a new site
+///
+/// Only `name` is required; all other fields are optional
 #[derive(Debug, Default, Deserialize)]
 pub(super) struct Payload {
     pub name: String,
@@ -14,12 +17,16 @@ pub(super) struct Payload {
     pub comment: Option<String>,
 }
 
+/// Handles POST requests to create a new site
+///
+/// Creates a site with the provided data and returns the created site
 pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<Payload>,
 ) -> Result<(StatusCode, Json<site::Model>), ApiError> {
     debug!("payload = {:?}", payload);
 
+    // Build new site entry based on the query parameters.
     let new_site = site::ActiveModel {
         name: Set(payload.name),
         floor_area_square_metre: Set(payload.floor_area_square_metre),
@@ -29,8 +36,10 @@ pub(super) async fn handler(
         ..Default::default()
     };
 
+    // Inser the new site into the database
     let new_site = new_site.insert(&state.database_connection).await?;
 
+    // Return the created record as a JSON response.
     Ok((StatusCode::CREATED, Json(new_site)))
 }
 
@@ -40,6 +49,9 @@ mod tests {
     use axum::response::IntoResponse;
     use sea_orm::{DatabaseBackend, MockDatabase, MockExecResult};
 
+    /// Tests creating a site with a valid payload
+    ///
+    /// Verifies that a 201 CREATED status is returned
     #[tokio::test]
     async fn test_valid_json_payload() {
         let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
@@ -64,6 +76,6 @@ mod tests {
         assert_eq!(StatusCode::CREATED, response.status());
     }
 
-    // not possible to test invalid JSON payload due to type constraints
-    // need to be done as a part of integration tests
+    // Note: Invalid JSON payload tests must be done in integration tests
+    // due to type system constraints
 }

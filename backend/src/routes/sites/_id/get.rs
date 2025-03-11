@@ -5,6 +5,9 @@ use sea_orm::{DbErr, EntityTrait as _};
 use std::sync::Arc;
 use tracing::debug;
 
+/// Handles GET requests for a specific site
+///
+/// Retrieves the site with the ID specified in the path parameters
 pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Path(path_params): Path<PathParams>,
@@ -28,6 +31,7 @@ mod tests {
     use axum::response::IntoResponse;
     use sea_orm::{DatabaseBackend, MockDatabase};
 
+    /// Tests retrieval of an existing site record
     #[tokio::test]
     async fn test_existing_record() {
         let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
@@ -50,6 +54,9 @@ mod tests {
         assert_eq!(StatusCode::OK, response.status());
     }
 
+    /// Tests retrieval of a non-existing site record
+    ///
+    /// Verifies that a 404 NOT_FOUND status is returned
     #[tokio::test]
     async fn test_non_existing_record() {
         let database_connection = MockDatabase::new(DatabaseBackend::Postgres)

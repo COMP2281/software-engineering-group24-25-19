@@ -10,6 +10,7 @@ use serde::Deserialize;
 use std::sync::Arc;
 use tracing::debug;
 
+/// Query parameters for filtering sites
 #[derive(Debug, Default, Deserialize)]
 pub(super) struct QueryParams {
     ids: Option<Vec<i32>>,
@@ -20,12 +21,16 @@ pub(super) struct QueryParams {
     ni185_energy_user: Option<String>,
 }
 
+/// Handles GET requests for sites
+///
+/// Filters sites based on optional query parameters
 pub(super) async fn handler(
     State(state): State<Arc<AppState>>,
     Query(query_params): Query<QueryParams>,
 ) -> Result<(StatusCode, Json<Vec<site::Model>>), ApiError> {
     debug!("query_params = {:?}", query_params);
 
+    // Build the conditions based on the query parameters.
     let conditions = Condition::all()
         .add_option(query_params.ids.map(|ids| site::Column::Id.is_in(ids)))
         .add_option(
@@ -54,11 +59,13 @@ pub(super) async fn handler(
                 .map(|search| site::Column::Ni185EnergyUser.contains(search)),
         );
 
+    // Find the site records that match the conditions.
     let matched_records: Vec<site::Model> = site::Entity::find()
         .filter(conditions)
         .all(&state.database_connection)
         .await?;
 
+    // Return the matched records as a JSON response.
     Ok((StatusCode::OK, Json(matched_records)))
 }
 
@@ -68,6 +75,7 @@ mod tests {
     use axum::response::IntoResponse;
     use sea_orm::{DatabaseBackend, MockDatabase};
 
+    /// Tests the handler without any query parameters
     #[tokio::test]
     async fn test_without_query_parameters() {
         let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
@@ -90,6 +98,7 @@ mod tests {
         assert_eq!(StatusCode::OK, response.status());
     }
 
+    /// Tests the handler with all query parameters provided
     #[tokio::test]
     async fn test_with_query_parameters() {
         let database_connection = MockDatabase::new(DatabaseBackend::Postgres)
