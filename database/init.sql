@@ -61,6 +61,12 @@ CREATE TABLE heating_degree_day (
     total INTEGER GENERATED ALWAYS AS (COALESCE(april, 0) + COALESCE(may, 0) + COALESCE(june, 0) + COALESCE(july, 0) + COALESCE(august, 0) + COALESCE(september, 0) + COALESCE(october, 0) + COALESCE(november, 0) + COALESCE(december, 0) + COALESCE(january, 0) + COALESCE(february, 0) + COALESCE(march, 0)) STORED
 );
 
+CREATE TABLE access_code (
+    id SERIAL PRIMARY KEY,
+    hashed_code TEXT NOT NULL,
+    access_level INTEGER NOT NULL CHECK (access_level IN (1, 2))
+);
+
 -- Insert test data into tables
 INSERT INTO site (name, floor_area_square_metre, unique_property_reference_number, ni185_energy_user, comment)
 VALUES
@@ -115,3 +121,8 @@ VALUES
 (2021, 231, 123, 61, 52, 58, 71, 148, 211, 305, 327, 277, 279),
 (2022, 229, 138, 66, 28, 60, 78, 179, 252, 300, 314, 280, 273),
 (2023, 238, 133, 70, 47, 54, 85, 186, 250, 306, NULL, NULL, NULL);
+
+INSERT INTO access_code (hashed_code, access_level) 
+VALUES 
+(md5('5BL34X'), 1),
+(md5('Q8J4KW'), 2);
