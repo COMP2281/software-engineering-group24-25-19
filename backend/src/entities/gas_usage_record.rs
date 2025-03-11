@@ -1,31 +1,30 @@
 use sea_orm::entity::prelude::*;
 use serde::Serialize;
 
+/// Represents a gas usage record
 #[derive(Clone, Debug, Default, PartialEq, DeriveEntityModel, Serialize)]
 #[sea_orm(table_name = "gas_usage_record")]
-// define the table name in the database
 pub struct Model {
+    /// Primary key
     #[sea_orm(primary_key)]
     pub id: i32,
+    /// Foreign key reference to the site table
     pub site_id: i32,
+    /// Starting year of the gas usage record
     pub start_year: i32,
+    /// Ending year of the gas usage record
     pub end_year: i32,
+    /// Gas energy usage in kilowatt-hours
     pub energy_usage_kwh: i32,
+    /// Cost in British Pounds
     pub cost_gbp: Option<f64>,
 }
 
-// primary key in 32-bit integer
-// site_id in 32-bit integer
-// start_year in 32-bit integer
-// end_year in 32-bit integer
-// energy_usage_kwh in 32-bit integer
-// cost_gbp in 64-bit float
-
+/// Defines relations for the `gas_usage_record` table
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-
-// define an enum for relations
 pub enum Relation {
-    // define a relation to the site entity (foreign key)
+    /// Foreign key relation to the site table
+    /// Defines the relation between the `gas_usage_record` table and the site table
     #[sea_orm(
         belongs_to = "super::site::Entity",
         from = "Column::SiteId",
@@ -34,12 +33,12 @@ pub enum Relation {
     Site,
 }
 
-// implement the Related trait for the Entity struct
+/// Implements the Related trait for sites
 impl Related<super::site::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Site.def()
     }
 }
 
-// implement default bahaviour for the Model struct
+/// Implements default behavior for the `ActiveModel`
 impl ActiveModelBehavior for ActiveModel {}

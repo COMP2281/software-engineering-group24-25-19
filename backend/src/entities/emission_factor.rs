@@ -1,26 +1,24 @@
 use sea_orm::entity::prelude::*;
 use serde::Serialize;
 
+/// Represents an emission factor record
 #[derive(Clone, Debug, Default, PartialEq, DeriveEntityModel, Serialize)]
-// derive the EntityModel trait for the Model struct
 #[sea_orm(table_name = "emission_factor")]
-// define the table name in the database
 pub struct Model {
+    /// Primary key - starting year of the emission factor period
     #[sea_orm(primary_key)]
-    // define the primary key (startt_year)
     pub start_year: i32,
-    // start_year in 32-bit integer
+    /// Ending year of the emission factor period
     pub end_year: i32,
-    // end_year in 32-bit integer
+    /// Gas emission factor
     pub gas: f64,
-    // gas in 64-bit float
+    /// Electricity emission factor
     pub electricity: f64,
-    //electricity in 64-bit float
 }
 
+/// Defines relations for the `emission_factor` table (currently empty)
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
-// an empty enum for defining relations
 
-// implement default bahaviour for the Model struct
+/// Implements default behavior for the `ActiveModel`
 impl ActiveModelBehavior for ActiveModel {}
