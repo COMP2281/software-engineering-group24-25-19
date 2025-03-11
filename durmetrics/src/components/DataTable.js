@@ -3,8 +3,7 @@ import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
 import { TableVirtuoso } from 'react-virtuoso';
 
-const DataTable = ({ data, setDataForExport }) => {
-        const [selectedYears, setSelectedYears] = useState([]);
+const DataTable = ({ data, setDataForExport, selectedYears, setSelectedYears }) => {
         const [tableColumns, setTableColumns] = useState([]);
         const [tableRows, setTableRows] = useState([]);
         const [filteredRows, setFilteredRows] = useState([]);

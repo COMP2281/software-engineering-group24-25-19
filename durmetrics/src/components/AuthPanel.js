@@ -28,7 +28,7 @@ const AuthPanel = () => {
         const handleKeyDown = (e) => {
                 const currentIndex = parseInt(e.target.id.split('-')[1], 10);
 
-                if (e.key === ' ' || e.key === 'Enter') {
+                if (e.key === ' ' || e.key === 'Enter' || e.key === 'Shift') {
                         e.preventDefault();
                         return;
                 }
@@ -64,7 +64,9 @@ const AuthPanel = () => {
                                         'Content-Type': 'application/json',
                                 },
                                 withCredentials: true,
-                                data: JSON.stringify({ code })
+                                data: {
+                                        code
+                                },
                         });
 
                         return res;

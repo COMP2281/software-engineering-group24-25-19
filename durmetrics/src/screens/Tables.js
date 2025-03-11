@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 const Tables = (props) => {
         const [data, setData] = React.useState([]);
         const [dataForExport, setDataForExport] = React.useState([]);
+        const [selectedYears, setSelectedYears] = React.useState([]);
 
         const tabRouteMap = {
                 0: "carbon-emissions",
@@ -67,23 +68,40 @@ const Tables = (props) => {
                 window.URL.revokeObjectURL(url);
         };
 
+        const fetchTableData = async () => {
+                try {
+                        const route = tabRouteMap[props.activeTab];
+                        const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records`);
+                        setData(result.data);
+                } catch (error) {
+                        console.error("Error fetching data:", error);
+                }
+        };
+
+        const fetchDataForYears = async (years) => {
+                try {
+                        const route = tabRouteMap[props.activeTab];
+                        const yearsParameters = years.map(year => `start_years=${year}`).join('&');
+                        console.log(dataForExport)
+                        const sitesParameters = dataForExport.map(row => `site_ids=${row.site_id}`).join('&');
+                        const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records?${yearsParameters}&${sitesParameters}`);
+                        setData(result.data);
+                } catch (error) {
+                        console.error("Error fetching data:", error);
+                }
+        };
+
         useEffect(() => {
                 setData(report.data);
         }, []);
 
         useEffect(() => {
-                const fetchData = async () => {
-                        try {
-                                const route = tabRouteMap[props.activeTab];
-                                const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records`);
-                                setData(result.data);
-                        } catch (error) {
-                                console.error("Error fetching data:", error);
-                        }
-                };
-
-                fetchData();
+                fetchTableData();
         }, [props.activeTab]);
+
+        useEffect(() => {
+                if (selectedYears.length) fetchDataForYears(selectedYears);
+        }, [selectedYears]);
 
         useEffect(() => {
                 if (props.wantsCSVExport) exportToCSV();
@@ -98,7 +116,13 @@ const Tables = (props) => {
         }, []);
 
         return (
-                <DataTable activeTab={props.activeTab} data={data} setDataForExport={setDataForExport} />
+                <DataTable
+                        activeTab={props.activeTab}
+                        data={data}
+                        setDataForExport={setDataForExport}
+                        selectedYears={selectedYears}
+                        setSelectedYears={setSelectedYears}
+                />
         );
 };
 
