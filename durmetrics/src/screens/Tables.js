@@ -4,6 +4,7 @@ import report from '../data/report.json'; // For now
 import axios from 'axios';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import tableHeadersConfig from '../utils/tableHeadersConfig';
 
 const Tables = (props) => {
         const [data, setData] = React.useState([]);
@@ -84,25 +85,38 @@ const Tables = (props) => {
         const fetchDataForYears = async (years) => {
                 try {
                         const route = tabRouteMap[props.activeTab];
+                        const headersConfig = tableHeadersConfig[route];
                         const yearsParameters = years.map(year => `start_years=${year}`).join('&');
                         const sitesParameters = dataForExport.map(row => `site_ids=${row.site_id}`).join('&');
 
                         const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records?${yearsParameters}&${sitesParameters}`);
 
+                        const { staticFields, dynamicFields } = headersConfig;
+
                         // Aggregate data by site_id
                         const aggregatedData = result.data.reduce((acc, row) => {
                                 const siteId = row.site_id;
-                                const yearRange = `${row.start_year.toString().slice(-2)}-${row.end_year.toString().slice(-2)}`;
 
-                                if (!acc[siteId]) {
-                                        acc[siteId] = {
-                                                site_id: siteId,
-                                                site_name: row.site_name,
-                                        };
+                                let years = [];
+                                if (row.start_year) {
+                                        years.push(row.start_year.toString().slice(-2));
+                                        years.push(row.end_year.toString().slice(-2));
                                 }
 
-                                acc[siteId][`Electricity ${yearRange}`] = row.energy_usage_kwh;
-                                acc[siteId][`Cost (£) for ${yearRange}`] = row.cost_gbp;
+                                if (!acc[siteId]) acc[siteId] = {};
+
+                                Object.keys(staticFields).forEach(apiField => {
+                                        let displayLabel = staticFields[apiField];
+                                        acc[siteId][displayLabel] = row[apiField];
+                                });
+
+                                Object.keys(dynamicFields).forEach(apiField => {
+                                        let displayLabel = dynamicFields[apiField];
+                                        displayLabel = displayLabel.replace(/{year1}/g, years[0]);
+                                        displayLabel = displayLabel.replace(/{year2}/g, years[1]);
+
+                                        acc[siteId][displayLabel] = row[apiField];
+                                });
 
                                 return acc;
                         }, {});
