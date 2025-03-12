@@ -23,6 +23,7 @@ pub struct LoginResponse {
 pub struct Claims {
     sub: String,
     exp: usize,
+    access_level: u8,
 }
 
 pub(super) async fn handler(
@@ -44,15 +45,16 @@ pub(super) async fn handler(
             let claims = Claims {
                 sub: hashed_code.clone(),
                 exp: chrono::Utc::now().timestamp() as usize + 3600,
+                access_level,
             };
-            Some(
-                encode(
-                    &Header::default(),
-                    &claims,
-                    &EncodingKey::from_secret(b"secret"),
-                )
-                .unwrap(),
-            )
+            match encode(
+                &Header::default(),
+                &claims,
+                &EncodingKey::from_secret(b"secret"),
+            ) {
+                Ok(t) => Some(t),
+                Err(_) => None,
+            }
         } else {
             None
         };
