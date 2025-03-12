@@ -2,8 +2,17 @@ import React, { useEffect, useState, useRef } from 'react';
 import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
 import { TableVirtuoso } from 'react-virtuoso';
+import PercentageModal from './PercentageModal';
 
-const DataTable = ({ data, setDataForExport, selectedYears, setSelectedYears, unchangedData }) => {
+const DataTable = ({
+        data,
+        setDataForExport,
+        selectedYears,
+        setSelectedYears,
+        unchangedData,
+        percentageChanges,
+        setPercentageChanges,
+}) => {
         const previousDataRef = useRef(null);
         const isResetting = useRef(false);
 
@@ -16,7 +25,6 @@ const DataTable = ({ data, setDataForExport, selectedYears, setSelectedYears, un
 
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
-
 
         useEffect(() => {
                 if (!data || data.length === 0) return;
@@ -95,7 +103,15 @@ const DataTable = ({ data, setDataForExport, selectedYears, setSelectedYears, un
                 <>
                         <div className="table-filters">
                                 <SearchBar searchTable={handleSearchChange} />
-                                <MultiDropdown items={years} changeSelection={setSelectedYears} selectedYears={selectedYears} newSheetLoaded={newSheetLoaded} label="Years" />
+                                <MultiDropdown
+                                        items={years}
+                                        changeSelection={setSelectedYears}
+                                        selectedYears={selectedYears}
+                                        newSheetLoaded={newSheetLoaded}
+                                        label="Years"
+                                        padLeft={true}
+                                />
+                                <PercentageModal percentageChanges={percentageChanges} setPercentageChanges={setPercentageChanges} />
                         </div>
 
                         <div className="table-container" style={{ overflowX: 'auto' }}>
@@ -153,17 +169,38 @@ const DataTable = ({ data, setDataForExport, selectedYears, setSelectedYears, un
                                                                                                         background: '#fff',
                                                                                                 }
                                                                                                 : {};
+
+                                                                                // If the column is a % Change column, apply conditional styling.
+                                                                                let customCellStyle = {};
+                                                                                if (col.field.includes("% Change")) {
+                                                                                        const cellVal = row[col.field];
+                                                                                        const numericVal = parseFloat(cellVal);
+                                                                                        if (!isNaN(numericVal)) {
+                                                                                                customCellStyle = {
+                                                                                                        color: numericVal <= 0 ? 'green' : '#a70000',
+                                                                                                        backgroundColor: numericVal <= 0 ? '#00bd002b' : '#a700002b',
+                                                                                                        fontWeight: 'bold',
+                                                                                                };
+                                                                                        }
+                                                                                }
+
                                                                                 return (
                                                                                         <td
                                                                                                 key={col.field}
                                                                                                 style={{
-                                                                                                        textAlign: typeof row[col.field] === 'number' ? 'right' : 'left',
+                                                                                                        textAlign:
+                                                                                                                typeof row[col.field] === 'number' || col.field.includes("%")
+                                                                                                                        ? 'right'
+                                                                                                                        : 'left',
                                                                                                         minWidth: `${col.minWidth}px`,
                                                                                                         whiteSpace: 'nowrap',
                                                                                                         ...stickyStyles,
+                                                                                                        ...customCellStyle,
                                                                                                 }}
                                                                                         >
-                                                                                                {typeof row[col.field] === 'number' ? formatNumber(row[col.field]) : row[col.field]}
+                                                                                                {typeof row[col.field] === 'number'
+                                                                                                        ? formatNumber(row[col.field])
+                                                                                                        : row[col.field]}
                                                                                         </td>
                                                                                 );
                                                                         })}

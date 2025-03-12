@@ -240,7 +240,7 @@ pre {
 }
 
 .search-bar {
-        width: calc(100% - 35px);
+        width: 100%;
         height: 100%;
         outline: none;
         border: 1px solid #D2D2D2;
@@ -445,6 +445,7 @@ pre {
         box-sizing: border-box;
         border-radius: 2px;
         margin-left: auto;
+        cursor: pointer;
 }
 
 .dropdown-button.align-left,
@@ -650,7 +651,9 @@ pre {
 }
 
 .file-upload-button,
-.generate-button {
+.generate-button,
+.add-percentage-button,
+.button-general {
         padding: 6px 16px;
         background-color: var(--green);
         font-weight: 700;
@@ -665,9 +668,23 @@ pre {
         justify-self: center;
 }
 
+.add-percentage-button {
+        width: 100%;
+        margin-top: 30px;
+        text-align: center;
+}
+
+.add-percentage-button.disabled {
+        background-color: #d3d3d3;
+        color: #9C9A9A;
+        cursor: not-allowed;
+}
+
 .file-upload-button:hover,
 .upload-button:not(.upload-button-disabled):hover,
-.generate-button:hover {
+.generate-button:hover,
+.add-percentage-button:not(.disabled):hover,
+.button-general:hover {
         filter: brightness(1.15);
         transition: all 0.2s;
 }
@@ -1042,4 +1059,125 @@ pre {
         100% {
                 transform: rotate(360deg);
         }
+}
+
+.MuiBox-root.css-vu07od,
+.MuiBox-root.css-1h93fi4 {
+        border-radius: 2px;
+        outline: none !important;
+}
+
+.modal {
+        font-family: "Inter";
+}
+
+.modal-dropdown-container {
+        margin-top: 15px;
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+}
+
+.modal-dropdown-container .dropdown-wrapper {
+        margin-left: unset;
+}
+
+.dropdown-disabled {
+        background-color: #f0f0f0;
+        cursor: not-allowed;
+        opacity: 0.4;
+}
+
+.percentage-changes {
+        background-color: #f3f3f3;
+        padding: 15px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        border-radius: 2px;
+        margin-bottom: 20px;
+}
+
+.percentage-change {
+        background-color: #D9D9D9;
+        padding: 3px 8px;
+        border-radius: 100px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        width: fit-content;
+}
+
+.percentage-change .cross-icon {
+        margin-left: 3px;
+        padding: 4px;
+        cursor: pointer;
+}
+
+.cross-icon:hover {
+        filter: brightness(0.8);
+        background-color: #f0f0f0;
+        border-radius: 50%;
+}
+
+.new-percentage-button {
+        background-color: white;
+        color: var(--green);
+        border: 1px solid var(--green);
+        transition: all 0.11s;
+}
+
+.new-percentage-button:hover {
+        background-color: var(--green);
+        color: white;
+        filter: none;
+}
+
+.new-percentage-button:active,
+.save-percentages-button:active {
+        filter: brightness(0.7);
+}
+
+.modal-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+}
+
+.no-percentage-changes {
+        font-size: 14px;
+        color: #7b7b7b;
+}
+
+.percentage-changes-button {
+        width: 240px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        border: 1px solid #D2D2D2;
+        color: black;
+        font-weight: normal;
+        padding: unset !important;
+        margin-left: 15px;
+}
+
+.percentage-changes-button:hover {
+        filter: none;
+        background-color: var(--green);
+        color: white;
+        border: 1px solid var(--green);
+}
+
+.percentage-changes-button:hover>.percent-icon {
+        filter: invert(1);
+}
+
+.percent-icon {
+        height: 14px;
+        margin-right: 10px;
+        transition: all 0.11s;
 }

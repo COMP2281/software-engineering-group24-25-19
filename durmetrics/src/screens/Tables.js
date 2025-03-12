@@ -1,16 +1,20 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import DataTable from '../components/DataTable';
 import report from '../data/report.json'; // For now
 import axios from 'axios';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import tableHeadersConfig from '../utils/tableHeadersConfig';
+import percentageChangeColumnConfig from '../utils/percentageChangeColumnConfig';
 
 const Tables = (props) => {
-        const [data, setData] = React.useState([]);
-        const [unchangedData, setUnchangedData] = React.useState([]);
-        const [dataForExport, setDataForExport] = React.useState([]);
-        const [selectedYears, setSelectedYears] = React.useState([]);
+        const [data, setData] = useState([]);
+        const [unchangedData, setUnchangedData] = useState([]); // Full aggregated master data
+        const [dataForExport, setDataForExport] = useState([]);
+        const [selectedYears, setSelectedYears] = useState([]);
+        const [percentageChanges, setPercentageChanges] = useState([]);
+
+        // Keep setSelectedYears stable to avoid loops
         const stableSetSelectedYears = useCallback(setSelectedYears, []);
 
         const tabRouteMap = {
@@ -29,39 +33,39 @@ const Tables = (props) => {
                         alert("No data to export!");
                         return;
                 }
-
                 try {
                         const workbook = new ExcelJS.Workbook();
-
                         const worksheet = workbook.addWorksheet('Data');
-
                         const headers = Object.keys(dataForExport[0]);
                         worksheet.columns = headers.map((key) => ({
                                 header: key,
                                 key: key,
                         }));
-
                         dataForExport.forEach((obj) => {
                                 worksheet.addRow(obj);
                         });
-
-                        // Make  first row (headers) bold
                         const headerRow = worksheet.getRow(1);
                         headerRow.font = { bold: true };
-
                         const buffer = await workbook.xlsx.writeBuffer();
-
-                        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        const blob = new Blob([buffer], {
+                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                        });
                         saveAs(blob, 'data.xlsx');
-
                 } catch (error) {
                         console.error("Excel export failed:", error);
                 }
         };
 
         const exportToCSV = () => {
-                const headers = Object.keys(dataForExport[0] || {}).join(',');
-                const csv = [headers, ...dataForExport.map(row => Object.values(row).join(','))].join('\n');
+                if (!dataForExport.length) {
+                        alert("No data to export!");
+                        return;
+                }
+                const headers = Object.keys(dataForExport[0]).join(',');
+                const csv = [
+                        headers,
+                        ...dataForExport.map(row => Object.values(row).join(','))
+                ].join('\n');
                 const blob = new Blob([csv], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -71,12 +75,47 @@ const Tables = (props) => {
                 window.URL.revokeObjectURL(url);
         };
 
+        // Aggregation Helper:
+        // This converts raw API data (with start_year/end_year) into an aggregated shape
+        // with columns like "Electricity 17-18" based on tableHeadersConfig import
+        const aggregateServerData = (rows, route) => {
+                const { staticFields = {}, dynamicFields = {} } = tableHeadersConfig[route] || {};
+                const aggregator = rows.reduce((acc, row) => {
+                        const siteId = row.site_id;
+                        if (!acc[siteId]) acc[siteId] = {};
+                        let y1 = "";
+                        let y2 = "";
+                        if (row.start_year) {
+                                y1 = row.start_year.toString().slice(-2);
+                        }
+                        if (row.end_year) {
+                                y2 = row.end_year.toString().slice(-2);
+                        }
+                        // Insert static fields
+                        Object.keys(staticFields).forEach((apiField) => {
+                                const displayLabel = staticFields[apiField];
+                                acc[siteId][displayLabel] = row[apiField];
+                        });
+                        // Insert dynamic fields
+                        Object.keys(dynamicFields).forEach((apiField) => {
+                                let displayLabel = dynamicFields[apiField];
+                                displayLabel = displayLabel.replace(/{year1}/g, y1).replace(/{year2}/g, y2);
+                                acc[siteId][displayLabel] = row[apiField];
+                        });
+                        return acc;
+                }, {});
+                return Object.values(aggregator);
+        };
+
         const fetchTableData = async () => {
                 try {
                         const route = tabRouteMap[props.activeTab];
+                        if (!route) return;
                         const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records`);
-                        setUnchangedData(result.data);
-                        setData(result.data);
+                        const rawRows = result.data || [];
+                        const aggregatedRows = aggregateServerData(rawRows, route);
+                        setUnchangedData(aggregatedRows); // store master data
+                        setData(aggregatedRows); // set visible data (initially all)
                 } catch (error) {
                         console.error("Error fetching data:", error);
                 }
@@ -85,74 +124,179 @@ const Tables = (props) => {
         const fetchDataForYears = async (years) => {
                 try {
                         const route = tabRouteMap[props.activeTab];
-                        const headersConfig = tableHeadersConfig[route];
+                        if (!route) return;
                         const yearsParameters = years.map(year => `start_years=${year}`).join('&');
-                        const sitesParameters = dataForExport.map(row => `site_ids=${row.site_id}`).join('&');
-
-                        const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records?${yearsParameters}&${sitesParameters}`);
-
-                        const { staticFields, dynamicFields } = headersConfig;
-
-                        // Aggregate data by site_id
-                        const aggregatedData = result.data.reduce((acc, row) => {
-                                const siteId = row.site_id;
-
-                                let years = [];
-                                if (row.start_year) {
-                                        years.push(row.start_year.toString().slice(-2));
-                                        years.push(row.end_year.toString().slice(-2));
-                                }
-
-                                if (!acc[siteId]) acc[siteId] = {};
-
-                                Object.keys(staticFields).forEach(apiField => {
-                                        let displayLabel = staticFields[apiField];
-                                        acc[siteId][displayLabel] = row[apiField];
-                                });
-
-                                Object.keys(dynamicFields).forEach(apiField => {
-                                        let displayLabel = dynamicFields[apiField];
-                                        displayLabel = displayLabel.replace(/{year1}/g, years[0]);
-                                        displayLabel = displayLabel.replace(/{year2}/g, years[1]);
-
-                                        acc[siteId][displayLabel] = row[apiField];
-                                });
-
-                                return acc;
-                        }, {});
-
-                        const transformedData = Object.values(aggregatedData);
-
-                        setData(transformedData);
+                        const sitesParameters = dataForExport
+                                .map(row => `site_ids=${row.site_id || row["Site ID"]}`)
+                                .join('&');
+                        const url = `https://durmetrics-api.sglre6355.net/${route}/records?${yearsParameters}&${sitesParameters}`;
+                        const result = await axios.get(url);
+                        const rawRows = result.data || [];
+                        const aggregatedRows = aggregateServerData(rawRows, route);
+                        setData(aggregatedRows);
                 } catch (error) {
                         console.error("Error fetching data:", error);
                 }
         };
 
-
+        // Load dummy data initially (local JSON) – for dev
         useEffect(() => {
                 setData(report.data);
         }, []);
 
+        // Fetch fresh data whenever the user switches tabs
         useEffect(() => {
                 fetchTableData();
+                // Also clear any percentage changes when tab changes
+                setPercentageChanges([]);
+                // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [props.activeTab]);
 
+        // If user selects specific years, fetch data for those years
         useEffect(() => {
-                if (selectedYears.length) fetchDataForYears(selectedYears);
+                if (selectedYears.length > 0) {
+                        fetchDataForYears(selectedYears);
+                }
         }, [selectedYears]);
 
+        // Handle export triggers
         useEffect(() => {
                 if (props.wantsCSVExport) exportToCSV();
                 if (props.wantsExcelExport) exportToExcel();
-
                 props.setWantsCSVExport(false);
                 props.setWantsExcelExport(false);
         }, [props.wantsCSVExport, props.wantsExcelExport]);
 
+        // Set the document title
         useEffect(() => {
                 document.title = 'Tables - DurMetrics';
         }, []);
+
+        // Whenever percentageChanges updates, add or remove the % Change columns
+        // This uses unchangedData for calculations but shows columns based on data variable
+        useEffect(() => {
+                // If there's no data, do nothing
+                if (!data.length) return;
+
+                // Determine which column prefix to use based on current route
+                const route = tabRouteMap[props.activeTab];
+
+                const columnPrefix = percentageChangeColumnConfig[route] || "Electricity";
+
+                // Build a set of allowed % Change column names based on current percentageChanges
+                const allowedPctCols = new Set(
+                        percentageChanges.map(({ year1, year2 }) => {
+                                const y1 = year1.toString().slice(-2);
+                                const y2 = year2.toString().slice(-2);
+                                return `% Change ${y1}-${y2}`;
+                        })
+                );
+
+                let changedSomething = false;
+                const updatedData = data.map((row) => {
+                        // Convert row to entries for ordered manipulation
+                        let rowEntries = Object.entries(row);
+
+                        // Remove any % Change columns that are no longer allowed
+                        const originalLength = rowEntries.length;
+                        rowEntries = rowEntries.filter(([colName]) => {
+                                if (colName.startsWith('% Change ')) {
+                                        return allowedPctCols.has(colName);
+                                }
+                                return true;
+                        });
+                        if (rowEntries.length !== originalLength) {
+                                changedSomething = true;
+                        }
+
+                        const siteId = row.site_id || row["Site ID"];
+                        // Find the matching row in unchangedData for hidden values
+                        const masterRow = unchangedData.find(
+                                (r) => r.site_id === siteId || r["Site ID"] === siteId
+                        );
+
+                        // Helper: parse a column like "Electricity 17-18" or "Gas 17-18" to extract the numeric start year
+                        function getColumnStartYear(colName) {
+                                const regex = new RegExp(`^${columnPrefix}\\s+(\\d+)-\\d+$`);
+                                const match = colName.match(regex);
+                                return match ? parseInt(match[1], 10) : NaN;
+                        }
+
+                        // For each requested % change (only for allowed ones)
+                        for (const { year1, year2 } of percentageChanges) {
+                                const y1 = year1.toString().slice(-2);
+                                const y2 = year2.toString().slice(-2);
+                                const firstYearCol = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
+                                const secondYearCol = `${columnPrefix} ${y2}-${parseInt(y2, 10) + 1}`;
+                                const changeColName = `% Change ${y1}-${y2}`;
+
+                                // If this column already exists in the current row, skip adding it
+                                if (row[changeColName] !== undefined) {
+                                        continue;
+                                }
+
+                                // Pull value for firstYearCol from row, fallback to masterRow if missing
+                                let val1 = row[firstYearCol];
+                                if (val1 === undefined && masterRow) {
+                                        val1 = masterRow[firstYearCol];
+                                }
+                                val1 = parseFloat(val1) || 0;
+
+                                // Pull value for secondYearCol from row, fallback to masterRow if missing
+                                let val2 = row[secondYearCol];
+                                if (val2 === undefined && masterRow) {
+                                        val2 = masterRow[secondYearCol];
+                                }
+                                val2 = parseFloat(val2) || 0;
+
+                                let pctChange = 0;
+                                if (val1 !== 0) {
+                                        pctChange = ((val2 - val1) / val1) * 100;
+                                }
+
+                                const finalNum = Number.isNaN(pctChange) ? 0 : +pctChange.toFixed(2)
+                                const finalVal = `${finalNum > 0 ? "+" : ""}${finalNum}%`;
+
+                                // Determine where to insert the new % Change column in rowEntries
+                                const secondYearIndex = rowEntries.findIndex(
+                                        ([colName]) => colName === secondYearCol
+                                );
+                                if (secondYearIndex !== -1) {
+                                        // Insert right after the secondYearCol
+                                        rowEntries.splice(secondYearIndex + 1, 0, [changeColName, finalVal]);
+                                        changedSomething = true;
+                                } else {
+                                        // If secondYearCol is not visible, insert before the next-larger column with the given prefix
+                                        const desiredYear = parseInt(y2, 10);
+                                        let insertionIndex = -1;
+                                        for (let i = 0; i < rowEntries.length; i++) {
+                                                const [colName] = rowEntries[i];
+                                                if (colName.startsWith(`${columnPrefix} `)) {
+                                                        const colStart = getColumnStartYear(colName);
+                                                        if (!isNaN(colStart) && colStart > desiredYear) {
+                                                                insertionIndex = i;
+                                                                break;
+                                                        }
+                                                }
+                                        }
+                                        if (insertionIndex === -1) {
+                                                insertionIndex = rowEntries.length;
+                                        }
+                                        rowEntries.splice(insertionIndex, 0, [changeColName, finalVal]);
+                                        changedSomething = true;
+                                }
+                        }
+                        return Object.fromEntries(rowEntries);
+                });
+                if (changedSomething) {
+                        setData(updatedData);
+                }
+        }, [data, unchangedData, percentageChanges, props.activeTab]);
+
+        // Clear all percentageChanges when a new tab is clicked
+        useEffect(() => {
+                setPercentageChanges([]);
+        }, [props.activeTab]);
 
         return (
                 <DataTable
@@ -162,44 +306,10 @@ const Tables = (props) => {
                         selectedYears={selectedYears}
                         setSelectedYears={stableSetSelectedYears}
                         unchangedData={unchangedData}
+                        percentageChanges={percentageChanges}
+                        setPercentageChanges={setPercentageChanges}
                 />
         );
 };
 
 export default Tables;
-
-
-// const [tableColumns, setTableColumns] = useState([]);
-// const [tableRows, setTableRows] = useState([]);
-// const [data, setData] = useState([]);
-
-// useEffect(async () => {
-
-//         let result = await axios.get("https://durmetrics-api.sglre6355.net/gas-usage/records");
-//         console.log(result);
-//         for (let row of result.data) {
-//                 console.log(row.energy_usage_kwh);
-//         }
-
-//         const columns = Object.keys(result.data[0] || {}).map((key) => ({
-//                 title: key,
-//                 field: key,
-//                 width: Math.max(
-//                         key.length * 15, // approximate width of header text
-//                         ...result.data.map((row) => (row[key]?.length || 0) * 8) // width of content
-//                 ),
-//         }));
-
-//         setTableColumns(columns);
-
-//         // map rows with matching keys
-//         const rows = result.data.map((row, index) => ({
-//                 id: index + 1,
-//                 ...row,
-//         }));
-//         console.log(rows)
-//         var filtered = rows.filter(row => { return row.start_year === 2020 })
-//         console.log(filtered.map(row => row.energy_usage_kwh));
-//         setTableRows(rows);
-
-// }, []);

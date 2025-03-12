@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import DropdownFooter from './DropdownFooter';
 import DropdownItem from './DropdownItem';
 
-const MultiDropdown = ({ items, changeSelection, selectedYears, newSheetLoaded, label = "Items", align = "middle", type = "classic", width = "", scrollWidth = "", disabled = false }) => {
+const MultiDropdown = ({ items, changeSelection, selectedYears, newSheetLoaded, label = "Items", align = "middle", type = "classic", width = "", scrollWidth = "", disabled = false, padLeft = false }) => {
         const [selectedItems, setSelectedItems] = useState([]);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -45,7 +45,7 @@ const MultiDropdown = ({ items, changeSelection, selectedYears, newSheetLoaded, 
         }, []);
 
         return (
-                <div className={`dropdown-wrapper align-${align}`} ref={dropdownRef} style={{ width }}>
+                <div className={`dropdown-wrapper align-${align}`} ref={dropdownRef} style={{ width, marginLeft: `${padLeft ? "15px" : "initial"}` }}>
                         <button className={`dropdown-button align-${align} dropdown-${type}`} style={{ width }} onClick={
                                 () => {
                                         if (disabled) return;

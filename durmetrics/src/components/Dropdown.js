@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DropdownItem from './DropdownItem';
 import DropdownFooter from './DropdownFooter';
 
-const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align = "middle", disabled = false }) => {
+const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align = "middle", disabled = false, width = null }) => {
         const [selectedItem, setSelectedItem] = useState(null);
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -29,13 +29,14 @@ const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align =
         const dropdownTitle = selectedItem || label;
 
         return (
-                <div className={`dropdown-wrapper dropdown-${size} align-${align}`} ref={dropdownRef}>
+                <div className={`dropdown-wrapper dropdown-${size} align-${align}`} ref={dropdownRef} style={{ width: width ? `${width}` : '' }}>
                         <button
-                                className={`dropdown-button dropdown-single dropdown-${size} align-${align}`}
+                                className={`dropdown-button dropdown-single dropdown-${size} align-${align} ${disabled ? 'dropdown-disabled' : ''}`}
                                 onClick={() => {
                                         if (disabled) return;
                                         setIsOpen((prev) => !prev)
                                 }}
+                                style={{ width: width ? `${width} !important` : 'initial' }}
                         >
                                 <span>{dropdownTitle}</span>
                                 <img
@@ -45,7 +46,7 @@ const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align =
                                 />
                         </button>
 
-                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`}>
+                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`} style={{ width: width ? `${width} !important` : '' }}>
                                 <div className="dropdown-scrollable">
                                         {items.map((item) => (
                                                 <DropdownItem
