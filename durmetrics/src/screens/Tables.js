@@ -5,7 +5,7 @@ import axios from 'axios';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import tableHeadersConfig from '../utils/tableHeadersConfig';
-import percentageChangeColumnConfig from '../utils/percentageChangeColumnConfig';
+import percentageColumnConfig from '../utils/percentageColumnConfig';
 
 const Tables = (props) => {
         const [data, setData] = useState([]);
@@ -13,6 +13,7 @@ const Tables = (props) => {
         const [dataForExport, setDataForExport] = useState([]);
         const [selectedYears, setSelectedYears] = useState([]);
         const [percentageChanges, setPercentageChanges] = useState([]);
+        const [percentageTotals, setPercentageTotals] = useState([]);
 
         // Keep setSelectedYears stable to avoid loops
         const stableSetSelectedYears = useCallback(setSelectedYears, []);
@@ -216,7 +217,7 @@ const Tables = (props) => {
                 // Determine which column prefix to use based on current route
                 const route = tabRouteMap[props.activeTab];
 
-                const columnPrefix = percentageChangeColumnConfig[route] || "Electricity";
+                const columnPrefix = percentageColumnConfig[route] || "Electricity";
 
                 // Build a set of allowed % Change column names based on current percentageChanges
                 const allowedPctCols = new Set(
@@ -328,6 +329,85 @@ const Tables = (props) => {
                 }
         }, [data, unchangedData, percentageChanges, props.activeTab]);
 
+        // Whenever percentageTotals updates, add or remove the % Total columns
+        // This uses unchangedData for calculations but shows columns based on data variable
+        useEffect(() => {
+                console.log("Percentage Totals (Years):", percentageTotals);
+                if (!data.length) return;
+
+                const route = tabRouteMap[props.activeTab];
+                const columnPrefix = percentageColumnConfig[route] || "Electricity";
+                const columnTotals = {};
+
+                // Calculate totals for each specified year's column
+                unchangedData.forEach(dataRow => {
+                        percentageTotals.forEach(year => {
+                                const y1 = year.toString().slice(-2);
+                                const columnName = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
+                                const value = parseFloat(dataRow[columnName]) || 0;
+                                columnTotals[columnName] = (columnTotals[columnName] || 0) + value;
+                        });
+                });
+
+                let changedSomething = false;
+                const updatedData = data.map((row) => {
+                        let rowEntries = Object.entries(row);
+                        const siteId = row.site_id || row["Site ID"];
+                        const masterRow = unchangedData.find(
+                                (r) => r.site_id === siteId || r["Site ID"] === siteId
+                        );
+
+                        // Remove any % Total columns that are no longer needed
+                        const allowedPctTotalCols = new Set(
+                                percentageTotals.map(year => {
+                                        const y1 = year.toString().slice(-2);
+                                        const columnName = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
+                                        return `% Total for ${columnName}`;
+                                })
+                        );
+
+                        const originalLength = rowEntries.length;
+                        rowEntries = rowEntries.filter(([colName]) => {
+                                if (colName.startsWith('% Total for ')) {
+                                        return allowedPctTotalCols.has(colName);
+                                }
+                                return true;
+                        });
+                        if (rowEntries.length !== originalLength) {
+                                changedSomething = true;
+                        }
+
+                        percentageTotals.forEach(year => {
+                                const y1 = year.toString().slice(-2);
+                                const columnName = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
+                                const total = columnTotals[columnName];
+                                const value = parseFloat(row[columnName]) || 0;
+                                const pctTotal = total > 0 ? (value / total) * 100 : 0;
+                                const pctTotalFormatted = `${pctTotal.toFixed(2)}%`;
+                                const totalColName = `% Total for ${columnName}`;
+
+                                if (row[totalColName] !== undefined) {
+                                        return;
+                                }
+
+                                const columnIndex = rowEntries.findIndex(([key]) => key === columnName);
+                                if (columnIndex !== -1) {
+                                        rowEntries.splice(columnIndex + 1, 0, [totalColName, pctTotalFormatted]);
+                                        changedSomething = true;
+                                } else {
+                                        rowEntries.push([totalColName, pctTotalFormatted]);
+                                        changedSomething = true;
+                                }
+                        });
+                        return Object.fromEntries(rowEntries);
+                });
+
+                if (changedSomething) {
+                        setData(updatedData);
+                }
+
+        }, [data, unchangedData, percentageTotals, props.activeTab]);
+
         // Clear all percentageChanges when a new tab is clicked
         useEffect(() => {
                 setPercentageChanges([]);
@@ -343,6 +423,8 @@ const Tables = (props) => {
                         unchangedData={unchangedData}
                         percentageChanges={percentageChanges}
                         setPercentageChanges={setPercentageChanges}
+                        percentageTotals={percentageTotals}
+                        setPercentageTotals={setPercentageTotals}
                 />
         );
 };

@@ -93,7 +93,7 @@ const NewModal = ({ addPercentageChange }) => {
         );
 }
 
-const PercentageModal = ({ percentageChanges, setPercentageChanges }) => {
+const PercentageChangeModal = ({ percentageChanges, setPercentageChanges }) => {
         const [open, setOpen] = useState(false);
         const handleOpen = () => setOpen(true);
         const handleClose = () => setOpen(false);
@@ -109,8 +109,8 @@ const PercentageModal = ({ percentageChanges, setPercentageChanges }) => {
 
         return (
                 <>
-                        <div className="button-general percentage-changes-button" onClick={handleOpen}>
-                                <img className="percent-icon" src="percent.svg" />
+                        <div className="button-general percentage-button percentage-change-button" onClick={handleOpen}>
+                                <img className="percent-icon" src="change.svg" />
                                 Percentage Changes
                         </div>
                         <Modal
@@ -142,9 +142,9 @@ const PercentageModal = ({ percentageChanges, setPercentageChanges }) => {
                                                 <div className="button-general save-percentages-button" onClick={handleClose}>Save</div>
                                         </div>
                                 </Box>
-                        </Modal >
+                        </Modal>
                 </>
         );
 };
 
-export default PercentageModal;
+export default PercentageChangeModal;

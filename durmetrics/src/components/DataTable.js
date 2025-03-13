@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
 import { TableVirtuoso } from 'react-virtuoso';
-import PercentageModal from './PercentageModal';
+import PercentageChangeModal from './PercentageChangeModal';
+import PercentageTotalModal from './PercentageTotalModal';
 
 const DataTable = ({
         data,
@@ -12,6 +13,8 @@ const DataTable = ({
         unchangedData,
         percentageChanges,
         setPercentageChanges,
+        percentageTotals,
+        setPercentageTotals,
 }) => {
         const previousDataRef = useRef(null);
         const isResetting = useRef(false);
@@ -136,7 +139,8 @@ const DataTable = ({
                                         label="Years"
                                         padLeft={true}
                                 />
-                                <PercentageModal percentageChanges={percentageChanges} setPercentageChanges={setPercentageChanges} />
+                                <PercentageChangeModal percentageChanges={percentageChanges} setPercentageChanges={setPercentageChanges} />
+                                <PercentageTotalModal percentageTotals={percentageTotals} setPercentageTotals={setPercentageTotals} />
                         </div>
 
                         <div className="table-container" style={{ overflowX: 'auto' }}>

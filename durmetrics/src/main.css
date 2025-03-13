@@ -1152,8 +1152,8 @@ pre {
         color: #7b7b7b;
 }
 
-.percentage-changes-button {
-        width: 240px;
+.percentage-button {
+        width: 260px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -1165,15 +1165,19 @@ pre {
         margin-left: 15px;
 }
 
-.percentage-changes-button:hover {
+.percentage-button:hover {
         filter: none;
         background-color: var(--green);
         color: white;
         border: 1px solid var(--green);
 }
 
-.percentage-changes-button:hover>.percent-icon {
+.percentage-button:hover>.percent-icon {
         filter: invert(1);
+}
+
+.percentage-change-button {
+        width: 300px;
 }
 
 .percent-icon {

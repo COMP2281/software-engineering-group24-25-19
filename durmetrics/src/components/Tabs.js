@@ -36,9 +36,9 @@ const Tabs = (props) => {
                                                 <div className="tab tab-selected" tab="0" data-text="Carbon Emissions">Carbon Emissions</div>
                                                 <div className="tab" tab="1" data-text="Electricity">Electricity</div>
                                                 <div className="tab" tab="2" data-text="Gas">Gas</div>
-                                                <div className="tab" tab="3" data-text="Carbon (%)">Carbon (%)</div>
-                                                <div className="tab" tab="4" data-text="Gas Sites (%)">Gas Sites (%)</div>
-                                                <div className="tab" tab="5" data-text="Electricity (%)">Electricity (%)</div>
+                                                {/* <div className="tab" tab="3" data-text="Carbon (%)">Carbon (%)</div>
+                                                <div className="tab" tab="4" data-text="Gas (%)">Gas (%)</div>
+                                                <div className="tab" tab="5" data-text="Electricity (%)">Electricity (%)</div> */}
                                                 <div className="tab" tab="6" data-text="kWh per HDD">kWh per HDD</div>
                                                 <div className="tab" tab="7" data-text="Site Information">Site Information</div>
                                         </>
