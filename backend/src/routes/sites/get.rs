@@ -7,13 +7,13 @@ use crate::{
 use axum::{extract::State, http::StatusCode};
 use sea_orm::{ColumnTrait as _, Condition, EntityTrait as _, QueryFilter as _};
 use serde::Deserialize;
-use std::{collections::HashSet, sync::Arc};
+use std::sync::Arc;
 use tracing::debug;
 
 /// Query parameters for filtering sites
 #[derive(Debug, Default, Deserialize)]
 pub(super) struct QueryParams {
-    ids: Option<HashSet<i32>>,
+    ids: Option<Vec<i32>>,
     name: Option<String>,
     floor_area_square_metre_min: Option<f64>,
     floor_area_square_metre_max: Option<f64>,

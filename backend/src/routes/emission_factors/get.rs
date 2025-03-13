@@ -7,13 +7,13 @@ use crate::{
 use axum::{extract::State, http::StatusCode};
 use sea_orm::{ColumnTrait as _, Condition, EntityTrait as _, QueryFilter as _};
 use serde::Deserialize;
-use std::{collections::HashSet, sync::Arc};
+use std::sync::Arc;
 use tracing::debug;
 
 /// Query parameters for filtering emission factors
 #[derive(Debug, Deserialize)]
 pub(super) struct QueryParams {
-    start_years: Option<HashSet<i32>>,
+    start_years: Option<Vec<i32>>,
 }
 
 /// Handles GET requests for emission factors
