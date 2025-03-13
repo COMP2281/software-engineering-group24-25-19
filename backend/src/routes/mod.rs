@@ -18,7 +18,7 @@ use std::sync::Arc;
 /// Configures all API endpoints and attaches the shared application state
 pub fn create_router(shared_state: Arc<AppState>) -> Router {
     Router::new()
-        .nest("/auth", auth::router(shared_state.clone()))
+        .nest("/auth", auth::router())
         .nest("/carbon-emissions", carbon_emissions::router())
         .nest("/electricity-usage", electricity_usage::router())
         .nest("/emission-factors", emission_factors::router())
