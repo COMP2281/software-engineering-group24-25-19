@@ -5,6 +5,7 @@ mod emission_factors;
 mod fallback;
 mod gas_usage;
 mod heating_degree_days;
+mod kwh_per_hdd;
 mod sites;
 mod upload;
 
@@ -23,6 +24,7 @@ pub fn create_router(shared_state: Arc<AppState>) -> Router {
         .nest("/emission-factors", emission_factors::router())
         .nest("/gas-usage", gas_usage::router())
         .nest("/heating-degree-days", heating_degree_days::router())
+        .nest("/kwh-per-hdd", kwh_per_hdd::router())
         .nest("/sites", sites::router())
         .nest("/upload", upload::router())
         .fallback(fallback::handler)
