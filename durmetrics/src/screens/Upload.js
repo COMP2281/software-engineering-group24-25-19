@@ -80,7 +80,7 @@ const Upload = (props) => {
                                 const workbook = read(data, { type: "array" });
                                 const sheetName = workbook.SheetNames[0];
                                 const sheet = workbook.Sheets[sheetName];
-                                const json = utils.sheet_to_json(sheet);
+                                const json = utils.sheet_to_json(sheet, { range: 2 }); // Skip the first two rows
 
                                 if (json.length === 0) {
                                         console.error("Excel file is empty.");
@@ -90,7 +90,7 @@ const Upload = (props) => {
                                 }
 
                                 const headers = Object.keys(json[0]);
-                                const isValidExcel = json.every((row, index) => {
+                                const isValidExcel = json.slice(0, -1).every((row, index) => { // Ignore the last row
                                         const rowKeys = Object.keys(row);
                                         if (rowKeys.length !== headers.length) {
                                                 console.error(`Row ${index + 1} has missing or extra columns.`);
@@ -99,6 +99,8 @@ const Upload = (props) => {
                                         return true;
                                 });
 
+                                console.log(json)
+
                                 if (!isValidExcel) {
                                         console.error("Excel file has inconsistent row structures.");
                                         alert("Could not process the data: Excel file has inconsistent row lengths.");
@@ -106,7 +108,7 @@ const Upload = (props) => {
                                         return;
                                 }
 
-                                setFileContentsJSON(json);
+                                setFileContentsJSON(json.slice(0, -1)); // Ignore the last row
                         }
                 };
 
@@ -124,6 +126,7 @@ const Upload = (props) => {
         }, [file]);
 
         useEffect(() => {
+                console.log(fileContentsJSON);
                 if (fileContentsJSON && dataYear && dataType) {
                         setStepsComplete(true);
                 } else {

@@ -22,9 +22,9 @@ const Tables = (props) => {
                 0: "carbon-emissions",
                 1: "electricity-usage",
                 2: "gas-usage",
-                3: "carbon-percentage",
-                4: "gas-sites-percentage",
-                5: "electricity-percentage",
+                // 3: "carbon-percentage",
+                // 4: "gas-sites-percentage",
+                // 5: "electricity-percentage",
                 6: "kwh-per-hdd",
                 7: "site-information"
         };

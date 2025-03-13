@@ -27,6 +27,14 @@ const tableHeadersConfig = {
                         total_emissions: "Total Emissions {year1}-{year2}"
                 }
         },
+        "kwh-per-hdd": {
+                staticFields: {
+                        site_id: 'Site ID',
+                },
+                dynamicFields: {
+                        kwh_per_hdd: "kWh/HDD {year1}-{year2}",
+                }
+        }
 };
 
 export default tableHeadersConfig;
