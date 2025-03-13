@@ -75,7 +75,7 @@ const Tables = (props) => {
                 window.URL.revokeObjectURL(url);
         };
 
-        // Aggregation Helper:
+        // Aggregation Helper
         // This converts raw API data (with start_year/end_year) into an aggregated shape
         // with columns like "Electricity 17-18" based on tableHeadersConfig import
         const aggregateServerData = (rows, route) => {
@@ -133,10 +133,46 @@ const Tables = (props) => {
                         const result = await axios.get(url);
                         const rawRows = result.data || [];
                         const aggregatedRows = aggregateServerData(rawRows, route);
-                        setData(aggregatedRows);
+                        const finalisedRows = await addSiteDetails(aggregatedRows);
+                        setData(finalisedRows);
                 } catch (error) {
                         console.error("Error fetching data:", error);
                 }
+        };
+
+        const fetchSites = async (rows) => {
+                try {
+                        const sitesParameters = rows
+                                .map(row => `site_ids=${row.site_id || row["Site ID"]}`)
+                                .join('&');
+                        const url = `https://durmetrics-api.sglre6355.net/sites?${sitesParameters}`;
+                        const result = await axios.get(url);
+                        const sites = result.data || [];
+                        return sites;
+                } catch (err) {
+                        console.error("Error fetching sites:", err);
+                        return [];
+                }
+        };
+
+        const addSiteDetails = async (rows) => {
+                // Takes in data rows and adds site name and code to each row
+                const sites = await fetchSites(rows);
+                let newRows = [];
+
+                for (let i = 0; i < rows.length; i++) {
+                        const row = rows[i];
+                        const site = sites.find(site => site.id === (row.site_id || row["Site ID"]));
+                        const { site_id, "Site ID": siteID, ...rowWithoutID } = row;
+                        newRows.push({
+                                "Site ID": siteID,
+                                "Site Name": site.name !== 'None' ? site.name : "",
+                                "Site Code": site.unique_property_reference_number !== 'None' ? site.unique_property_reference_number || "" : "",
+                                ...rowWithoutID
+                        });
+                }
+                console.log(newRows)
+                return newRows;
         };
 
         // Load dummy data initially (local JSON) – for dev
@@ -149,7 +185,6 @@ const Tables = (props) => {
                 fetchTableData();
                 // Also clear any percentage changes when tab changes
                 setPercentageChanges([]);
-                // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [props.activeTab]);
 
         // If user selects specific years, fetch data for those years

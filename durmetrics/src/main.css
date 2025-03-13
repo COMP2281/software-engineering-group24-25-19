@@ -279,7 +279,7 @@ pre {
         flex-direction: column;
         border: 1px solid #D2D2D2;
         border-radius: 2px;
-        overflow: visible;
+        overflow: auto;
         font-size: 14px;
 }
 
@@ -544,7 +544,7 @@ pre {
 
 .data-table {
         width: 100%;
-        table-layout: fixed;
+        table-layout: auto;
         border-collapse: collapse;
         /* Ensures borders collapse for cleaner lines */
         font-family: "Roboto";
@@ -1180,4 +1180,19 @@ pre {
         height: 14px;
         margin-right: 10px;
         transition: all 0.11s;
+}
+
+.sticky-col-first {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background-color: white;
+        /* Ensure background */
+}
+
+.sticky-col-second {
+        position: sticky;
+        z-index: 2;
+        background-color: white;
+        /* Ensure background */
 }

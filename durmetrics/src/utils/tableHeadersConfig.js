@@ -2,7 +2,6 @@ const tableHeadersConfig = {
         "electricity-usage": {
                 staticFields: {
                         site_id: 'Site ID',
-                        site_name: 'Site Name'
                 },
                 dynamicFields: {
                         energy_usage_kwh: "Electricity {year1}-{year2}",
@@ -12,7 +11,6 @@ const tableHeadersConfig = {
         "gas-usage": {
                 staticFields: {
                         site_id: 'Site ID',
-                        site_name: 'Site Name'
                 },
                 dynamicFields: {
                         energy_usage_kwh: "Gas {year1}-{year2}",

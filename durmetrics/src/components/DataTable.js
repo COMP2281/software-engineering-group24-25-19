@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
 import { TableVirtuoso } from 'react-virtuoso';
@@ -15,13 +15,15 @@ const DataTable = ({
 }) => {
         const previousDataRef = useRef(null);
         const isResetting = useRef(false);
+        const firstStickyHeaderRef = useRef(null); // Ref for the first sticky header
 
-        const [tableColumns, setTableColumns] = useState([]);
-        const [tableRows, setTableRows] = useState([]);
-        const [filteredRows, setFilteredRows] = useState([]);
+        const [tableColumns, setTableColumns] = useState();
+        const [tableRows, setTableRows] = useState();
+        const [filteredRows, setFilteredRows] = useState();
         const [searchText, setSearchText] = useState('');
         const [loading, setLoading] = useState(true);
         const [newSheetLoaded, setNewSheetLoaded] = useState(false);
+        const [firstStickyColWidth, setFirstStickyColWidth] = useState(0); // State for the width
 
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
@@ -73,12 +75,15 @@ const DataTable = ({
                 let filtered = tableRows;
                 if (searchText) {
                         filtered = tableRows.filter((row) => {
-                                const firstCol = Object.keys(row)[1];
-                                const secondCol = Object.keys(row)[2];
-                                return (
-                                        row[firstCol]?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
-                                        row[secondCol]?.toString().toLowerCase().includes(searchText.toLowerCase())
-                                );
+                                if (row && Object.keys(row).length > 3) {
+                                        const secondCol = Object.keys(row)[2];
+                                        const thirdCol = Object.keys(row)[3];
+                                        return (
+                                                row[secondCol]?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+                                                row[thirdCol]?.toString().toLowerCase().includes(searchText.toLowerCase())
+                                        );
+                                }
+                                return false; // If row is invalid or doesn't have enough keys, don't include it in the filter
                         });
                 }
                 setFilteredRows(filtered);
@@ -86,10 +91,18 @@ const DataTable = ({
         }, [searchText, tableRows, setDataForExport]);
 
         useEffect(() => {
-                if (filteredRows.length === 0) {
+                if (Array.isArray(filteredRows) && filteredRows.length === 0) {
                         setFilteredRows([{ id: 'no-results', message: `No results found for "${searchText}".` }]);
                 }
-        }, [filteredRows]);
+        }, [filteredRows, searchText]);
+
+        useLayoutEffect(() => {
+                if (tableColumns && tableColumns.length > 0 && firstStickyHeaderRef.current) {
+                        const width = firstStickyHeaderRef.current.offsetWidth;
+                        setFirstStickyColWidth(width);
+                        console.log("First Sticky Column Width on Load (LayoutEffect):", width);
+                }
+        }, [tableColumns]);
 
         const handleSearchChange = (event) => {
                 setSearchText(event.target.value);
@@ -97,6 +110,18 @@ const DataTable = ({
 
         const formatNumber = (num) => {
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        };
+
+        const getStickyStyles = (colIndex, zIndex) => {
+                if (colIndex < 2) {
+                        return {
+                                position: 'sticky',
+                                left: 0,
+                                zIndex: zIndex,
+                                background: '#f4f4f4',
+                        };
+                }
+                return {};
         };
 
         return (
@@ -127,24 +152,31 @@ const DataTable = ({
                                                         <thead>
                                                                 <tr>
                                                                         {tableColumns.map((col, colIndex) => {
-                                                                                const stickyStyles =
-                                                                                        colIndex < 2
-                                                                                                ? {
-                                                                                                        position: 'sticky',
-                                                                                                        left: colIndex === 0 ? 0 : `${tableColumns[0].minWidth}px`,
-                                                                                                        zIndex: 2,
-                                                                                                        background: '#fff',
-                                                                                                }
-                                                                                                : {};
+                                                                                let style = {
+                                                                                        minWidth: `${col.minWidth}px`,
+                                                                                        whiteSpace: 'nowrap',
+                                                                                };
+                                                                                if (colIndex === 0) {
+                                                                                        style.display = 'none';
+                                                                                }
+
+                                                                                const stickyStyles = getStickyStyles(colIndex, 2);
+                                                                                style = { ...style, ...stickyStyles };
+
+                                                                                if (colIndex === 1) {
+                                                                                        return (
+                                                                                                <th
+                                                                                                        key={col.field}
+                                                                                                        style={style}
+                                                                                                        ref={firstStickyHeaderRef}
+                                                                                                >
+                                                                                                        {col.title}
+                                                                                                </th>
+                                                                                        );
+                                                                                }
+
                                                                                 return (
-                                                                                        <th
-                                                                                                key={col.field}
-                                                                                                style={{
-                                                                                                        minWidth: `${col.minWidth}px`,
-                                                                                                        whiteSpace: 'nowrap',
-                                                                                                        ...stickyStyles,
-                                                                                                }}
-                                                                                        >
+                                                                                        <th key={col.field} style={style}>
                                                                                                 {col.title}
                                                                                         </th>
                                                                                 );
@@ -160,15 +192,20 @@ const DataTable = ({
                                                         return (
                                                                 <>
                                                                         {tableColumns.map((col, colIndex) => {
-                                                                                const stickyStyles =
-                                                                                        colIndex < 2
-                                                                                                ? {
-                                                                                                        position: 'sticky',
-                                                                                                        left: colIndex === 0 ? 0 : `${tableColumns[0].minWidth}px`,
-                                                                                                        zIndex: 1,
-                                                                                                        background: '#fff',
-                                                                                                }
-                                                                                                : {};
+                                                                                let style = {
+                                                                                        textAlign:
+                                                                                                typeof row[col.field] === 'number' || col.field.includes("%")
+                                                                                                        ? 'right'
+                                                                                                        : 'left',
+                                                                                        minWidth: `${col.minWidth}px`,
+                                                                                        whiteSpace: 'nowrap',
+                                                                                };
+                                                                                if (colIndex === 0) {
+                                                                                        style.display = 'none';
+                                                                                }
+
+                                                                                const stickyStyles = getStickyStyles(colIndex, 1);
+                                                                                style = { ...style, ...stickyStyles };
 
                                                                                 // If the column is a % Change column, apply conditional styling.
                                                                                 let customCellStyle = {};
@@ -187,16 +224,7 @@ const DataTable = ({
                                                                                 return (
                                                                                         <td
                                                                                                 key={col.field}
-                                                                                                style={{
-                                                                                                        textAlign:
-                                                                                                                typeof row[col.field] === 'number' || col.field.includes("%")
-                                                                                                                        ? 'right'
-                                                                                                                        : 'left',
-                                                                                                        minWidth: `${col.minWidth}px`,
-                                                                                                        whiteSpace: 'nowrap',
-                                                                                                        ...stickyStyles,
-                                                                                                        ...customCellStyle,
-                                                                                                }}
+                                                                                                style={{ ...style, ...customCellStyle }}
                                                                                         >
                                                                                                 {typeof row[col.field] === 'number'
                                                                                                         ? formatNumber(row[col.field])
@@ -222,24 +250,30 @@ const DataTable = ({
                                                                 <thead {...props}>
                                                                         <tr>
                                                                                 {tableColumns.map((col, colIndex) => {
-                                                                                        const stickyStyles =
-                                                                                                colIndex < 2
-                                                                                                        ? {
-                                                                                                                position: 'sticky',
-                                                                                                                left: colIndex === 0 ? 0 : `${tableColumns[0].minWidth}px`,
-                                                                                                                zIndex: 2,
-                                                                                                                background: '#fff',
-                                                                                                        }
-                                                                                                        : {};
+                                                                                        let style = {
+                                                                                                minWidth: `${col.minWidth}px`,
+                                                                                                whiteSpace: 'nowrap',
+                                                                                        };
+                                                                                        if (colIndex === 0) {
+                                                                                                style.display = 'none';
+                                                                                        }
+                                                                                        const stickyStyles = getStickyStyles(colIndex, 2);
+                                                                                        style = { ...style, ...stickyStyles };
+
+                                                                                        if (colIndex === 1) {
+                                                                                                return (
+                                                                                                        <th
+                                                                                                                key={col.field}
+                                                                                                                style={style}
+                                                                                                                ref={firstStickyHeaderRef}
+                                                                                                        >
+                                                                                                                {col.title}
+                                                                                                        </th>
+                                                                                                );
+                                                                                        }
+
                                                                                         return (
-                                                                                                <th
-                                                                                                        key={col.field}
-                                                                                                        style={{
-                                                                                                                minWidth: `${col.minWidth}px`,
-                                                                                                                whiteSpace: 'nowrap',
-                                                                                                                ...stickyStyles,
-                                                                                                        }}
-                                                                                                >
+                                                                                                <th key={col.field} style={style}>
                                                                                                         {col.title}
                                                                                                 </th>
                                                                                         );
