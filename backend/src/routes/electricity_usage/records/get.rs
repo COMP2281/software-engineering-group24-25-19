@@ -7,14 +7,14 @@ use crate::{
 use axum::{extract::State, http::StatusCode};
 use sea_orm::{ColumnTrait as _, Condition, EntityTrait as _, QueryFilter as _};
 use serde::Deserialize;
-use std::sync::Arc;
+use std::{collections::HashSet, sync::Arc};
 use tracing::debug;
 
 /// Query parameters for filtering electricity usage records
 #[derive(Deserialize, Debug)]
 pub(super) struct QueryParams {
-    site_ids: Option<Vec<i32>>,
-    start_years: Option<Vec<i32>>,
+    site_ids: Option<HashSet<i32>>,
+    start_years: Option<HashSet<i32>>,
 }
 
 /// Handles GET requests for electricity usage records

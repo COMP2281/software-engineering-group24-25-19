@@ -7,13 +7,13 @@ use crate::{
 use axum::{extract::State, http::StatusCode};
 use sea_orm::{ColumnTrait as _, Condition, EntityTrait as _, QueryFilter as _};
 use serde::Deserialize;
-use std::sync::Arc;
+use std::{collections::HashSet, sync::Arc};
 use tracing::debug;
 
 /// Query parameters for filtering heating degree days
 #[derive(Debug, Default, Deserialize)]
 pub(super) struct QueryParams {
-    start_years: Option<Vec<i32>>,
+    start_years: Option<HashSet<i32>>,
     min_total: Option<i32>,
     max_total: Option<i32>,
 }
