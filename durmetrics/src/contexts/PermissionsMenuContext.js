@@ -25,20 +25,21 @@ export const PermissionsMenuContextProvider = (props) => {
         );
 
         const getPermissionsLevel = async () => {
-                // try {
-                //         const res = await axios.get("<API CALL FOR PERMISSIONS>", {
-                //                 headers: {
-                //                         'Content-Type': 'application/json',
-                //                 },
-                //                 withCredentials: true,
-                //         });
+                try {
+                        const authToken = document.cookie.split('; ').find(row => row.startsWith('authToken=')).split('=')[1];
+                        console.log(authToken)
+                        const res = await axios.post("https://durmetrics-api.sglre6355.net/auth/verify_session", {}, {
+                                headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${authToken}`
+                                }
+                        });
 
-                //         return res;
-                // } catch (err) {
-                //         setError(err.status);
-                // }
-
-                return 2; // Edit permissions
+                        return res.data.access_level;
+                } catch (err) {
+                        setError(err.status);
+                        return 0;
+                }
         };
 
         useEffect(() => {
@@ -89,16 +90,16 @@ export const PermissionsMenuContextProvider = (props) => {
         // if (loading) return <p>Loading...</p>;
         if (error) {
                 switch (error) {
-                        case 404:
-                                return <Error
-                                        code={404}
-                                        title={"Page not found"}
-                                        message={"The page you are looking for could not be found."} />;
                         case 403:
                                 return <Error
                                         code={403}
                                         title={"Forbidden"}
                                         message={"You do not have permission to view this page."} />;
+                        case 404:
+                                return <Error
+                                        code={404}
+                                        title={"Page not found"}
+                                        message={"The page you are looking for could not be found."} />;
                         default:
                                 return <p>Error: {error}</p>;
                 }

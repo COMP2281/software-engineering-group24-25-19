@@ -384,12 +384,12 @@ pre {
         font-weight: 700;
         border-radius: 2px;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.11s;
 }
 
 .signin-submit:not(.signin-submit-disabled):hover {
-        filter: brightness(1.25);
-        transition: all 0.2s;
+        filter: brightness(1.05);
+        transition: all 0.11s;
 }
 
 .signin-submit-disabled {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CharacterInput from './CharacterInput';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const AuthPanel = () => {
         const [code, setCode] = useState('');
@@ -16,7 +17,7 @@ const AuthPanel = () => {
                 const enteredCode = Array.from(document.getElementsByClassName('code-char'))
                         .map(input => input.value.trim())
                         .join('');
-                setCode(enteredCode);
+                setCode(enteredCode.toUpperCase());
 
                 if (enteredCode.length === CODE_LENGTH) {
                         setButtonIsDisabled(false);
@@ -53,25 +54,38 @@ const AuthPanel = () => {
 
         const handleSubmit = () => {
                 if (!buttonIsDisabled) {
-                        signIn();
+                        signIn().then(accessLevel => {
+                                if (accessLevel >= 1) {
+                                        setTimeout(() => {
+                                                window.location.href = '/';
+                                        }, 400);
+                                }
+                        });
                 }
         };
 
         const signIn = async () => {
                 try {
-                        const res = await axios.get("<SIGNIN API ENDPOINT>", {
+                        const res = await axios.post("https://durmetrics-api.sglre6355.net/auth/login", {
+                                code
+                        }, {
                                 headers: {
                                         'Content-Type': 'application/json',
-                                },
-                                withCredentials: true,
-                                data: {
-                                        code
-                                },
+                                }
                         });
 
-                        return res;
+                        const token = res.data.token;
+
+                        if (token) {
+                                Cookies.set('authToken', token, { path: '/', secure: true, sameSite: 'Strict' });
+                        } else {
+                                setError("Your login code is invalid.");
+                        }
+
+                        return res.data.access_level;
                 } catch (err) {
                         setError("Your login code is invalid.");
+                        return 0;
                 }
         };
 
