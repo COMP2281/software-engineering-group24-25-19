@@ -114,6 +114,7 @@ const Tables = (props) => {
                         if (!route) return;
                         const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records`);
                         const rawRows = result.data || [];
+                        console.log(rawRows)
                         const aggregatedRows = aggregateServerData(rawRows, route);
                         setUnchangedData(aggregatedRows); // store master data
                         setData(aggregatedRows); // set visible data (initially all)
