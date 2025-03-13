@@ -1,7 +1,7 @@
 use crate::app_state::AppState;
 use axum::{
-    extract::{Request, State},                 // Import Request extractor
-    http::{header::AUTHORIZATION, StatusCode}, // Import AUTHORIZATION header
+    extract::{Request, State},
+    http::{header::AUTHORIZATION, StatusCode},
     response::{IntoResponse, Json},
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
@@ -18,7 +18,7 @@ pub struct Claims {
 #[axum::debug_handler]
 pub async fn post(
     State(_state): State<Arc<AppState>>,
-    req: Request, // Change from CookieJar to Request
+    req: Request,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
     // Extract the Authorization header
     let auth_header = req.headers().get(AUTHORIZATION);
