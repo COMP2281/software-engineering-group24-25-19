@@ -1,10 +1,9 @@
 use crate::app_state::AppState;
 use axum::{
-    extract::State,
-    http::StatusCode,
+    extract::{Request, State},                 // Import Request extractor
+    http::{header::AUTHORIZATION, StatusCode}, // Import AUTHORIZATION header
     response::{IntoResponse, Json},
 };
-use axum_extra::extract::cookie::CookieJar;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -19,22 +18,48 @@ pub struct Claims {
 #[axum::debug_handler]
 pub async fn post(
     State(_state): State<Arc<AppState>>,
-    cookies: CookieJar,
+    req: Request, // Change from CookieJar to Request
 ) -> Result<impl IntoResponse, impl IntoResponse> {
-    let token = cookies.get("authToken");
+    // Extract the Authorization header
+    let auth_header = req.headers().get(AUTHORIZATION);
 
-    if token.is_none() {
-        tracing::warn!("No authToken cookie found in request");
+    if auth_header.is_none() {
+        tracing::warn!("No Authorization header found in request");
         return Err((
             StatusCode::UNAUTHORIZED,
             Json(
-                serde_json::json!({"status": "unauthorised", "message": "Session token cookie not found"}),
+                serde_json::json!({"status": "unauthorised", "message": "Authorization header not found"}),
             ),
         ));
     }
 
-    let token_value = token.unwrap().value();
-    let secret = "secret";
+    let auth_header_value = auth_header.unwrap();
+    let auth_value_str = match auth_header_value.to_str() {
+        Ok(s) => s,
+        Err(_) => {
+            tracing::warn!("Invalid Authorization header format");
+            return Err((
+                StatusCode::BAD_REQUEST,
+                Json(
+                    serde_json::json!({"status": "error", "message": "Invalid Authorization header format"}),
+                ),
+            ));
+        }
+    };
+
+    // Check if it's a Bearer token and extract the token value
+    if !auth_value_str.starts_with("Bearer ") {
+        tracing::warn!("Authorization header is not a Bearer token");
+        return Err((
+            StatusCode::UNAUTHORIZED,
+            Json(
+                serde_json::json!({"status": "unauthorised", "message": "Authorization header is not a Bearer token"}),
+            ),
+        ));
+    }
+
+    let token_value = &auth_value_str[7..]; // Remove "Bearer " prefix
+    let secret = "secret"; // TODO: Read from config/env variable
     let decoding_key = DecodingKey::from_secret(secret.as_bytes());
 
     let mut validation = Validation::default();

@@ -49,7 +49,7 @@ async fn main() -> Result<()> {
 
     let app = routes::create_router(shared_state).layer(
         CorsLayer::new()
-            .allow_headers([CONTENT_TYPE])
+            .allow_headers([CONTENT_TYPE, axum::http::header::AUTHORIZATION])
             .allow_methods(AllowMethods::any())
             .allow_origin(AllowOrigin::any()),
     );
