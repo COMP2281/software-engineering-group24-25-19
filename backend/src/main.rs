@@ -40,8 +40,8 @@ async fn main() -> Result<()> {
     // enable logging with tracing
     tracing_subscriber::fmt::init();
 
-    let database_url =
-        env::var("DATABASE_URL").expect("`DATABASE_URL` environment variable must be set");
+    let database_url = env::var("DURMETRICS_DATABASE_URL")
+        .expect("`DURMETRICS_DATABASE_URL` environment variable must be set");
     let database_connection = Database::connect(database_url).await?;
     let shared_state = Arc::new(AppState {
         database_connection,
