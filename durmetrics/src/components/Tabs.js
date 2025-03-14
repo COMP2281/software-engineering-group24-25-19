@@ -11,7 +11,6 @@ const Tabs = (props) => {
         };
 
         useEffect(() => {
-                console.log(activeTab);
                 const activeTabElement = document.querySelector(`.tab[tab="${activeTab}"]`);
                 if (activeTabElement) {
                         activeTabElement.classList.add('tab-selected');
@@ -28,9 +27,12 @@ const Tabs = (props) => {
         return (
                 <div className="header-tabs">
                         {props.page === "upload" ?
-                                <div className="tab tab-selected" tab="0" data-text="Upload Data">Data Manager</div>
+                                <>
+                                        <div className="tab tab-selected" tab="0" data-text="Energy Data">Energy Data</div>
+                                        <div className="tab" tab="1" data-text="Emission Factors">Emission Factors</div>
+                                </>
                                 : props.page == "insights" ?
-                                        <div className="tab tab-selected" tab="0" data-text="Upload Data">Graph Studio</div>
+                                        <div className="tab tab-selected" tab="0" data-text="Graph Studio">Graph Studio</div>
                                         :
                                         <>
                                                 <div className="tab tab-selected" tab="0" data-text="Carbon Emissions">Carbon Emissions</div>

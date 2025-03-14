@@ -18,7 +18,7 @@ const UploadConfiguration = (props) => {
 
         return (
                 <div className="upload-panel">
-                        <div className="upload-title">Upload data</div>
+                        <div className="upload-title">Upload Data</div>
                         <div className="panel-bar"></div>
                         <FileUpload file={props.file} setFile={props.setFile} />
                         <div className="upload-title upload-subtitle">Configuration</div>
@@ -39,7 +39,7 @@ const UploadConfiguration = (props) => {
                                 Uploading data will overwrite any previous data with the same configurations.
                         </div>
                         <div className={`upload-button ${!props.stepsComplete ? 'upload-button-disabled' : ''}`}>
-                                Upload data
+                                Upload Data
                         </div>
                 </div>
         );

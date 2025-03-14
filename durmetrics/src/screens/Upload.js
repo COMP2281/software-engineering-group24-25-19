@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import UploadConfiguration from '../components/UploadConfiguration';
 import UploadPreview from '../components/UploadPreview';
 import Papa from 'papaparse';
+import EmissionFactorTable from '../components/EmissionFactorTable';
+import EmissionFactorGraph from '../components/EmissionFactorGraph';
+import EmissionFactorConfiguration from '../components/EmissionFactorConfiguration';
+import axios from 'axios';
 
 const Upload = (props) => {
         const [file, setFile] = useState(null);
@@ -9,6 +13,41 @@ const Upload = (props) => {
         const [dataYear, setDataYear] = useState(null);
         const [dataType, setDataType] = useState(null);
         const [stepsComplete, setStepsComplete] = useState(false);
+
+        const [emissionFactors, setEmissionFactors] = useState([]);
+
+        const fetchEmissionFactors = async () => {
+                try {
+                        const res = await axios.get('https://durmetrics-api.sglre6355.net/emission-factors');
+                        const data = res.data;
+                        return data;
+                } catch (error) {
+                        console.error(error);
+                        return [];
+                }
+        };
+
+        const formatEmissionFactors = (data) => {
+                let formattedData = [];
+                data.forEach((row) => {
+                        formattedData.push({
+                                years: `${row.start_year}-${row.end_year.toString().slice(-2)}`,
+                                electricity: parseFloat(parseFloat(row.electricity).toPrecision(3)),
+                                gas: parseFloat(parseFloat(row.gas).toPrecision(3)),
+                        });
+                });
+                console.log("FORMATTED", formattedData);
+                return formattedData;
+        };
+
+        useEffect(() => {
+                if (props.activeTab == 1) {
+                        fetchEmissionFactors().then((data) => {
+                                const formatted = formatEmissionFactors(data);
+                                setEmissionFactors(formatted);
+                        });
+                }
+        }, [props.activeTab]);
 
         const parseFile = (file) => {
                 if (!file) {
@@ -139,9 +178,28 @@ const Upload = (props) => {
         }, []);
 
         return (
-                <div className="upload-content">
-                        <UploadConfiguration file={file} setFile={setFile} setDataYear={setDataYear} setDataType={setDataType} stepsComplete={stepsComplete} />
-                        <UploadPreview file={file} />
+                <div className={`upload-content ${props.activeTab == 1 ? "ef-content" : ""}`}>
+                        {props.activeTab == 0 ?
+                                <>
+                                        <UploadConfiguration file={file} setFile={setFile} setDataYear={setDataYear} setDataType={setDataType} stepsComplete={stepsComplete} />
+                                        <UploadPreview file={file} />
+                                </>
+                                :
+                                <>
+                                        <EmissionFactorTable emissionFactors={emissionFactors} />
+                                        <EmissionFactorConfiguration />
+                                        <EmissionFactorGraph emissionFactors={emissionFactors} />
+                                        {/* <div className="upload-panel ef-info-container">
+                                                <div className="upload-title">What are Emission Factors?</div>
+                                                <div className="panel-bar"></div>
+                                                <div className="ef-info">
+                                                        Emission factors are used to calculate the energy consumption of a building based on the amount of electricity and gas used. This data is available in the kWh per HDD sheet.
+                                                        <br /><br />
+                                                        HDD (Heating Degree Day) is a measure used to estimate the energy needed to heat a building. The emission factors are used as multipiers for the electricity and gas usages of each building.
+                                                </div>
+                                        </div> */}
+                                </>
+                        }
                 </div>
         );
 };

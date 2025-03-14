@@ -17,7 +17,7 @@ const UploadPreview = (props) => {
         return (
                 <div className="upload-panel">
                         <div className="upload-title">
-                                Data preview
+                                Data Preview
                         </div>
                         <div className="panel-bar"></div>
                         {props.file && <>
