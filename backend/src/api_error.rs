@@ -14,14 +14,18 @@ use serde::Serialize;
 use std::error::Error as _;
 use thiserror::Error;
 
-// serialize the ErrorResponse struct
+/// Response structure for API errors
+///
+/// Contains a message string and an optional error detail
 #[derive(Serialize)]
 struct ErrorResponse {
     message: String,
     error: Option<String>,
-    // ErrorResponse struct contains a message (string) and an error (optional and string)
 }
 
+/// API error types that can be returned by endpoints
+///
+/// Each variant represents a different error condition that might occur
 #[derive(Debug, Error)]
 pub enum ApiError {
     #[error("InvalidPath")]
@@ -38,14 +42,14 @@ pub enum ApiError {
     DatabaseFailure(#[from] DbErr),
     #[error("RouteNotFound")]
     RouteNotFound,
-    // listing the possible errors that can occur in the API
-    // invalid path, query, json, multipart, excel, database, and route not found
 }
-// implement the IntoResponse trait for the ApiError enum
+
+/// Implements response conversion for API errors
+///
+/// Maps each error variant to an appropriate HTTP status code and formats the error response
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         let status_code = match self {
-            // match the error variant and return the corresponding status code
             ApiError::InvalidPath(_)
             | ApiError::InvalidQuery(_)
             | ApiError::InvalidJson(_)
@@ -59,7 +63,6 @@ impl IntoResponse for ApiError {
         };
 
         (
-            // return a response with the status code and the ErrorResponse struct
             status_code,
             Json(ErrorResponse {
                 message: self.to_string(),
