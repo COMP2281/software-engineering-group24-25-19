@@ -36,8 +36,34 @@ const Upload = (props) => {
                                 gas: parseFloat(parseFloat(row.gas).toPrecision(3)),
                         });
                 });
-                console.log("FORMATTED", formattedData);
                 return formattedData;
+        };
+
+        const updateEmissionFactors = async (years, electricity, gas) => {
+                try {
+                        const payload = {
+                                start_year: parseInt(years.split('-')[0]),
+                        };
+
+                        if (!isNaN(parseFloat(electricity))) {
+                                payload.electricity = parseFloat(electricity);
+                        }
+
+                        if (!isNaN(parseFloat(gas))) {
+                                payload.gas = parseFloat(gas);
+                        }
+
+                        const res = await axios.post('https://durmetrics-api.sglre6355.net/emission-factors', payload);
+                        if (res.status == 200 || res.status == 201) {
+                                fetchEmissionFactors().then((data) => {
+                                        const formatted = formatEmissionFactors(data);
+                                        console.log(formatted);
+                                        setEmissionFactors(formatted);
+                                });
+                        }
+                } catch (error) {
+                        console.error(error);
+                }
         };
 
         useEffect(() => {
@@ -187,17 +213,8 @@ const Upload = (props) => {
                                 :
                                 <>
                                         <EmissionFactorTable emissionFactors={emissionFactors} />
-                                        <EmissionFactorConfiguration />
+                                        <EmissionFactorConfiguration updateEmissionFactors={updateEmissionFactors} />
                                         <EmissionFactorGraph emissionFactors={emissionFactors} />
-                                        {/* <div className="upload-panel ef-info-container">
-                                                <div className="upload-title">What are Emission Factors?</div>
-                                                <div className="panel-bar"></div>
-                                                <div className="ef-info">
-                                                        Emission factors are used to calculate the energy consumption of a building based on the amount of electricity and gas used. This data is available in the kWh per HDD sheet.
-                                                        <br /><br />
-                                                        HDD (Heating Degree Day) is a measure used to estimate the energy needed to heat a building. The emission factors are used as multipiers for the electricity and gas usages of each building.
-                                                </div>
-                                        </div> */}
                                 </>
                         }
                 </div>

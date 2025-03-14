@@ -6,7 +6,14 @@ const EmissionFactorGraph = ({ emissionFactors = [] }) => {
                 return <div>Loading emission factor data...</div>;
         }
 
-        const years = emissionFactors.map((factor) => factor.years);
+        // Sort emissionFactors by years
+        const sortedEmissionFactors = emissionFactors.sort((a, b) => {
+                const yearA = Number(a.years.split('-')[0]);
+                const yearB = Number(b.years.split('-')[0]);
+                return yearA - yearB;
+        });
+
+        const years = sortedEmissionFactors.map((factor) => factor.years);
 
         // Format values to show 6 decimal places in tooltips
         const valueFormatter = (value) => {
@@ -42,8 +49,8 @@ const EmissionFactorGraph = ({ emissionFactors = [] }) => {
                                                 valueFormatter,
                                         },
                                 ]}
-                                dataset={emissionFactors}
-                                width={1100}
+                                dataset={sortedEmissionFactors}
+                                width={900}
                                 height={400}
                                 slotProps={{
                                         tooltip: {

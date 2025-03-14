@@ -2,20 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { TableVirtuoso } from 'react-virtuoso';
 
 const EmissionFactorTable = ({ emissionFactors }) => {
-        const [transposedData, setTransposedData] = useState([]);
-        const [dynamicColumns, setDynamicColumns] = useState([]);
+        const [transposedData, setTransposedData] = useState();
+        const [dynamicColumns, setDynamicColumns] = useState();
 
         useEffect(() => {
-                if (!emissionFactors || emissionFactors.length === 0) return;
+                if (!emissionFactors || emissionFactors.length === 0) {
+                        setDynamicColumns([{ title: 'Years', field: 'category', minWidth: 100 }]);
+                        setTransposedData();
+                        return;
+                }
 
-                // Extract categories and years
+                // Extract categories
                 const categories = ['Electricity', 'Gas'];
-                const years = emissionFactors.map(ef => ef.years.toString());
 
-                // Create dynamic columns
+                // Extract unique years
+                const uniqueYears = Array.from(new Set(emissionFactors.map(ef => ef.years)));
+
+                // Sort years based on the starting year
+                const sortedYears = uniqueYears.sort((a, b) => {
+                        const startYearA = parseInt(a.split('-')[0], 10);
+                        const startYearB = parseInt(b.split('-')[0], 10);
+                        return startYearA - startYearB;
+                });
+
+                // Create dynamic columns with sorted years
                 const newDynamicColumns = [
-                        { title: 'Years', field: 'category', minWidth: 100 },
-                        ...years.map(year => ({
+                        { title: 'Years', field: 'category', minWidth: 100 }
+                        , ...sortedYears.map(year => ({
                                 title: year,
                                 field: year,
                                 minWidth: 100
@@ -26,7 +39,7 @@ const EmissionFactorTable = ({ emissionFactors }) => {
                 const newTransposedData = categories.map(category => {
                         const row = { category };
                         emissionFactors.forEach(ef => {
-                                const yearKey = ef.years.toString();
+                                const yearKey = ef.years;
                                 row[yearKey] = ef[category.toLowerCase()];
                         });
                         return row;
@@ -47,12 +60,17 @@ const EmissionFactorTable = ({ emissionFactors }) => {
                                 fixedHeaderContent={() => (
                                         <thead>
                                                 <tr className="table-header">
-                                                        {dynamicColumns.map((col) => {
+                                                        {Array.isArray(dynamicColumns) && dynamicColumns.map((col, colIndex) => {
                                                                 const style = {
                                                                         minWidth: `${col.minWidth}px`,
                                                                         whiteSpace: 'nowrap',
                                                                         background: '#f4f4f4',
                                                                 };
+                                                                if (colIndex === 0) {
+                                                                        style.position = 'sticky';
+                                                                        style.left = 0;
+                                                                        style.zIndex = 1;
+                                                                }
                                                                 return (
                                                                         <th key={col.field} style={style}>
                                                                                 {col.title}
@@ -64,14 +82,17 @@ const EmissionFactorTable = ({ emissionFactors }) => {
                                 )}
                                 itemContent={(index, row) => (
                                         <tr className="table-row">
-                                                {dynamicColumns.map((col, colIndex) => {
+                                                {Array.isArray(dynamicColumns) && dynamicColumns.map((col, colIndex) => {
                                                         const style = {
                                                                 minWidth: `${col.minWidth}px`,
                                                                 whiteSpace: 'nowrap',
                                                                 textAlign: col.field === 'category' ? 'left' : 'right',
                                                         };
                                                         if (colIndex === 0) {
+                                                                style.position = 'sticky';
+                                                                style.left = 0;
                                                                 style.background = '#f4f4f4';
+                                                                style.zIndex = 1;
                                                         }
                                                         return (
                                                                 <td key={col.field} style={style}>
