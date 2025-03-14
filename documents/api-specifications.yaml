@@ -1,0 +1,663 @@
+openapi: 3.1.0
+info:
+  title: DurMetrics Backend API
+  description: API for the DurMetrics application which handles energy usage and emissions data
+  version: 1.0.0
+servers:
+  - url: https://durmetrics-api.sglre6355.net
+tags:
+  - name: auth
+    description: Authentication and session management
+  - name: carbon-emissions
+    description: Carbon emissions data and calculations
+  - name: electricity-usage
+    description: Electricity usage records management
+  - name: emission-factors
+    description: Emission factors for different energy types
+  - name: gas-usage
+    description: Gas usage records management
+  - name: heating-degree-days
+    description: Heating degree days data
+  - name: kwh-per-hdd
+    description: Kilowatt-hours per heating degree day calculations
+  - name: sites
+    description: Site management and information
+  - name: upload
+    description: Data upload functionality
+paths:
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Authenticate with access code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful or unsuccessful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400": &id002
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500": &id001
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/verify-session:
+    post:
+      tags:
+        - auth
+      summary: Verify session token
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Session token verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "verified"
+                  user_id:
+                    type: string
+                  access_level:
+                    type: integer
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /carbon-emissions/records:
+    get:
+      tags:
+        - carbon-emissions
+      summary: Get carbon emissions records
+      parameters:
+        - name: site_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: start_years
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        "200":
+          description: A list of carbon emissions records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CarbonEmissionRecord"
+        "500": *id001
+        "400": *id002
+        "404": &id003
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /electricity-usage/records:
+    get:
+      tags:
+        - electricity-usage
+      summary: Get electricity usage records
+      parameters:
+        - name: site_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: start_years
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        "200":
+          description: A list of electricity usage records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ElectricityUsageRecord"
+        "500": *id001
+        "400": *id002
+        "404": *id003
+  /emission-factors:
+    get:
+      tags:
+        - emission-factors
+      summary: Get emission factors
+      parameters:
+        - name: start_years
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        "200":
+          description: A list of emission factors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionFactor"
+        "500": *id001
+        "400": *id002
+        "404": *id003
+    post:
+      tags:
+        - emission-factors
+      summary: Create a new emission factor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmissionFactorCreate"
+      responses:
+        "201":
+          description: Emission factor created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionFactor"
+        "500": *id001
+        "400": *id002
+        "404": *id003
+  /gas-usage/records:
+    get:
+      tags:
+        - gas-usage
+      summary: Get gas usage records
+      parameters:
+        - name: site_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: start_years
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        "200":
+          description: A list of gas usage records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GasUsageRecord"
+        "500": *id001
+        "400": *id002
+        "404": *id003
+  /heating-degree-days:
+    get:
+      tags:
+        - heating-degree-days
+      summary: Get heating degree days
+      parameters:
+        - name: start_years
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: min_total
+          in: query
+          schema:
+            type: integer
+        - name: max_total
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of heating degree days
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HeatingDegreeDay"
+        "500": *id001
+        "400": *id002
+        "404": *id003
+  /kwh-per-hdd/records:
+    get:
+      tags:
+        - kwh-per-hdd
+      summary: Get kWh per HDD records
+      parameters:
+        - name: site_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: start_years
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        "200":
+          description: A list of kWh per HDD records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KwhPerHddRecord"
+        "500": *id001
+        "400": *id002
+        "404": *id003
+  /sites:
+    get:
+      tags:
+        - sites
+      summary: Get site information
+      parameters:
+        - name: ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: floor_area_square_metre_min
+          in: query
+          schema:
+            type: number
+        - name: floor_area_square_metre_max
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: A list of sites
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SiteRead"
+        "500": *id001
+        "400": *id002
+        "404": *id003
+    post:
+      tags:
+        - sites
+      summary: Create a new site
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteCreate"
+      responses:
+        "201":
+          description: Site created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteRead"
+          headers:
+            Location:
+              description: URI of the newly created resource
+              schema:
+                type: string
+        "500": *id001
+        "400": *id002
+        "404": *id003
+  /sites/{id}:
+    get:
+      tags:
+        - sites
+      summary: Get site by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Site details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteRead"
+        "404": *id003
+        "500": *id001
+        "400": *id002
+    patch:
+      tags:
+        - sites
+      summary: Update a site by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteUpdate"
+      responses:
+        "200":
+          description: Site updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteRead"
+          headers:
+            Location:
+              description: URI of the updated resource
+              schema:
+                type: string
+        "404": *id003
+        "500": *id001
+        "400": *id002
+    delete:
+      tags:
+        - sites
+      summary: Delete a site by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Site deleted successfully
+        "404": *id003
+        "500": *id001
+        "400": *id002
+  /upload:
+    post:
+      tags:
+        - upload
+      summary: Upload data file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: File uploaded and processed successfully
+        "400": *id002
+        "500": *id001
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        code:
+          type: string
+      required:
+        - code
+    LoginResponse:
+      type: object
+      properties:
+        access_level:
+          type: integer
+          format: uint8
+          description: Access level of the user (0 if authentication failed)
+        token:
+          type:
+            - string
+            - "null"
+          description: JWT token for authenticated sessions (null if access_level is 0)
+    CarbonEmissionRecord:
+      type: object
+      properties:
+        site_id:
+          type: integer
+        start_year:
+          type: integer
+        end_year:
+          type: integer
+        electricity_energy_usage_kwh:
+          type: number
+          format: float
+        gas_energy_usage_kwh:
+          type: number
+          format: float
+        total_emissions:
+          type: number
+          format: float
+    ElectricityUsageRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        site_id:
+          type: integer
+        start_year:
+          type: integer
+        end_year:
+          type: integer
+        energy_usage_kwh:
+          type: integer
+        cost_gbp:
+          type:
+            - number
+            - "null"
+    EmissionFactor:
+      type: object
+      properties:
+        start_year:
+          type: integer
+        end_year:
+          type: integer
+        gas:
+          type: number
+        electricity:
+          type: number
+    EmissionFactorCreate:
+      type: object
+      properties:
+        start_year:
+          type: integer
+        end_year:
+          type: integer
+        gas:
+          type: number
+        electricity:
+          type: number
+      required:
+        - start_year
+        - end_year
+        - gas
+        - electricity
+    GasUsageRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        site_id:
+          type: integer
+        start_year:
+          type: integer
+        end_year:
+          type: integer
+        energy_usage_kwh:
+          type: integer
+        cost_gbp:
+          type:
+            - number
+            - "null"
+    HeatingDegreeDay:
+      type: object
+      properties:
+        start_year:
+          type: integer
+        end_year:
+          type: integer
+        april:
+          type:
+            - integer
+            - "null"
+        may:
+          type:
+            - integer
+            - "null"
+        june:
+          type:
+            - integer
+            - "null"
+        july:
+          type:
+            - integer
+            - "null"
+        august:
+          type:
+            - integer
+            - "null"
+        september:
+          type:
+            - integer
+            - "null"
+        october:
+          type:
+            - integer
+            - "null"
+        november:
+          type:
+            - integer
+            - "null"
+        december:
+          type:
+            - integer
+            - "null"
+        january:
+          type:
+            - integer
+            - "null"
+        february:
+          type:
+            - integer
+            - "null"
+        march:
+          type:
+            - integer
+            - "null"
+        total:
+          type: integer
+    KwhPerHddRecord:
+      type: object
+      properties:
+        site_id:
+          type: integer
+        start_year:
+          type: integer
+        end_year:
+          type: integer
+        kwh_per_hdd:
+          type: number
+          format: float
+    SiteBase:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        floor_area_square_metre:
+          type:
+            - number
+            - "null"
+        unique_property_reference_number:
+          type:
+            - string
+            - "null"
+        ni185_energy_user:
+          type:
+            - string
+            - "null"
+        comment:
+          type:
+            - string
+            - "null"
+    SiteCreate:
+      allOf:
+        - $ref: "#/components/schemas/SiteBase"
+      required:
+        - name
+    SiteRead:
+      allOf:
+        - $ref: "#/components/schemas/SiteBase"
+    SiteUpdate:
+      allOf:
+        - $ref: "#/components/schemas/SiteBase"
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "DatabaseError"
+        error:
+          type:
+            - string
+            - "null"
+          example: "Failed to acquire connection from pool: Connection pool timed out"
+      required:
+        - message
