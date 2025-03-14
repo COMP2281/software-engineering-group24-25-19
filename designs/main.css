@@ -1,0 +1,370 @@
+@font-face {
+        font-family: 'Domine';
+        src: url('fonts/Domine.ttf') format('truetype');
+}
+
+html,
+body,
+#root {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        font-family: "Domine";
+}
+
+* {
+        box-sizing: border-box;
+}
+
+:root {
+        --dgreen: #023430;
+        --green: #014E3D;
+        --lgreen: #185E4E;
+}
+
+.header {
+        background-color: var(--green);
+        color: white;
+        height: 18%;
+        width: 100%;
+        display: flex;
+}
+
+.header-side {
+        height: 100%;
+        width: 14%;
+        border-right: 1px solid var(--lgreen);
+        display: flex;
+        flex-direction: column;
+}
+
+.header-logo-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.header-logo {
+        height: 36px;
+}
+
+.header-access-level {
+        flex: 0.5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top: 1px solid var(--lgreen);
+        font-size: 12.6px;
+}
+
+.header-content {
+        height: 100%;
+        width: calc(100% - 14% - 3.7em);
+        margin-left: 3.7em;
+        display: flex;
+        align-items: center;
+        position: relative;
+}
+
+.header-title {
+        font-size: 45px;
+        font-weight: bold;
+        margin-top: -5px;
+}
+
+.header-tabs {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        font-family: "Inter";
+        font-size: 12.6px;
+}
+
+.tab {
+        padding: 0.6em 1.2em;
+        cursor: pointer;
+        border-radius: 2px 2px 0 0;
+}
+
+.tab:hover {
+        background-color: var(--lgreen);
+        color: white;
+}
+
+.tab-selected {
+        background-color: white !important;
+        color: var(--green) !important;
+        font-weight: bold;
+}
+
+.lower {
+        height: calc(100% - 18%);
+        width: 100%;
+        display: flex;
+}
+
+.menu {
+        height: 100%;
+        width: 14%;
+        border-right: 1px solid #BBC8C7;
+        padding-top: 22px;
+        display: flex;
+        flex-direction: column;
+        font-family: "Inter";
+}
+
+.menu-item {
+        width: 100%;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+}
+
+.menu-icon {
+        padding-left: 24px;
+        padding-right: 18px;
+}
+
+.menu-item-selected {
+        background-color: #EAEAEA;
+        border-left: 3px solid var(--dgreen);
+        box-sizing: border-box;
+}
+
+.menu-item-selected .menu-icon {
+        padding-left: calc(24px - 3px);
+}
+
+.menu-item:hover:not(.menu-item-selected) {
+        background-color: #F5F5F5;
+}
+
+.menu-footer {
+        margin-top: auto;
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top: 1px solid #BBC8C7;
+}
+
+.dcc-logo {
+        width: 65px;
+        margin-left: -5px;
+        padding-right: 5px;
+}
+
+.credits {
+        font-size: 7px;
+}
+
+.body {
+        height: 100%;
+        width: calc(100% - 14%);
+        padding: 20px 3.7em;
+        font-family: "Inter";
+        box-sizing: border-box;
+}
+
+.table-filters {
+        width: 100%;
+        height: 30px;
+        display: flex;
+}
+
+.input-group {
+        display: flex;
+        width: calc(100% - 130px - 20px);
+        height: 100%;
+}
+
+.search-icon-container {
+        background-color: #EAEAEA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 100%;
+        border-radius: 2px 0 0 2px;
+        border: 1px solid #D2D2D2;
+}
+
+.search-icon {
+        height: 16px
+}
+
+.search-bar {
+        width: calc(100% - 35px);
+        height: 100%;
+        outline: none;
+        border: 1px solid #D2D2D2;
+        border-left: none;
+        border-radius: 0 2px 2px 0;
+        text-indent: 7px;
+        font-size: 14px;
+        line-height: 30px;
+        box-sizing: border-box;
+}
+
+.years-dropdown {
+        height: 100%;
+        width: 130px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #D2D2D2;
+        box-sizing: border-box;
+        border-radius: 2px;
+        margin-left: auto;
+}
+
+.dropdown-icon {
+        height: 7px;
+        margin-left: 8px;
+        margin-bottom: -2px;
+}
+
+.table-container {
+        width: 100%;
+        height: calc(100% - 30px - 10px);
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #D2D2D2;
+        border-radius: 2px;
+}
+
+body.signin {
+        background-color: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+}
+
+.signin-logo {
+        width: 168px;
+        padding-bottom: 37px;
+        margin-top: -200px;
+}
+
+.signin-panel {
+        width: 542.3px;
+        height: 267.3px;
+        background-color: white;
+        border-radius: 4px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+}
+
+/* Times by 1.1 */
+
+.signin-panel>div {
+        height: 100%;
+        width: 100%;
+}
+
+.signin-panel-text {
+        padding: 31px 25px;
+        display: flex;
+        flex-direction: column;
+}
+
+.signin-panel-code {
+        background-color: #D9D9D9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+}
+
+.signin-title {
+        font-weight: 500;
+        max-width: 161px;
+        font-size: 17px;
+}
+
+.signin-subtitle {
+        font-size: 12px;
+        margin-top: 14px;
+        max-width: 161px;
+}
+
+.signin-dcc-logo {
+        width: 68px;
+        margin-top: auto;
+        margin-bottom: -10px;
+        margin-left: -7px;
+}
+
+.signin-code {
+        display: flex;
+        gap: 4px;
+}
+
+.code-char {
+        font-family: "Domine";
+        height: 30px;
+        width: 30px;
+        text-align: center;
+        border-radius: 2px;
+        border: none;
+        outline: none !important;
+}
+
+.signin-submit {
+        margin-top: 12px;
+        width: calc(6 * 30px + 5 * 4px);
+        height: 30px;
+        background-color: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 11px;
+        font-family: "Inter";
+        font-weight: 700;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+}
+
+.signin-submit-disabled {
+        background-color: #C5C5C5;
+        color: #9C9A9A;
+        cursor: not-allowed;
+}
+
+.data-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse; /* Ensures borders collapse for cleaner lines */
+}
+
+.data-table th,
+.data-table td {
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 8px;
+        border: 1px solid #ddd; /* Adds lines between cells */
+}
+
+.data-table th {
+        background-color: #f4f4f4; /* Optional: Adds a subtle background for headers */
+        font-weight: bold;
+        border-bottom: 2px solid #ccc; /* Slightly thicker line for the header */
+}
+
+.data-table tr:nth-child(even) {
+        background-color: #f9f9f9; /* Optional: Alternating row colours for readability */
+}
+
