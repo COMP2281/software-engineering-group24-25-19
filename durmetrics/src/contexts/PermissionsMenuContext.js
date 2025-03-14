@@ -28,7 +28,7 @@ export const PermissionsMenuContextProvider = (props) => {
                 try {
                         const authToken = document.cookie.split('; ').find(row => row.startsWith('authToken=')).split('=')[1];
                         console.log(authToken)
-                        const res = await axios.post("https://durmetrics-api.sglre6355.net/auth/verify_session", {}, {
+                        const res = await axios.post("https://durmetrics-api.sglre6355.net/auth/verify-session", {}, {
                                 headers: {
                                         'Content-Type': 'application/json',
                                         'Authorization': `Bearer ${authToken}`
