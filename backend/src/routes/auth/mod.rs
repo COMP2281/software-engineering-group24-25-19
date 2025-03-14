@@ -9,5 +9,5 @@ use std::sync::Arc;
 pub(super) fn router() -> Router<Arc<AppState>> {
     Router::new()
         .nest("/login", login::router())
-        .nest("/verify_session", verify_session::router())
+        .nest("/verify-session", verify_session::router())
 }
