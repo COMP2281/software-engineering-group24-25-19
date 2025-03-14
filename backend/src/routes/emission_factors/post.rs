@@ -2,7 +2,7 @@ use crate::{
     api_error::ApiError, app_state::AppState, custom_extractors::Json, entities::emission_factor,
 };
 use axum::{extract::State, http::StatusCode};
-use sea_orm::{ActiveModelTrait as _, ActiveValue::Set};
+use sea_orm::{ActiveModelTrait as _, ActiveValue::NotSet, ActiveValue::Set};
 use serde::Deserialize;
 use std::sync::Arc;
 use tracing::debug;
@@ -13,7 +13,6 @@ use tracing::debug;
 #[derive(Debug, Default, Deserialize)]
 pub(super) struct Payload {
     pub start_year: i32,
-    pub end_year: i32,
     pub gas: f64,
     pub electricity: f64,
 }
@@ -30,7 +29,7 @@ pub(super) async fn handler(
     // Build new emission factor entry based on the query parameters.
     let new_emission_factor = emission_factor::ActiveModel {
         start_year: Set(payload.start_year),
-        end_year: Set(payload.end_year),
+        end_year: NotSet,
         gas: Set(payload.gas),
         electricity: Set(payload.electricity),
     };
