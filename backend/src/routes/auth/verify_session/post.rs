@@ -8,21 +8,25 @@ use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
-// derive the Claims struct with the Deserialize and Serialize traits
+/// JWT claims structure for authentication tokens
+///
+/// Contains user identification and access control information
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
+    /// Subject identifier (user ID or hashed access code)
     pub sub: String,
+    /// Token expiration timestamp (in seconds since Unix epoch)
     pub exp: usize,
+    /// User's access level for authorization
     pub access_level: u8,
-    // struct claims contains a subject (sub) which is a string,
-    // an expiration time (exp) which is a usize,
-    // and an access level which is a u8
 }
 
-// handler function receives a state of type State<Arc<AppState>> and a request of type Request
+/// Handles POST requests for session verification
+///
+/// Validates the JWT token from the Authorization header and returns
+/// the user's identity and access level if authentication is successful
 #[axum::debug_handler]
 pub async fn post(
-    // take the state and request as arguments
     State(_state): State<Arc<AppState>>,
     req: Request,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
@@ -37,10 +41,9 @@ pub async fn post(
                 serde_json::json!({"status": "unauthorised", "message": "Authorization header not found"}),
             ),
         ));
-        // return an error response if the Authorization header is not found
     }
-    // construct the auth_value_str from the Authorization header
-    // auth_value_str is the Authorization header value as a string
+
+    // Parse the Authorization header value to a string
     let auth_header_value = auth_header.unwrap();
     let auth_value_str = match auth_header_value.to_str() {
         Ok(s) => s,
@@ -52,11 +55,10 @@ pub async fn post(
                     serde_json::json!({"status": "error", "message": "Invalid Authorization header format"}),
                 ),
             ));
-            // returns an error response if the Authorization header format is invalid
         }
     };
 
-    // Check if it's a Bearer token and extract the token value
+    // Verify the token uses Bearer authentication scheme
     if !auth_value_str.starts_with("Bearer ") {
         tracing::warn!("Authorization header is not a Bearer token");
         return Err((
@@ -67,23 +69,25 @@ pub async fn post(
         ));
     }
 
-    let token_value = &auth_value_str[7..]; // Remove "Bearer " prefix
+    // Extract the token by removing the "Bearer " prefix
+    let token_value = &auth_value_str[7..];
     let secret = "secret"; // TODO: Read from config/env variable
     let decoding_key = DecodingKey::from_secret(secret.as_bytes());
 
+    // Set up validation criteria for the token
     let mut validation = Validation::default();
     validation.validate_exp = true;
 
+    // Decode and validate the JWT token
     match decode::<Claims>(token_value, &decoding_key, &validation) {
         Ok(decoded_token) => {
-            // Token is valid
+            // Token is valid - return user information
             tracing::info!(
                 "Session token successfully verified for user: {}, access_level: {}",
                 decoded_token.claims.sub,
                 decoded_token.claims.access_level
-            ); // Log access_level
+            );
             Ok((
-                // returns a success response if the token is successfully verified
                 StatusCode::OK,
                 Json(serde_json::json!({
                     "status": "verified",
@@ -93,9 +97,9 @@ pub async fn post(
             ))
         }
         Err(e) => {
+            // Token validation failed
             tracing::warn!("Session token verification failed for request: {}", e);
             Err((
-                // returns an error response if the token verification fails
                 StatusCode::UNAUTHORIZED,
                 Json(
                     serde_json::json!({"status": "unauthorised", "message": "Session token verification failed"}),
