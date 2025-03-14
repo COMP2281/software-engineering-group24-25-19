@@ -46,7 +46,7 @@ pub(super) async fn handler(
         .await
         .ok()
         .flatten();
-        // find the access code in the database using the hashed code and return the result
+    // find the access code in the database using the hashed code and return the result
 
     // if the result is found, create a token with the hashed code as the subject
     if let Some(entry) = result {
