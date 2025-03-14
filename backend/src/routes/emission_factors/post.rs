@@ -2,7 +2,10 @@ use crate::{
     api_error::ApiError, app_state::AppState, custom_extractors::Json, entities::emission_factor,
 };
 use axum::{extract::State, http::StatusCode};
-use sea_orm::{ActiveModelTrait as _, ActiveValue::NotSet, ActiveValue::Set};
+use sea_orm::{
+    ActiveModelTrait as _, ActiveValue::NotSet, ActiveValue::Set, ColumnTrait, EntityTrait,
+    IntoActiveModel, QueryFilter,
+};
 use serde::Deserialize;
 use std::sync::Arc;
 use tracing::debug;
@@ -26,19 +29,31 @@ pub(super) async fn handler(
 ) -> Result<(StatusCode, Json<emission_factor::Model>), ApiError> {
     debug!("payload = {:?}", payload);
 
-    // Build new emission factor entry based on the query parameters.
-    let new_emission_factor = emission_factor::ActiveModel {
-        start_year: Set(payload.start_year),
-        end_year: NotSet,
-        gas: Set(payload.gas),
-        electricity: Set(payload.electricity),
-    };
+    let db = &state.database_connection;
 
-    // Inser the new emission factor entry into the database
-    let new_emission_factor = new_emission_factor
-        .insert(&state.database_connection)
-        .await?;
+    // Try to find an existing emission factor with given start_year
+    if let Some(existing_emission_factor) = emission_factor::Entity::find()
+        .filter(emission_factor::Column::StartYear.eq(payload.start_year))
+        .one(db)
+        .await?
+    {
+        // Update the existing record
+        let mut active_model = existing_emission_factor.into_active_model();
+        active_model.gas = Set(payload.gas);
+        active_model.electricity = Set(payload.electricity);
 
-    // Return the created record as a JSON response.
-    Ok((StatusCode::CREATED, Json(new_emission_factor)))
+        let updated_model = active_model.update(db).await?;
+        Ok((StatusCode::OK, Json(updated_model)))
+    } else {
+        // Create a new record
+        let emission_factor_model = emission_factor::ActiveModel {
+            start_year: Set(payload.start_year),
+            end_year: NotSet,
+            gas: Set(payload.gas),
+            electricity: Set(payload.electricity),
+        };
+
+        let new_model = emission_factor_model.insert(db).await?;
+        Ok((StatusCode::CREATED, Json(new_model)))
+    }
 }
