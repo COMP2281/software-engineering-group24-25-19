@@ -40,6 +40,8 @@ async fn main() -> Result<()> {
     // enable logging with tracing
     tracing_subscriber::fmt::init();
 
+    let http_bind = env::var("DURMETRICS_HTTP_BIND")
+        .expect("`DURMETRICS_HTTP_BIND` environment variable must be set");
     let database_url = env::var("DURMETRICS_DATABASE_URL")
         .expect("`DURMETRICS_DATABASE_URL` environment variable must be set");
     let database_connection = Database::connect(database_url).await?;
@@ -54,8 +56,7 @@ async fn main() -> Result<()> {
             .allow_origin(AllowOrigin::any()),
     );
 
-    // TODO: make binding address configurable
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await?;
+    let listener = tokio::net::TcpListener::bind(http_bind).await?;
 
     info!("Serving API endpoints at {}", listener.local_addr()?);
     axum::serve(listener, app)
