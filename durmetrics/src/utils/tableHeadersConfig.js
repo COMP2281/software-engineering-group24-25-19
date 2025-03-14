@@ -34,6 +34,15 @@ const tableHeadersConfig = {
                 dynamicFields: {
                         kwh_per_hdd: "kWh/HDD {year1}-{year2}",
                 }
+        },
+        "sites": {
+                staticFields: {
+                        id: 'Site ID',
+                        name: 'Site Name',
+                        floor_area_square_metre: "Floor Area (m²)",
+                        ni185_energy_user: "NI 185 Energy User",
+                        comment: "Comments"
+                }
         }
 };
 

@@ -15,6 +15,7 @@ const DataTable = ({
         setPercentageChanges,
         percentageTotals,
         setPercentageTotals,
+        route
 }) => {
         const previousDataRef = useRef(null);
         const isResetting = useRef(false);
@@ -40,10 +41,15 @@ const DataTable = ({
                         isResetting.current = true; // Prevent multiple triggers
                         setLoading(true);
 
-                        const currentYear = new Date().getFullYear();
-                        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
+                        // If we're on the tab 'Site Information', we ignore selected years
+                        if (route != "sites") {
+                                const currentYear = new Date().getFullYear();
+                                const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
-                        setSelectedYears(years);
+                                setSelectedYears(years);
+                        } else {
+                                setSelectedYears([]);
+                        }
 
                         previousDataRef.current = data; // Update the stored reference
 
@@ -56,6 +62,7 @@ const DataTable = ({
         }, [unchangedData, setSelectedYears]);
 
         useEffect(() => {
+                console.log("Data changed, updating table...", data);
                 if (data && data.length > 0) {
                         const columns = Object.keys(data[0]).map((key) => ({
                                 title: key,
@@ -103,7 +110,6 @@ const DataTable = ({
                 if (tableColumns && tableColumns.length > 0 && firstStickyHeaderRef.current) {
                         const width = firstStickyHeaderRef.current.offsetWidth;
                         setFirstStickyColWidth(width);
-                        console.log("First Sticky Column Width on Load (LayoutEffect):", width);
                 }
         }, [tableColumns]);
 
@@ -131,16 +137,20 @@ const DataTable = ({
                 <>
                         <div className="table-filters">
                                 <SearchBar searchTable={handleSearchChange} />
-                                <MultiDropdown
-                                        items={years}
-                                        changeSelection={setSelectedYears}
-                                        selectedYears={selectedYears}
-                                        newSheetLoaded={newSheetLoaded}
-                                        label="Years"
-                                        padLeft={true}
-                                />
-                                <PercentageChangeModal percentageChanges={percentageChanges} setPercentageChanges={setPercentageChanges} />
-                                <PercentageTotalModal percentageTotals={percentageTotals} setPercentageTotals={setPercentageTotals} />
+                                {route != "sites" && (
+                                        <>
+                                                <MultiDropdown
+                                                        items={years}
+                                                        changeSelection={setSelectedYears}
+                                                        selectedYears={selectedYears}
+                                                        newSheetLoaded={newSheetLoaded}
+                                                        label="Years"
+                                                        padLeft={true}
+                                                />
+                                                <PercentageChangeModal percentageChanges={percentageChanges} setPercentageChanges={setPercentageChanges} />
+                                                <PercentageTotalModal percentageTotals={percentageTotals} setPercentageTotals={setPercentageTotals} />
+                                        </>
+                                )}
                         </div>
 
                         <div className="table-container" style={{ overflowX: 'auto' }}>

@@ -26,7 +26,7 @@ const Tables = (props) => {
                 // 4: "gas-sites-percentage",
                 // 5: "electricity-percentage",
                 6: "kwh-per-hdd",
-                7: "site-information"
+                7: "sites"
         };
 
         const exportToExcel = async () => {
@@ -82,27 +82,35 @@ const Tables = (props) => {
         const aggregateServerData = (rows, route) => {
                 const { staticFields = {}, dynamicFields = {} } = tableHeadersConfig[route] || {};
                 const aggregator = rows.reduce((acc, row) => {
-                        const siteId = row.site_id;
-                        if (!acc[siteId]) acc[siteId] = {};
+                        const siteId = route != "sites" ? row.site_id : row.id;
                         let y1 = "";
                         let y2 = "";
-                        if (row.start_year) {
-                                y1 = row.start_year.toString().slice(-2);
+
+                        if (!acc[siteId]) acc[siteId] = {};
+
+                        if (route != "sites") {
+                                if (row.start_year) {
+                                        y1 = row.start_year.toString().slice(-2);
+                                }
+                                if (row.end_year) {
+                                        y2 = row.end_year.toString().slice(-2);
+                                }
                         }
-                        if (row.end_year) {
-                                y2 = row.end_year.toString().slice(-2);
-                        }
+
                         // Insert static fields
                         Object.keys(staticFields).forEach((apiField) => {
                                 const displayLabel = staticFields[apiField];
                                 acc[siteId][displayLabel] = row[apiField];
                         });
+
                         // Insert dynamic fields
-                        Object.keys(dynamicFields).forEach((apiField) => {
-                                let displayLabel = dynamicFields[apiField];
-                                displayLabel = displayLabel.replace(/{year1}/g, y1).replace(/{year2}/g, y2);
-                                acc[siteId][displayLabel] = row[apiField];
-                        });
+                        if (route != "sites") {
+                                Object.keys(dynamicFields).forEach((apiField) => {
+                                        let displayLabel = dynamicFields[apiField];
+                                        displayLabel = displayLabel.replace(/{year1}/g, y1).replace(/{year2}/g, y2);
+                                        acc[siteId][displayLabel] = row[apiField];
+                                });
+                        }
                         return acc;
                 }, {});
                 return Object.values(aggregator);
@@ -112,9 +120,11 @@ const Tables = (props) => {
                 try {
                         const route = tabRouteMap[props.activeTab];
                         if (!route) return;
-                        const result = await axios.get(`https://durmetrics-api.sglre6355.net/${route}/records`);
+                        const url = route === "sites"
+                                ? `https://durmetrics-api.sglre6355.net/${route}`
+                                : `https://durmetrics-api.sglre6355.net/${route}/records`;
+                        const result = await axios.get(url);
                         const rawRows = result.data || [];
-                        console.log(rawRows)
                         const aggregatedRows = aggregateServerData(rawRows, route);
                         setUnchangedData(aggregatedRows); // store master data
                         setData(aggregatedRows); // set visible data (initially all)
@@ -131,7 +141,9 @@ const Tables = (props) => {
                         const sitesParameters = dataForExport
                                 .map(row => `site_ids=${row.site_id || row["Site ID"]}`)
                                 .join('&');
-                        const url = `https://durmetrics-api.sglre6355.net/${route}/records?${yearsParameters}&${sitesParameters}`;
+                        const url = route === "sites"
+                                ? `https://durmetrics-api.sglre6355.net/${route}`
+                                : `https://durmetrics-api.sglre6355.net/${route}/records?${yearsParameters}&${sitesParameters}`;
                         const result = await axios.get(url);
                         const rawRows = result.data || [];
                         const aggregatedRows = aggregateServerData(rawRows, route);
@@ -159,6 +171,8 @@ const Tables = (props) => {
 
         const addSiteDetails = async (rows) => {
                 // Takes in data rows and adds site name and code to each row
+                if (tabRouteMap[props.activeTab] === "sites") return rows;
+
                 const sites = await fetchSites(rows);
                 let newRows = [];
 
@@ -177,21 +191,17 @@ const Tables = (props) => {
                 return newRows;
         };
 
-        // Load dummy data initially (local JSON) – for dev
-        useEffect(() => {
-                setData(report.data);
-        }, []);
-
         // Fetch fresh data whenever the user switches tabs
         useEffect(() => {
                 fetchTableData();
-                // Also clear any percentage changes when tab changes
+                // Also clear any percentage changes or totals when tab changes
                 setPercentageChanges([]);
+                setPercentageTotals([]);
         }, [props.activeTab]);
 
         // If user selects specific years, fetch data for those years
         useEffect(() => {
-                if (selectedYears.length > 0) {
+                if (selectedYears.length > 0 && tabRouteMap[props.activeTab] !== "sites") {
                         fetchDataForYears(selectedYears);
                 }
         }, [selectedYears]);
@@ -212,6 +222,7 @@ const Tables = (props) => {
         // Whenever percentageChanges updates, add or remove the % Change columns
         // This uses unchangedData for calculations but shows columns based on data variable
         useEffect(() => {
+                if (tabRouteMap[props.activeTab] === "sites") return;
                 // If there's no data, do nothing
                 if (!data.length) return;
 
@@ -333,6 +344,8 @@ const Tables = (props) => {
         // Whenever percentageTotals updates, add or remove the % Total columns
         // This uses unchangedData for calculations but shows columns based on data variable
         useEffect(() => {
+                if (tabRouteMap[props.activeTab] === "sites") return;
+
                 console.log("Percentage Totals (Years):", percentageTotals);
                 if (!data.length) return;
 
@@ -412,6 +425,7 @@ const Tables = (props) => {
         // Clear all percentageChanges when a new tab is clicked
         useEffect(() => {
                 setPercentageChanges([]);
+                setPercentageTotals([]);
         }, [props.activeTab]);
 
         return (
@@ -426,6 +440,7 @@ const Tables = (props) => {
                         setPercentageChanges={setPercentageChanges}
                         percentageTotals={percentageTotals}
                         setPercentageTotals={setPercentageTotals}
+                        route={tabRouteMap[props.activeTab]}
                 />
         );
 };
