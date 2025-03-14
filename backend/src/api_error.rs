@@ -14,10 +14,12 @@ use serde::Serialize;
 use std::error::Error as _;
 use thiserror::Error;
 
+// serialize the ErrorResponse struct
 #[derive(Serialize)]
 struct ErrorResponse {
     message: String,
     error: Option<String>,
+    // ErrorResponse struct contains a message (string) and an error (optional and string)
 }
 
 #[derive(Debug, Error)]
@@ -36,11 +38,14 @@ pub enum ApiError {
     DatabaseFailure(#[from] DbErr),
     #[error("RouteNotFound")]
     RouteNotFound,
+    // listing the possible errors that can occur in the API
+    // invalid path, query, json, multipart, excel, database, and route not found
 }
-
+// implement the IntoResponse trait for the ApiError enum
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         let status_code = match self {
+            // match the error variant and return the corresponding status code
             ApiError::InvalidPath(_)
             | ApiError::InvalidQuery(_)
             | ApiError::InvalidJson(_)
@@ -54,11 +59,13 @@ impl IntoResponse for ApiError {
         };
 
         (
+            // return a response with the status code and the ErrorResponse struct
             status_code,
             Json(ErrorResponse {
                 message: self.to_string(),
                 error: self.source().map(|source| source.to_string()),
             }),
+            // return the error message and the source of the error
         )
             .into_response()
     }
