@@ -8,21 +8,27 @@ use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
+// derive the Claims struct with the Deserialize and Serialize traits
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,
     pub exp: usize,
     pub access_level: u8,
+    // struct claims contains a subject (sub) which is a string,
+    // an expiration time (exp) which is a usize,
+    // and an access level which is a u8
 }
 
+// handler function receives a state of type State<Arc<AppState>> and a request of type Request
 #[axum::debug_handler]
 pub async fn post(
+    // take the state and request as arguments
     State(_state): State<Arc<AppState>>,
     req: Request,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
     // Extract the Authorization header
     let auth_header = req.headers().get(AUTHORIZATION);
-
+    // Check if the Authorization header is present
     if auth_header.is_none() {
         tracing::warn!("No Authorization header found in request");
         return Err((
@@ -31,8 +37,10 @@ pub async fn post(
                 serde_json::json!({"status": "unauthorised", "message": "Authorization header not found"}),
             ),
         ));
+        // return an error response if the Authorization header is not found
     }
-
+    // construct the auth_value_str from the Authorization header
+    // auth_value_str is the Authorization header value as a string
     let auth_header_value = auth_header.unwrap();
     let auth_value_str = match auth_header_value.to_str() {
         Ok(s) => s,
@@ -44,6 +52,7 @@ pub async fn post(
                     serde_json::json!({"status": "error", "message": "Invalid Authorization header format"}),
                 ),
             ));
+            // returns an error response if the Authorization header format is invalid
         }
     };
 
@@ -74,6 +83,7 @@ pub async fn post(
                 decoded_token.claims.access_level
             ); // Log access_level
             Ok((
+                // returns a success response if the token is successfully verified
                 StatusCode::OK,
                 Json(serde_json::json!({
                     "status": "verified",
@@ -85,6 +95,7 @@ pub async fn post(
         Err(e) => {
             tracing::warn!("Session token verification failed for request: {}", e);
             Err((
+                // returns an error response if the token verification fails
                 StatusCode::UNAUTHORIZED,
                 Json(
                     serde_json::json!({"status": "unauthorised", "message": "Session token verification failed"}),
