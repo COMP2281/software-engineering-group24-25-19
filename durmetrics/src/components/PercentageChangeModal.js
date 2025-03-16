@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import Dropdown from './Dropdown';
@@ -57,14 +56,16 @@ const NewModal = ({ addPercentageChange }) => {
                 }
         };
 
+        /* eslint-disable react-hooks/exhaustive-deps */
         useEffect(() => {
                 validateSelection();
         }, [selectedYear1, selectedYear2]);
+        /* eslint-enable react-hooks/exhaustive-deps */
 
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
-        const [availableYears1, setAvailableYears1] = React.useState(years.slice(1, years.length));
+        const availableYears1 = years.slice(1, years.length);
         const [availableYears2, setAvailableYears2] = React.useState(years.slice(0, years.length - 1));
 
         return (
@@ -110,7 +111,7 @@ const PercentageChangeModal = ({ percentageChanges, setPercentageChanges }) => {
         return (
                 <>
                         <div className="button-general percentage-button percentage-change-button" onClick={handleOpen}>
-                                <img className="percent-icon" src="change.svg" />
+                                <img className="percent-icon" alt="percent-change" src="change.svg" />
                                 Percentage Changes
                         </div>
                         <Modal
@@ -132,7 +133,7 @@ const PercentageChangeModal = ({ percentageChanges, setPercentageChanges }) => {
                                                         percentageChanges.map((change, index) => (
                                                                 <div key={index} className="percentage-change">
                                                                         {change.year1}-{change.year2}
-                                                                        <img className="cross-icon" src="cross.svg" onClick={() => removePercentageChange(change.year1, change.year2)} />
+                                                                        <img className="cross-icon" alt="cross" src="cross.svg" onClick={() => removePercentageChange(change.year1, change.year2)} />
                                                                 </div>
                                                         ))
                                                 )}

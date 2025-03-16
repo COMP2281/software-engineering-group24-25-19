@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import MultiDropdown from './MultiDropdown';
 import Dropdown from './Dropdown';
 import axios from "axios";
-import { data } from 'react-router-dom';
 
 const getSites = async () => {
         try {
@@ -16,7 +15,7 @@ const getSites = async () => {
 const GraphFilters = ({ setData, setRenderGraph }) => {
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
-        const [categories, setCategories] = useState(["Electricity (kWh)", "Electricity (£)", "Gas (kWh)", "Gas (£)"]);
+        const categories = ["Electricity (kWh)", "Electricity (£)", "Gas (kWh)", "Gas (£)"];
         const charts = ["Line", "Bar", "Pie"];
         const [sites, setSites] = useState(["test"]);
 
@@ -36,11 +35,6 @@ const GraphFilters = ({ setData, setRenderGraph }) => {
                 setDataYears([]);
                 setDataCategories([]);
                 setDataSites([]);
-
-                // Allow for cumulative line?
-                // if (selectedChart == "Line") {
-                //         setCategories(["Carbon Emissions", "Electricity (kWh)", "Electricity (kWh)", "Electricity (£)", "Gas (kWh)", "Gas (£)"]);
-                // }
         };
 
         const handleYearChange = (selectedYears) => {
@@ -90,28 +84,28 @@ const GraphFilters = ({ setData, setRenderGraph }) => {
                                 <div className="gf-subtitle">Choose the layout style of the chart</div>
                                 <Dropdown items={charts} onSelect={handleChartChange} label="Select Chart" align="left" />
                         </div>
-                        <img className="gf-chevron" src="right-icon.svg" />
+                        <img className="gf-chevron" alt="arrow" src="right-icon.svg" />
                         <div className={`graph-filter ${chart ? '' : 'gf-disabled'}`}>
-                                <div className="gf-title">Year{chart != "Pie" ? "s" : ""}</div>
+                                <div className="gf-title">Year{chart !== "Pie" ? "s" : ""}</div>
                                 <div className="gf-subtitle">
-                                        {chart != "Pie" ? "Select the range of years for insights" : "Select the year for insights"}
+                                        {chart !== "Pie" ? "Select the range of years for insights" : "Select the year for insights"}
                                 </div>
-                                {chart != "Pie" && <MultiDropdown key={chart} items={years} changeSelection={handleYearChange} label="Years" align="left" type="filter" width="fit-content" scrollWidth="100px" disabled={!chart} />}
-                                {chart == "Pie" && <Dropdown key={chart} items={years} onSelect={handleYearChange} label="Select Year" align="left" disabled={!chart} />}
+                                {chart !== "Pie" && <MultiDropdown key={chart} items={years} changeSelection={handleYearChange} label="Years" align="left" type="filter" width="fit-content" scrollWidth="100px" disabled={!chart} />}
+                                {chart === "Pie" && <Dropdown key={chart} items={years} onSelect={handleYearChange} label="Select Year" align="left" disabled={!chart} />}
                         </div>
-                        <img className="gf-chevron" src="right-icon.svg" />
+                        <img className="gf-chevron" alt="arrow" src="right-icon.svg" />
                         <div className={`graph-filter ${dataYears.length > 0 ? '' : 'gf-disabled'}`}>
-                                <div className="gf-title">Categor{chart == "Bar" ? "ies" : "y"}</div>
-                                <div className="gf-subtitle">Choose the categor{chart == "Bar" ? "ies" : "y"} of the data</div>
-                                {chart == "Bar" && <MultiDropdown key={dataYears.join("-")} items={categories} changeSelection={handleCategoryChange} label="Categories" align="left" type="filter" width="fit-content" scrollWidth="150px" disabled={dataYears.length === 0} />}
-                                {chart != "Bar" && <Dropdown key={dataYears.join("-")} items={categories} onSelect={handleCategoryChange} label={dataCategories.length > 0 ? dataCategories[0] : "Select Category"} size="large" align="left" disabled={dataYears.length === 0} />}
+                                <div className="gf-title">Categor{chart === "Bar" ? "ies" : "y"}</div>
+                                <div className="gf-subtitle">Choose the categor{chart === "Bar" ? "ies" : "y"} of the data</div>
+                                {chart === "Bar" && <MultiDropdown key={dataYears.join("-")} items={categories} changeSelection={handleCategoryChange} label="Categories" align="left" type="filter" width="fit-content" scrollWidth="150px" disabled={dataYears.length === 0} />}
+                                {chart !== "Bar" && <Dropdown key={dataYears.join("-")} items={categories} onSelect={handleCategoryChange} label={dataCategories.length > 0 ? dataCategories[0] : "Select Category"} size="large" align="left" disabled={dataYears.length === 0} />}
                         </div>
-                        <img className="gf-chevron" src="right-icon.svg" />
+                        <img className="gf-chevron" alt="arrow" src="right-icon.svg" />
                         <div className={`graph-filter ${dataCategories.length > 0 ? '' : 'gf-disabled'}`}>
-                                <div className="gf-title">Site{chart != "Bar" ? "s" : ""}</div>
-                                <div className="gf-subtitle">Select the site{chart != "Bar" ? "s" : ""} relevant to the query</div>
-                                {chart != "Bar" && <MultiDropdown key={dataCategories.join("-")} items={sites} changeSelection={handleSiteChange} label="Sites" align="left" type="filter" width="fit-content" disabled={dataCategories.length === 0} />}
-                                {chart == "Bar" && <Dropdown key={dataCategories.join("-")} items={sites} onSelect={handleSiteChange} label={dataSites.length > 0 ? dataSites[0] : "Select Site"} align="left" disabled={dataCategories.length === 0} />}
+                                <div className="gf-title">Site{chart !== "Bar" ? "s" : ""}</div>
+                                <div className="gf-subtitle">Select the site{chart !== "Bar" ? "s" : ""} relevant to the query</div>
+                                {chart !== "Bar" && <MultiDropdown key={dataCategories.join("-")} items={sites} changeSelection={handleSiteChange} label="Sites" align="left" type="filter" width="fit-content" disabled={dataCategories.length === 0} />}
+                                {chart === "Bar" && <Dropdown key={dataCategories.join("-")} items={sites} onSelect={handleSiteChange} label={dataSites.length > 0 ? dataSites[0] : "Select Site"} align="left" disabled={dataCategories.length === 0} />}
                         </div>
                 </div>
         );

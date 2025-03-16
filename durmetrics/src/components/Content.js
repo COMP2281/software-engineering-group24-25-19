@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Routes, Route } from 'react-router-dom';
 import Tables from '../screens/Tables';
 import Insights from '../screens/Insights';

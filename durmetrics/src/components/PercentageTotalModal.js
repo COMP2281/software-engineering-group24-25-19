@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import Dropdown from './Dropdown';
@@ -50,9 +49,11 @@ const NewModal = ({ addPercentageTotal }) => {
                 }
         };
 
+        /* eslint-disable react-hooks/exhaustive-deps */
         useEffect(() => {
                 validateSelection();
         }, [selectedYear]);
+        /* eslint-enable react-hooks/exhaustive-deps */
 
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
@@ -98,7 +99,7 @@ const PercentageTotalModal = ({ percentageTotals, setPercentageTotals }) => {
         return (
                 <>
                         <div className="button-general percentage-button" onClick={handleOpen}>
-                                <img className="percent-icon" src="percent.svg" />
+                                <img className="percent-icon" alt="percent-total" src="percent.svg" />
                                 Percentage Totals
                         </div>
                         <Modal
@@ -120,7 +121,7 @@ const PercentageTotalModal = ({ percentageTotals, setPercentageTotals }) => {
                                                         percentageTotals.map((year, index) => (
                                                                 <div key={index} className="percentage-change">
                                                                         {year}
-                                                                        <img className="cross-icon" src="cross.svg" onClick={() => removePercentageTotal(year)} />
+                                                                        <img className="cross-icon" alt="cross" src="cross.svg" onClick={() => removePercentageTotal(year)} />
                                                                 </div>
                                                         ))
                                                 )}

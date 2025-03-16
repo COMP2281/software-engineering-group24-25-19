@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DropdownItem from './DropdownItem';
-import DropdownFooter from './DropdownFooter';
 
 const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align = "middle", disabled = false, width = null }) => {
         const [selectedItem, setSelectedItem] = useState(null);
@@ -29,14 +28,14 @@ const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align =
         const dropdownTitle = selectedItem || label;
 
         return (
-                <div className={`dropdown-wrapper dropdown-${size} align-${align}`} ref={dropdownRef} style={{ width: width ? `${width}` : '' }}>
+                <div className={`dropdown-wrapper dropdown-${size} align-${align}`} ref={dropdownRef} style={{ width: width ? `${width}` : 'initial' }}>
                         <button
                                 className={`dropdown-button dropdown-single dropdown-${size} align-${align} ${disabled ? 'dropdown-disabled' : ''}`}
                                 onClick={() => {
                                         if (disabled) return;
                                         setIsOpen((prev) => !prev)
                                 }}
-                                style={{ width: width ? `${width} !important` : 'initial' }}
+                                style={{ width: width ? `${width}` : 'initial' }}
                         >
                                 <span>{dropdownTitle}</span>
                                 <img
@@ -46,7 +45,7 @@ const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align =
                                 />
                         </button>
 
-                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`} style={{ width: width ? `${width} !important` : '' }}>
+                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`} style={{ width: width ? `${width}` : 'initial' }}>
                                 <div className="dropdown-scrollable">
                                         {items.map((item) => (
                                                 <DropdownItem

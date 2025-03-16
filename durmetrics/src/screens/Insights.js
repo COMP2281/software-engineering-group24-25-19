@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
 import GraphFilters from '../components/GraphFilters';
 import Graph from '../components/Graph';
 

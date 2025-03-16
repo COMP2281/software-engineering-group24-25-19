@@ -95,7 +95,7 @@ const AuthPanel = () => {
                                 <div className="signin-title">Sign into DurMetrics with a login code</div>
                                 <div className="signin-subtitle">You may use either a view-code or an edit-code.</div>
                                 {error && <div className="signin-error">{error}</div>}
-                                <img src="dcc-logo.png" className="signin-dcc-logo" />
+                                <img src="dcc-logo.png" alt="dcc-logo" className="signin-dcc-logo" />
                         </div>
                         <div className="signin-panel-code">
                                 <div className="signin-code">

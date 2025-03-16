@@ -59,8 +59,8 @@ export const PermissionsMenuContextProvider = (props) => {
                                                 },
                                         ]);
                                 } else if (res < 1) {
-                                        // Backend routing should cover this, but just in case
                                         setMenuContent([]);
+                                        // eslint-disable-next-line no-throw-literal
                                         throw 403;
                                 }
                         } catch (err) {
@@ -84,7 +84,7 @@ export const PermissionsMenuContextProvider = (props) => {
                                 setError(null);
                         }
                 }
-        }, [menuContent, loading]);
+        }, [menuContent, loading, error]);
 
         // Render loading, error, or data
         // if (loading) return <p>Loading...</p>;

@@ -4,7 +4,7 @@ import AuthPanel from '../components/AuthPanel';
 const Login = () => {
         return (
                 <div className="signin">
-                        <img src="logo.png" className="signin-logo" />
+                        <img src="logo.png" alt="logo" className="signin-logo" />
                         <AuthPanel />
                 </div>
         );

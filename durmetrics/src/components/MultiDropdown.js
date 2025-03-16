@@ -17,6 +17,7 @@ const MultiDropdown = ({ items, changeSelection, selectedYears, newSheetLoaded, 
                 setSelectedItems((prev) => (prev.length === items.length ? [] : items));
         };
 
+        /* eslint-disable react-hooks/exhaustive-deps */
         useEffect(() => {
                 changeSelection(selectedItems);
         }, [selectedItems]);
@@ -26,6 +27,7 @@ const MultiDropdown = ({ items, changeSelection, selectedYears, newSheetLoaded, 
                         setSelectedItems(selectedYears);
                 }
         }, [selectedYears]);
+        /* eslint-enable react-hooks/exhaustive-deps */
 
         const isAllSelected = selectedItems.length === items.length;
         const dropdownTitle = isAllSelected

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import SearchBar from './SearchBar';
 import MultiDropdown from './MultiDropdown';
 import { TableVirtuoso } from 'react-virtuoso';
@@ -27,11 +27,11 @@ const DataTable = ({
         const [searchText, setSearchText] = useState('');
         const [loading, setLoading] = useState(true);
         const [newSheetLoaded, setNewSheetLoaded] = useState(false);
-        const [firstStickyColWidth, setFirstStickyColWidth] = useState(0); // State for the width
 
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
+        /* eslint-disable react-hooks/exhaustive-deps */
         useEffect(() => {
                 if (!data || data.length === 0) return;
 
@@ -42,7 +42,7 @@ const DataTable = ({
                         setLoading(true);
 
                         // If we're on the tab 'Site Information', we ignore selected years
-                        if (route != "sites") {
+                        if (route !== "sites") {
                                 const currentYear = new Date().getFullYear();
                                 const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
 
@@ -60,6 +60,7 @@ const DataTable = ({
                         }, 500); // Small delay to prevent multiple quick triggers
                 }
         }, [unchangedData, setSelectedYears]);
+        /* eslint-enable react-hooks/exhaustive-deps */
 
         useEffect(() => {
                 console.log("Data changed, updating table...", data);
@@ -106,13 +107,6 @@ const DataTable = ({
                 }
         }, [filteredRows, searchText]);
 
-        useLayoutEffect(() => {
-                if (tableColumns && tableColumns.length > 0 && firstStickyHeaderRef.current) {
-                        const width = firstStickyHeaderRef.current.offsetWidth;
-                        setFirstStickyColWidth(width);
-                }
-        }, [tableColumns]);
-
         const handleSearchChange = (event) => {
                 setSearchText(event.target.value);
         };
@@ -137,7 +131,7 @@ const DataTable = ({
                 <>
                         <div className="table-filters">
                                 <SearchBar searchTable={handleSearchChange} />
-                                {route != "sites" && (
+                                {route !== "sites" && (
                                         <>
                                                 <MultiDropdown
                                                         items={years}

@@ -7,10 +7,10 @@ const Header = (props) => {
         const permissionsTags = { 2: "Edit", 1: "View", 0: "None" };
 
         const getPageTitle = () => {
-                if (window.location.pathname == "/") return "Tables";
+                if (window.location.pathname === "/") return "Tables";
 
                 for (let i = 0; i < menuContent.length; i++) {
-                        if (menuContent[i].route == window.location.pathname) {
+                        if (menuContent[i].route === window.location.pathname) {
                                 return menuContent[i].title;
                         }
                 }
@@ -22,7 +22,7 @@ const Header = (props) => {
                 <div className="header">
                         <div className="header-side">
                                 <div className="header-logo-container">
-                                        <img className="header-logo" src="logo.png" />
+                                        <img className="header-logo" alt="logo" src="logo.png" />
                                 </div>
                                 <div className="header-access-level">
                                         <div className="access-level">Access Level&nbsp;&nbsp;&nbsp;
@@ -33,7 +33,7 @@ const Header = (props) => {
                         <div className="header-content">
                                 <div className="header-title">{pageTitle}</div>
                                 <Tabs activeTab={props.activeTab} setActiveTab={props.setActiveTab} page={window.location.pathname.split('/')[1]} />
-                                {pageTitle == "Tables" &&
+                                {pageTitle === "Tables" &&
                                         <>
                                                 <button className="header-export-button" onClick={() => { props.setWantsCSVExport(true) }}>
                                                         <img src="csv.svg" alt="Export" className="export-icon" />

@@ -8,7 +8,6 @@ import './main.css';
 
 function App() {
     const [isSmallDevice, setIsSmallDevice] = useState(false);
-    const [defaultPath, setDefaultPath] = useState("/");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const checkValidJWT = async () => {

@@ -6,13 +6,9 @@ const UploadConfiguration = (props) => {
         const currentYear = new Date().getFullYear();
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
         const sheets = [
-                "Carbon Emissions",
                 "Electricity",
                 "Gas",
-                "Carbon (%)",
-                "Gas Sites (%)",
-                "Electricity (%)",
-                "kwH per HDD",
+                "HDD",
                 "Site Information"
         ];
 
@@ -29,11 +25,11 @@ const UploadConfiguration = (props) => {
                         </div>
                         <div className="upload-config-item">
                                 <div className="upload-config-label">Relevant sheet</div>
-                                <Dropdown items={sheets} onSelect={props.setDataType} label="Select Sheet" size="large" />
+                                <Dropdown items={sheets} onSelect={props.setDataType} label="Select Sheet" size="large" width="140px" />
                         </div>
                         <div className="upload-warning">
                                 <div className="upload-warning-header">
-                                        <img src="warning-icon.svg" className="upload-warning-icon" />
+                                        <img src="warning-icon.svg" alt="warning" className="upload-warning-icon" />
                                         Warning
                                 </div>
                                 Uploading data will overwrite any previous data with the same configurations.

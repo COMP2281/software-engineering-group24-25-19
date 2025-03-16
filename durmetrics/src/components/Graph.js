@@ -20,7 +20,7 @@ const colourPalette = [
 ];
 
 
-const Graph = (props) => {
+const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
         const [graph, setGraph] = React.useState(null);
         const [chartSeries, setChartSeries] = React.useState([]);
 
@@ -228,7 +228,7 @@ const Graph = (props) => {
         };
 
         const generateGraph = async () => {
-                if (!props.isAvailable) return;
+                if (!isAvailable) return;
                 let data;
                 switch (props.chart) {
                         case "Line": {
@@ -287,15 +287,15 @@ const Graph = (props) => {
         };
 
         useEffect(() => {
-                if (!props.isAvailable) {
-                        props.setRenderGraph(false);
+                if (!isAvailable) {
+                        setRenderGraph(false);
                 }
-        }, [props.isAvailable]);
+        }, [isAvailable, setRenderGraph]);
 
         return (
                 <ThemeProvider theme={theme}>
                         <div style={{ width: '100%' }}>
-                                {props.isAvailable ? (
+                                {isAvailable ? (
                                         <>
                                                 {!props.renderGraph && (
                                                         <div
@@ -317,7 +317,7 @@ const Graph = (props) => {
 
                                 {props.renderGraph && (
                                         <>
-                                                {props.chart == "Pie" && <div style={{ height: "30px" }}></div>}
+                                                {props.chart === "Pie" && <div style={{ height: "30px" }}></div>}
                                                 <Box mt={2} display={props.chart === "Pie" ? "flex" : "block"}>
                                                         {props.chart === "Pie" ? (
                                                                 <>

@@ -54,7 +54,7 @@ const Upload = (props) => {
                         }
 
                         const res = await axios.post('https://durmetrics-api.sglre6355.net/emission-factors', payload);
-                        if (res.status == 200 || res.status == 201) {
+                        if (res.status === 200 || res.status === 201) {
                                 fetchEmissionFactors().then((data) => {
                                         const formatted = formatEmissionFactors(data);
                                         console.log(formatted);
@@ -66,6 +66,7 @@ const Upload = (props) => {
                 }
         };
 
+        /* eslint-disable eqeqeq */
         useEffect(() => {
                 if (props.activeTab == 1) {
                         fetchEmissionFactors().then((data) => {
@@ -219,6 +220,7 @@ const Upload = (props) => {
                         }
                 </div>
         );
+        /* eslint-enable eqeqeq */
 };
 
 export default Upload;

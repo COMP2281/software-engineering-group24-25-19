@@ -14,19 +14,19 @@ const EmissionFactorConfiguration = (props) => {
                 return `${start}-${(start + 1).toString().slice(-2)}`;
         });
 
-        const checkStepsComplete = () => {
-                if (
-                        !emissionFactorYears ||
-                        (electricity !== "" && isNaN(electricity)) ||
-                        (gas !== "" && isNaN(gas))
-                ) {
-                        setStepsComplete(false);
-                } else {
-                        setStepsComplete(true);
-                }
-        };
-
         useEffect(() => {
+                const checkStepsComplete = () => {
+                        if (
+                                !emissionFactorYears ||
+                                (electricity !== "" && isNaN(electricity)) ||
+                                (gas !== "" && isNaN(gas))
+                        ) {
+                                setStepsComplete(false);
+                        } else {
+                                setStepsComplete(true);
+                        }
+                };
+
                 checkStepsComplete();
         }, [emissionFactorYears, electricity, gas]);
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import DataTable from '../components/DataTable';
-import report from '../data/report.json'; // For now
 import axios from 'axios';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -16,6 +15,7 @@ const Tables = (props) => {
         const [percentageTotals, setPercentageTotals] = useState([]);
 
         // Keep setSelectedYears stable to avoid loops
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         const stableSetSelectedYears = useCallback(setSelectedYears, []);
 
         const tabRouteMap = {
@@ -82,13 +82,13 @@ const Tables = (props) => {
         const aggregateServerData = (rows, route) => {
                 const { staticFields = {}, dynamicFields = {} } = tableHeadersConfig[route] || {};
                 const aggregator = rows.reduce((acc, row) => {
-                        const siteId = route != "sites" ? row.site_id : row.id;
+                        const siteId = route !== "sites" ? row.site_id : row.id;
                         let y1 = "";
                         let y2 = "";
 
                         if (!acc[siteId]) acc[siteId] = {};
 
-                        if (route != "sites") {
+                        if (route !== "sites") {
                                 if (row.start_year) {
                                         y1 = row.start_year.toString().slice(-2);
                                 }
@@ -104,7 +104,7 @@ const Tables = (props) => {
                         });
 
                         // Insert dynamic fields
-                        if (route != "sites") {
+                        if (route !== "sites") {
                                 Object.keys(dynamicFields).forEach((apiField) => {
                                         let displayLabel = dynamicFields[apiField];
                                         displayLabel = displayLabel.replace(/{year1}/g, y1).replace(/{year2}/g, y2);
@@ -191,6 +191,7 @@ const Tables = (props) => {
                 return newRows;
         };
 
+        /* eslint-disable react-hooks/exhaustive-deps */
         // Fetch fresh data whenever the user switches tabs
         useEffect(() => {
                 fetchTableData();
@@ -366,10 +367,6 @@ const Tables = (props) => {
                 let changedSomething = false;
                 const updatedData = data.map((row) => {
                         let rowEntries = Object.entries(row);
-                        const siteId = row.site_id || row["Site ID"];
-                        const masterRow = unchangedData.find(
-                                (r) => r.site_id === siteId || r["Site ID"] === siteId
-                        );
 
                         // Remove any % Total columns that are no longer needed
                         const allowedPctTotalCols = new Set(
@@ -421,6 +418,7 @@ const Tables = (props) => {
                 }
 
         }, [data, unchangedData, percentageTotals, props.activeTab]);
+        /* eslint-enable react-hooks/exhaustive-deps */
 
         // Clear all percentageChanges when a new tab is clicked
         useEffect(() => {
