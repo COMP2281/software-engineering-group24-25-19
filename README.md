@@ -2,6 +2,9 @@
 
 **Client**: Durham County Council
 
+## Access
+The app is available at <a href="https://durmetrics.vercel.app">https://durmetrics.vercel.app</a>.
+
 ## Usage
 Our frontend code is located on the `frontend` branch.
 
