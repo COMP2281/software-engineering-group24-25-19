@@ -45,7 +45,7 @@ const Dropdown = ({ items, onSelect, label = "Select", size = "regular", align =
                                 />
                         </button>
 
-                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`} style={{ width: width ? `${width}` : 'initial' }}>
+                        <div className={`dropdown-container ${isOpen ? 'open' : 'closed'} dropdown-${size}`}>
                                 <div className="dropdown-scrollable">
                                         {items.map((item) => (
                                                 <DropdownItem

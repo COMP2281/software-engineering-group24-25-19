@@ -302,7 +302,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                                                                 className="generate-button"
                                                                 onClick={() => {
                                                                         generateGraph();
-                                                                        props.setRenderGraph(true);
+                                                                        setRenderGraph(true);
                                                                 }}
                                                         >
                                                                 Generate graph

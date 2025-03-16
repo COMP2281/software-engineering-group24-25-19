@@ -1265,7 +1265,7 @@ pre {
         width: 100%;
 }
 
-.css-5d9yge-MuiResponsiveChart-container {
+.ef-graph-container> :nth-child(3) {
         width: unset !important;
 }
 
