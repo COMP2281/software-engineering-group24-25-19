@@ -42,6 +42,10 @@ pub enum ApiError {
     DatabaseFailure(#[from] DbErr),
     #[error("RouteNotFound")]
     RouteNotFound,
+    #[error("InternalServerError")]
+    InternalServerError(String),
+    #[error("BadRequest")]
+    BadRequest(String),
 }
 
 /// Implements response conversion for API errors
@@ -60,6 +64,8 @@ impl IntoResponse for ApiError {
                 _ => StatusCode::INTERNAL_SERVER_ERROR,
             },
             ApiError::RouteNotFound => StatusCode::NOT_FOUND,
+            ApiError::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::BadRequest(_) => StatusCode::BAD_REQUEST,
         };
 
         (
