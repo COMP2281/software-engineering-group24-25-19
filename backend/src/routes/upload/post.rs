@@ -3,7 +3,8 @@ use axum::{
     http::StatusCode,
 };
 use sea_orm::{
-    ActiveModelTrait, ActiveValue::Set, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter,
+    ActiveModelTrait, ActiveValue::Set, ColumnTrait, EntityTrait, IntoActiveModel, ModelTrait,
+    QueryFilter,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -62,6 +63,7 @@ struct GasUsageRecordRaw {
     pub cost: Option<f64>,
 }
 
+/// Raw struct for "heating degree days"
 #[derive(Debug, Deserialize)]
 struct HeatingDegreeDayRaw {
     pub year: String,
@@ -79,6 +81,7 @@ struct HeatingDegreeDayRaw {
     pub mar: Option<i32>,
 }
 
+/// Final DB form
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HeatingDegreeDay {
     pub start_year: i32,
@@ -148,17 +151,115 @@ pub async fn handler(
 
     match category.as_str() {
         "site-information" => {
+            println!(
+                "Processing category: site-information with start_year: {} and data: {:?}",
+                start_year, data_json
+            );
+
+            // Parse the incoming sites
             let sites: Vec<SiteInformation> = serde_json::from_value(data_json).map_err(|e| {
                 ApiError::BadRequest(format!("Failed to parse SiteInformation array: {e}"))
             })?;
 
+            // Upsert all sites from the request
             let mut seen_sites = HashSet::new();
-            for site_info in sites {
+            let mut uprns_in_input = HashSet::new();
+
+            for site_info in &sites {
                 // If we've already seen this site name, skip it
                 if !seen_sites.insert(site_info.name.clone()) {
                     continue;
                 }
-                upsert_site(&state, &site_info).await?;
+
+                // Upsert the site
+                upsert_site(&state, site_info).await?;
+
+                // Collect the UPRN into our set of "kept" UPRNs
+                if let Some(uprn) = &site_info.unique_property_reference_number {
+                    uprns_in_input.insert(uprn.clone());
+                }
+            }
+
+            // Delete any sites NOT in the input:
+            //  - if a DB site has a UPRN not in uprns_in_input
+            //  - or if it has no UPRN at all
+            let db = &state.database_connection;
+            let all_db_sites = site::Entity::find().all(db).await.map_err(|e| {
+                ApiError::InternalServerError(format!("Failed to fetch all sites: {e}"))
+            })?;
+
+            for db_site in all_db_sites {
+                let site_id = db_site.id;
+                match db_site.unique_property_reference_number.clone() {
+                    Some(db_uprn) => {
+                        // If UPRN is not in input, delete site & usage
+                        if !uprns_in_input.contains(&db_uprn) {
+                            println!("Deleting site_id={} with UPRN='{}'", site_id, db_uprn);
+
+                            electricity_usage_record::Entity::delete_many()
+                                .filter(electricity_usage_record::Column::SiteId.eq(site_id))
+                                .exec(db)
+                                .await
+                                .map_err(|e| {
+                                    ApiError::InternalServerError(format!(
+                                        "Failed to delete electricity usage for site_id={}: {e}",
+                                        site_id
+                                    ))
+                                })?;
+
+                            gas_usage_record::Entity::delete_many()
+                                .filter(gas_usage_record::Column::SiteId.eq(site_id))
+                                .exec(db)
+                                .await
+                                .map_err(|e| {
+                                    ApiError::InternalServerError(format!(
+                                        "Failed to delete gas usage for site_id={}: {e}",
+                                        site_id
+                                    ))
+                                })?;
+
+                            db_site.delete(db).await.map_err(|e| {
+                                ApiError::InternalServerError(format!(
+                                    "Failed to delete site_id={} uprn={}: {e}",
+                                    site_id, db_uprn
+                                ))
+                            })?;
+                        }
+                    }
+                    None => {
+                        // If site has NO UPRN, we choose to delete it
+                        println!("Deleting site_id={} because it has no UPRN", site_id);
+
+                        electricity_usage_record::Entity::delete_many()
+                            .filter(electricity_usage_record::Column::SiteId.eq(site_id))
+                            .exec(db)
+                            .await
+                            .map_err(|e| {
+                                ApiError::InternalServerError(format!(
+                                    "Failed to delete electricity usage for site_id={}: {e}",
+                                    site_id
+                                ))
+                            })?;
+
+                        gas_usage_record::Entity::delete_many()
+                            .filter(gas_usage_record::Column::SiteId.eq(site_id))
+                            .exec(db)
+                            .await
+                            .map_err(|e| {
+                                ApiError::InternalServerError(format!(
+                                    "Failed to delete gas usage for site_id={}: {e}",
+                                    site_id
+                                ))
+                            })?;
+
+                        db_site.delete(db).await.map_err(|e| {
+                            ApiError::InternalServerError(format!(
+                                "Failed to delete site_id={} with no UPRN: {e}",
+                                site_id
+                            ))
+                        })?;
+                    }
+                }
             }
         }
 
@@ -320,6 +421,7 @@ async fn upsert_site(
             .update(db)
             .await
             .map_err(|e| ApiError::InternalServerError(e.to_string()))?;
+
         Ok(updated)
     } else {
         // Insert new
@@ -463,7 +565,7 @@ async fn upsert_hdd(
             .map_err(|e| ApiError::InternalServerError(format!("Failed to update HDD: {e}")))?;
         Ok(updated)
     } else {
-        // Insert new record
+        // Insert new
         let new_active = heating_degree_day::ActiveModel {
             start_year: Set(hdd.start_year),
             april: Set(hdd.april),
