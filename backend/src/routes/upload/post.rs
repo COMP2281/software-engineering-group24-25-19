@@ -12,11 +12,9 @@ use std::{collections::HashSet, str, sync::Arc};
 use crate::{
     api_error::ApiError,
     app_state::AppState,
-    // Make sure to import your HDD entity
     entities::{electricity_usage_record, gas_usage_record, heating_degree_day, site},
 };
 
-/// Represents site info from the JSON
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SiteInformation {
     #[serde(rename = "site_name")]
@@ -25,7 +23,7 @@ pub struct SiteInformation {
     #[serde(rename = "floor_area_sq_mtrs")]
     pub floor_area_square_metre: Option<f64>,
 
-    #[serde(rename = "code")]
+    #[serde(rename = "uprn")]
     pub unique_property_reference_number: Option<String>,
 
     pub ni185_energy_user: Option<String>,
@@ -34,7 +32,6 @@ pub struct SiteInformation {
     pub comment: Option<String>,
 }
 
-/// Represents final DB form for an "electricity" usage record.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ElectricityUsageRecord {
     pub site_id: i32,
@@ -43,7 +40,6 @@ pub struct ElectricityUsageRecord {
     pub cost_gbp: Option<f64>,
 }
 
-/// Represents final DB form for a "gas" usage record.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GasUsageRecord {
     pub site_id: i32,
@@ -52,7 +48,6 @@ pub struct GasUsageRecord {
     pub cost_gbp: Option<f64>,
 }
 
-/// A raw struct for electricity usage in JSON
 #[derive(Debug, Deserialize)]
 struct ElectricityUsageRecordRaw {
     pub site_name: String,
@@ -60,7 +55,6 @@ struct ElectricityUsageRecordRaw {
     pub cost: Option<f64>,
 }
 
-/// A raw struct for gas usage in JSON
 #[derive(Debug, Deserialize)]
 struct GasUsageRecordRaw {
     pub site_name: String,
@@ -68,18 +62,9 @@ struct GasUsageRecordRaw {
     pub cost: Option<f64>,
 }
 
-/// A raw struct for "heating degree day" data in JSON
-///
-/// Example JSON object:
-/// {
-///   "year": "2017-2018",
-///   "apr": 10,
-///   "may": 12,
-///   ...
-/// }
 #[derive(Debug, Deserialize)]
-struct HeatedDegreeDayRaw {
-    pub year: String, // e.g. "2017-2018"
+struct HeatingDegreeDayRaw {
+    pub year: String,
     pub apr: Option<i32>,
     pub may: Option<i32>,
     pub jun: Option<i32>,
@@ -94,12 +79,8 @@ struct HeatedDegreeDayRaw {
     pub mar: Option<i32>,
 }
 
-/// Represents the final DB form for an "HDD" usage record.
-///
-/// The DB automatically calculates `end_year` from `start_year + 1`.
-/// If your table also has a `total` column or others, add them here.
 #[derive(Debug, Serialize, Deserialize)]
-pub struct HeatedDegreeDay {
+pub struct HeatingDegreeDay {
     pub start_year: i32,
     pub april: Option<i32>,
     pub may: Option<i32>,
@@ -224,7 +205,7 @@ pub async fn handler(
         }
 
         "hdd" => {
-            let raw_hdds: Vec<HeatedDegreeDayRaw> = serde_json::from_value(data_json)
+            let raw_hdds: Vec<HeatingDegreeDayRaw> = serde_json::from_value(data_json)
                 .map_err(|e| ApiError::BadRequest(format!("Failed to parse HDD array: {e}")))?;
 
             let mut seen_years = HashSet::new();
@@ -250,7 +231,7 @@ pub async fn handler(
                 }
 
                 // Build the final HDD struct
-                let hdd = HeatedDegreeDay {
+                let hdd = HeatingDegreeDay {
                     start_year: parsed_start_year,
                     april: raw_hdd.apr,
                     may: raw_hdd.may,
@@ -311,7 +292,7 @@ async fn upsert_site(
     let db = &state.database_connection;
 
     let uprn = match &site_info.unique_property_reference_number {
-        Some(code) => code.clone(),
+        Some(uprn) => uprn.clone(),
         None => {
             return Err(ApiError::BadRequest(
                 "Missing Unique Property Reference Number (UPRN)".to_string(),
@@ -449,7 +430,7 @@ async fn upsert_gas_usage_record(
 /// Upsert a heating_degree_day record by start_year
 async fn upsert_hdd(
     state: &Arc<AppState>,
-    hdd: &HeatedDegreeDay,
+    hdd: &HeatingDegreeDay,
 ) -> Result<heating_degree_day::Model, ApiError> {
     let db = &state.database_connection;
 
