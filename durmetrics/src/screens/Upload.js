@@ -13,6 +13,7 @@ const Upload = (props) => {
         const [dataYear, setDataYear] = useState(null);
         const [dataType, setDataType] = useState(null);
         const [stepsComplete, setStepsComplete] = useState(false);
+        const [configKey, setConfigKey] = useState(0);
 
         const [emissionFactors, setEmissionFactors] = useState([]);
 
@@ -66,6 +67,38 @@ const Upload = (props) => {
                 }
         };
 
+        const uploadData = async () => {
+                try {
+                        const formData = new FormData();
+                        formData.append('data', JSON.stringify(fileContentsJSON));
+                        formData.append('start_year', dataYear ? parseInt(dataYear.toString().split('-')[0]) : 2025);
+                        formData.append('category', dataType.toLowerCase().replace(/\s+/g, "-"));
+
+                        const res = await axios.post('https://durmetrics-api.sglre6355.net/upload', formData, {
+                                headers: {
+                                        'Content-Type': 'multipart/form-data',
+                                },
+                        });
+                        alert("Data uploaded successfully.");
+
+                        clearUploadInputs();
+                        return res;
+                } catch (error) {
+                        console.error(error);
+                        alert("Could not upload the data.");
+                        return null;
+                }
+        };
+
+        const clearUploadInputs = () => {
+                setFile(null);
+                setFileContentsJSON(null);
+                setDataYear(null);
+                setDataType(null);
+                setStepsComplete(false);
+                setConfigKey((prevKey) => prevKey + 1);
+        };
+
         /* eslint-disable eqeqeq */
         useEffect(() => {
                 if (props.activeTab == 1) {
@@ -87,7 +120,7 @@ const Upload = (props) => {
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 ];
 
-                const maxFileSizeMB = 3;
+                const maxFileSizeMB = 8;
 
                 if (!allowedTypes.includes(file.type)) {
                         console.error("Invalid file type. Please upload a CSV or Excel file.");
@@ -101,6 +134,12 @@ const Upload = (props) => {
                         return;
                 }
 
+                const transformHeader = (header) =>
+                        header
+                                .toLowerCase()
+                                .replace(/\s+/g, "_")
+                                .replace(/[()]/g, ""); // remove brackets
+
                 const reader = new FileReader();
                 reader.onload = async (event) => {
                         const fileData = event.target.result;
@@ -110,15 +149,16 @@ const Upload = (props) => {
                                         header: true,
                                         skipEmptyLines: true,
                                         complete: (results) => {
-                                                const { data, meta } = results;
+                                                let { data, meta } = results;
 
+                                                // Basic validations
                                                 if (!meta.fields || meta.fields.length === 0) {
                                                         console.error("CSV file has no headers.");
                                                         setFileContentsJSON(null);
-                                                        alert("Could not process the data: TCSV file has no headers.");
+                                                        alert("Could not process the data: CSV file has no headers.");
+                                                        clearUploadInputs();
                                                         return;
                                                 }
-
 
                                                 const isValidCSV = data.every((row, index) => {
                                                         const rowKeys = Object.keys(row);
@@ -132,12 +172,31 @@ const Upload = (props) => {
                                                 if (!isValidCSV) {
                                                         console.error("CSV file has inconsistent row lengths.");
                                                         alert("Could not process the data: CSV file has inconsistent row lengths.");
-                                                        setFile(null);
-                                                        setFileContentsJSON(null);
+                                                        clearUploadInputs();
                                                         return;
                                                 }
 
-                                                setFileContentsJSON(data);
+                                                // Transform the original fields
+                                                const transformedFields = meta.fields.map(transformHeader);
+
+                                                const transformedData = data.map((row) => {
+                                                        return transformedFields.reduce((acc, newKey, i) => {
+                                                                const originalKey = meta.fields[i];
+                                                                const val = row[originalKey];
+
+                                                                // Attempt parseFloat
+                                                                const maybeNumber = parseFloat(val);
+                                                                // If parseFloat worked (and val isn’t ""), store numeric. Otherwise keep original
+                                                                if (!isNaN(maybeNumber) && val !== "") {
+                                                                        acc[newKey] = maybeNumber;
+                                                                } else {
+                                                                        acc[newKey] = val;
+                                                                }
+                                                                return acc;
+                                                        }, {});
+                                                });
+
+                                                setFileContentsJSON(transformedData);
                                         },
                                 });
                         } else if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
@@ -146,17 +205,21 @@ const Upload = (props) => {
                                 const workbook = read(data, { type: "array" });
                                 const sheetName = workbook.SheetNames[0];
                                 const sheet = workbook.Sheets[sheetName];
-                                const json = utils.sheet_to_json(sheet, { range: 2 }); // Skip the first two rows
+
+                                // Skip the first two rows when converting to JSON:
+                                const json = utils.sheet_to_json(sheet, { range: 2 });
 
                                 if (json.length === 0) {
                                         console.error("Excel file is empty.");
                                         alert("Could not process the data: Excel file is empty.");
-                                        setFileContentsJSON(null);
+                                        clearUploadInputs();
                                         return;
                                 }
 
+                                // Original headers
                                 const headers = Object.keys(json[0]);
-                                const isValidExcel = json.slice(0, -1).every((row, index) => { // Ignore the last row
+                                // We ignore the last row in the loop below, so check everything except the last row
+                                const isValidExcel = json.slice(0, -1).every((row, index) => {
                                         const rowKeys = Object.keys(row);
                                         if (rowKeys.length !== headers.length) {
                                                 console.error(`Row ${index + 1} has missing or extra columns.`);
@@ -165,16 +228,27 @@ const Upload = (props) => {
                                         return true;
                                 });
 
-                                console.log(json)
-
                                 if (!isValidExcel) {
                                         console.error("Excel file has inconsistent row structures.");
                                         alert("Could not process the data: Excel file has inconsistent row lengths.");
-                                        setFileContentsJSON(null);
+                                        clearUploadInputs();
                                         return;
                                 }
 
-                                setFileContentsJSON(json.slice(0, -1)); // Ignore the last row
+                                // Transform the headers
+                                const transformedHeaders = headers.map(transformHeader);
+
+                                const rowsToTransform = json.length > 1 ? json.slice(0, -1) : json;
+
+                                const transformedData = rowsToTransform.map((row) => {
+                                        return transformedHeaders.reduce((acc, newKey, i) => {
+                                                const originalKey = headers[i];
+                                                acc[newKey] = row[originalKey];
+                                                return acc;
+                                        }, {});
+                                });
+
+                                setFileContentsJSON(transformedData);
                         }
                 };
 
@@ -185,15 +259,16 @@ const Upload = (props) => {
                 }
         };
 
+        /* eslint-disable react-hooks/exhaustive-deps */
         useEffect(() => {
                 if (file) {
                         parseFile(file);
                 }
         }, [file]);
+        /* eslint-enable react-hooks/exhaustive-deps */
 
         useEffect(() => {
-                console.log(fileContentsJSON);
-                if (fileContentsJSON && dataYear && dataType) {
+                if (fileContentsJSON && (dataType === 'Site Information' || dataType === 'HDD' || dataYear) && dataType) {
                         setStepsComplete(true);
                 } else {
                         setStepsComplete(false);
@@ -208,7 +283,15 @@ const Upload = (props) => {
                 <div className={`upload-content ${props.activeTab == 1 ? "ef-content" : ""}`}>
                         {props.activeTab == 0 ?
                                 <>
-                                        <UploadConfiguration file={file} setFile={setFile} setDataYear={setDataYear} setDataType={setDataType} stepsComplete={stepsComplete} />
+                                        <UploadConfiguration
+                                                key={configKey}
+                                                file={file}
+                                                setFile={setFile}
+                                                setDataYear={setDataYear}
+                                                setDataType={setDataType}
+                                                stepsComplete={stepsComplete}
+                                                uploadData={uploadData}
+                                        />
                                         <UploadPreview file={file} />
                                 </>
                                 :

@@ -38,7 +38,6 @@ const tableHeadersConfig = {
         "sites": {
                 staticFields: {
                         id: 'Site ID',
-                        name: 'Site Name',
                         floor_area_square_metre: "Floor Area (m²)",
                         ni185_energy_user: "NI 185 Energy User",
                         comment: "Comments"

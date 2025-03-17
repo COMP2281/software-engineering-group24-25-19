@@ -171,7 +171,6 @@ const Tables = (props) => {
 
         const addSiteDetails = async (rows) => {
                 // Takes in data rows and adds site name and code to each row
-                if (tabRouteMap[props.activeTab] === "sites") return rows;
 
                 const sites = await fetchSites(rows);
                 let newRows = [];
@@ -204,6 +203,10 @@ const Tables = (props) => {
         useEffect(() => {
                 if (selectedYears.length > 0 && tabRouteMap[props.activeTab] !== "sites") {
                         fetchDataForYears(selectedYears);
+                } else if (tabRouteMap[props.activeTab] === "sites") {
+                        addSiteDetails(unchangedData).then((finalisedRows) => {
+                                setData(finalisedRows);
+                        });
                 }
         }, [selectedYears]);
 
