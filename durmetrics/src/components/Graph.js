@@ -19,11 +19,11 @@ const colourPalette = [
         "#03008D"
 ];
 
-
 const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
         const [graph, setGraph] = React.useState(null);
         const [chartSeries, setChartSeries] = React.useState([]);
 
+        // Maps categories to their respective API endpoints
         const categoryURLMap = {
                 "Electricity (kWh)": "electricity-usage",
                 "Electricity (£)": "electricity-usage",
@@ -31,6 +31,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 "Gas (£)": "gas-usage",
         };
 
+        // Maps categories to the specific data field in the API response
         const categoryDataMap = {
                 "Electricity (kWh)": "energy_usage_kwh",
                 "Electricity (£)": "cost_gbp",
@@ -38,6 +39,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 "Gas (£)": "cost_gbp",
         };
 
+        // Removes duplicate ticks from the X-axis of the Line Chart
         const removeDuplicateTicks = () => {
                 setTimeout(() => {
                         const ticks = document.querySelectorAll(
@@ -58,6 +60,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 }, 100);
         };
 
+        // Observes changes in the Line Chart's X-axis to remove duplicate ticks dynamically
         useEffect(() => {
                 if (props.renderGraph && props.chart === "Line") {
                         removeDuplicateTicks();
@@ -70,6 +73,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 }
         }, [props.renderGraph, props.chart]);
 
+        // Generates data for the Line Chart
         const generateLineChartData = async () => {
                 try {
                         const usageResp = await axios.get(
@@ -128,6 +132,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 }
         };
 
+        // Generates data for the Bar Chart
         const generateBarChartData = async () => {
                 try {
                         if (!props.sites || props.sites.length === 0) {
@@ -185,6 +190,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 }
         };
 
+        // Generates data for the Pie Chart
         const generatePieChartData = async () => {
                 try {
                         const chosenCategory = props.categories[0];
@@ -227,6 +233,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 }
         };
 
+        // Generates the appropriate graph based on the selected chart type
         const generateGraph = async () => {
                 if (!isAvailable) return;
                 let data;
@@ -286,6 +293,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                 }
         };
 
+        // Ensures the graph is not rendered if data is unavailable
         useEffect(() => {
                 if (!isAvailable) {
                         setRenderGraph(false);

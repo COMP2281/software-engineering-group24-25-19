@@ -52,7 +52,7 @@ const EmissionFactorConfiguration = (props) => {
                                         items={years}
                                         onSelect={setEmissionFactorYears}
                                         label="Choose Year"
-                                        selectedValue={emissionFactorYears}  // Optional: if your Dropdown supports it
+                                        selectedValue={emissionFactorYears}
                                 />
                         </div>
                         <div className="upload-config-item">
