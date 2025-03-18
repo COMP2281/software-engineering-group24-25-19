@@ -56,7 +56,10 @@ const NewModal = ({ addPercentageTotal }) => {
         /* eslint-enable react-hooks/exhaustive-deps */
 
         const currentYear = new Date().getFullYear();
-        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
+        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => {
+                const start = 2017 + i;
+                return `${start}-${(start + 1).toString().slice(-2)}`;
+        }).reverse();
 
         return (
                 <>
@@ -73,7 +76,7 @@ const NewModal = ({ addPercentageTotal }) => {
                                                 New Percentage Total
                                         </Typography>
                                         <div className="modal-dropdown-container" style={{ justifyContent: 'center' }}>
-                                                <Dropdown items={years} width="80px" onSelect={handleYearTotal} />
+                                                <Dropdown items={years} width="95px" onSelect={handleYearTotal} />
                                         </div>
                                         <div className={`add-percentage-button ${isValid ? '' : 'disabled'}`} onClick={isValid ? updatePercentageTotals : null}>Add</div>
                                 </Box>

@@ -5,7 +5,7 @@ const tableHeadersConfig = {
                 },
                 dynamicFields: {
                         energy_usage_kwh: "Electricity {year1}-{year2}",
-                        cost_gbp: "Cost (£) {year1}-{year2}",
+                        // cost_gbp: "Cost (£) {year1}-{year2}",
                 }
         },
         "gas-usage": {
@@ -14,7 +14,7 @@ const tableHeadersConfig = {
                 },
                 dynamicFields: {
                         energy_usage_kwh: "Gas {year1}-{year2}",
-                        cost_gbp: "Cost (£) {year1}-{year2}"
+                        // cost_gbp: "Cost (£) {year1}-{year2}"
                 }
         },
         "carbon-emissions": {

@@ -63,7 +63,10 @@ const NewModal = ({ addPercentageChange }) => {
         /* eslint-enable react-hooks/exhaustive-deps */
 
         const currentYear = new Date().getFullYear();
-        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
+        const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => {
+                const start = 2017 + i;
+                return `${start}-${(start + 1).toString().slice(-2)}`;
+        }).reverse();
 
         const availableYears1 = years.slice(1, years.length);
         const [availableYears2, setAvailableYears2] = React.useState(years.slice(0, years.length - 1));
@@ -78,14 +81,14 @@ const NewModal = ({ addPercentageChange }) => {
                                 aria-describedby="child-modal-description"
                                 className="modal"
                         >
-                                <Box sx={{ ...style, width: 290 }}>
+                                <Box sx={{ ...style, width: 300 }}>
                                         <Typography id="modal-modal-title" variant="h6" component="h2">
                                                 New Percentage Change
                                         </Typography>
                                         <div className="modal-dropdown-container">
-                                                <Dropdown items={availableYears1} width="80px" onSelect={handleYear1Change} />
+                                                <Dropdown items={availableYears1} width="95px" onSelect={handleYear1Change} />
                                                 <div>{"to"}</div>
-                                                <Dropdown items={availableYears2} width="80px" onSelect={handleYear2Change} disabled={!selectedYear1} />
+                                                <Dropdown items={availableYears2} width="95px" onSelect={handleYear2Change} disabled={!selectedYear1} />
                                         </div>
                                         <div className={`add-percentage-button ${isValid ? '' : 'disabled'}`} onClick={isValid ? updatePercentageChanges : null}>Add</div>
                                 </Box>
@@ -132,7 +135,7 @@ const PercentageChangeModal = ({ percentageChanges, setPercentageChanges }) => {
                                                 {!percentageChanges.length ? <div className="no-percentage-changes">No percentage changes added yet.</div> : (
                                                         percentageChanges.map((change, index) => (
                                                                 <div key={index} className="percentage-change">
-                                                                        {change.year1}-{change.year2}
+                                                                        {change.year1.slice(2)}{" -> "}{change.year2.slice(2)}
                                                                         <img className="cross-icon" alt="cross" src="cross.svg" onClick={() => removePercentageChange(change.year1, change.year2)} />
                                                                 </div>
                                                         ))

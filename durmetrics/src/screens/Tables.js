@@ -22,9 +22,6 @@ const Tables = (props) => {
                 0: "carbon-emissions",
                 1: "electricity-usage",
                 2: "gas-usage",
-                // 3: "carbon-percentage",
-                // 4: "gas-sites-percentage",
-                // 5: "electricity-percentage",
                 6: "kwh-per-hdd",
                 7: "sites"
         };
@@ -238,9 +235,11 @@ const Tables = (props) => {
                 // Build a set of allowed % Change column names based on current percentageChanges
                 const allowedPctCols = new Set(
                         percentageChanges.map(({ year1, year2 }) => {
-                                const y1 = year1.toString().slice(-2);
-                                const y2 = year2.toString().slice(-2);
-                                return `% Change ${y1}-${y2}`;
+                                const y1 = year1.toString().split("-")[0].slice(-2);
+                                const y2 = year2.toString().split("-")[0].slice(-2);
+                                const y1Range = `${y1}-${(parseInt(y1) + 1).toString()}`;
+                                const y2Range = `${y2}-${(parseInt(y2) + 1).toString()}`;
+                                return `% Change ${y1Range} to ${y2Range}`;
                         })
                 );
 
@@ -276,11 +275,13 @@ const Tables = (props) => {
 
                         // For each requested % change (only for allowed ones)
                         for (const { year1, year2 } of percentageChanges) {
-                                const y1 = year1.toString().slice(-2);
-                                const y2 = year2.toString().slice(-2);
+                                const y1 = year1.toString().split("-")[0].slice(-2);
+                                const y2 = year2.toString().split("-")[0].slice(-2);
+                                const y1Range = `${y1}-${(parseInt(y1) + 1).toString()}`;
+                                const y2Range = `${y2}-${(parseInt(y2) + 1).toString()}`;
                                 const firstYearCol = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
                                 const secondYearCol = `${columnPrefix} ${y2}-${parseInt(y2, 10) + 1}`;
-                                const changeColName = `% Change ${y1}-${y2}`;
+                                const changeColName = `% Change ${y1Range} to ${y2Range}`;
 
                                 // If this column already exists in the current row, skip adding it
                                 if (row[changeColName] !== undefined) {
@@ -360,7 +361,7 @@ const Tables = (props) => {
                 // Calculate totals for each specified year's column
                 unchangedData.forEach(dataRow => {
                         percentageTotals.forEach(year => {
-                                const y1 = year.toString().slice(-2);
+                                const y1 = year.toString().split("-")[0].slice(-2);
                                 const columnName = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
                                 const value = parseFloat(dataRow[columnName]) || 0;
                                 columnTotals[columnName] = (columnTotals[columnName] || 0) + value;
@@ -374,15 +375,15 @@ const Tables = (props) => {
                         // Remove any % Total columns that are no longer needed
                         const allowedPctTotalCols = new Set(
                                 percentageTotals.map(year => {
-                                        const y1 = year.toString().slice(-2);
-                                        const columnName = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
-                                        return `% Total for ${columnName}`;
+                                        const y1 = year.toString().split("-")[0].slice(-2);
+                                        const columnName = `${y1}-${parseInt(y1, 10) + 1}`;
+                                        return `% Total ${columnName}`;
                                 })
                         );
 
                         const originalLength = rowEntries.length;
                         rowEntries = rowEntries.filter(([colName]) => {
-                                if (colName.startsWith('% Total for ')) {
+                                if (colName.startsWith('% Total ')) {
                                         return allowedPctTotalCols.has(colName);
                                 }
                                 return true;
@@ -392,13 +393,13 @@ const Tables = (props) => {
                         }
 
                         percentageTotals.forEach(year => {
-                                const y1 = year.toString().slice(-2);
+                                const y1 = year.toString().split("-")[0].slice(-2);
                                 const columnName = `${columnPrefix} ${y1}-${parseInt(y1, 10) + 1}`;
                                 const total = columnTotals[columnName];
                                 const value = parseFloat(row[columnName]) || 0;
                                 const pctTotal = total > 0 ? (value / total) * 100 : 0;
                                 const pctTotalFormatted = `${pctTotal.toFixed(2)}%`;
-                                const totalColName = `% Total for ${columnName}`;
+                                const totalColName = `% Total ${y1}-${parseInt(y1, 10) + 1}`;
 
                                 if (row[totalColName] !== undefined) {
                                         return;
