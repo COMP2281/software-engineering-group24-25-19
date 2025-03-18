@@ -26,17 +26,21 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
         // Maps categories to their respective API endpoints
         const categoryURLMap = {
                 "Electricity (kWh)": "electricity-usage",
-                "Electricity (£)": "electricity-usage",
+                // "Electricity (£)": "electricity-usage",
                 "Gas (kWh)": "gas-usage",
-                "Gas (£)": "gas-usage",
+                // "Gas (£)": "gas-usage",
+                "Carbon Emissions": "carbon-emissions",
+                "kWh per HDD": "kwh-per-hdd",
         };
 
         // Maps categories to the specific data field in the API response
         const categoryDataMap = {
                 "Electricity (kWh)": "energy_usage_kwh",
-                "Electricity (£)": "cost_gbp",
+                // "Electricity (£)": "cost_gbp",
                 "Gas (kWh)": "energy_usage_kwh",
-                "Gas (£)": "cost_gbp",
+                // "Gas (£)": "cost_gbp",
+                "Carbon Emissions": "total_emissions",
+                "kWh per HDD": "kwh_per_hdd",
         };
 
         // Removes duplicate ticks from the X-axis of the Line Chart
@@ -85,12 +89,16 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                                 return { xAxis: [], yAxis: [], series: [] };
                         }
 
-                        const siteIDs = usageData.map((record) => record.site_id);
-                        const siteParams = siteIDs.map((id) => `siteids=${id}`).join("&");
+                        console.log("Fetching from ", `https://durmetrics-api.sglre6355.net/${categoryURLMap[props.categories[0]]}/records`);
+                        console.log("Usage data: ", usageData);
+
                         const siteResult = await axios.get(
-                                `https://durmetrics-api.sglre6355.net/sites?${siteParams}`
+                                `https://durmetrics-api.sglre6355.net/sites`
                         );
-                        const siteNames = siteResult.data.map((site) => site.name);
+                        const siteNames = siteResult.data.reduce((acc, site) => {
+                                acc[site.id] = site.name;
+                                return acc;
+                        }, {});
 
                         const xAxis = [
                                 {
@@ -104,9 +112,10 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                         const siteDataMap = {};
 
                         usageData.forEach((rec) => {
+                                console.log("Record: ", rec);
                                 if (!props.years.includes(rec.start_year)) return;
-                                const index = siteIDs.indexOf(rec.site_id);
-                                const siteName = siteNames[index];
+                                const siteName = siteNames[rec.site_id];
+                                console.log("Site name: ", siteName);
 
                                 if (!props.sites.includes(siteName)) return;
                                 if (!siteDataMap[siteName]) {
@@ -157,7 +166,7 @@ const Graph = ({ isAvailable, setRenderGraph, ...props }) => {
                                         valueFormatter: (val) => `${Math.floor(val)}`,
                                 },
                         ];
-                        const yAxis = [{ label: "Usage/Cost" }];
+                        const yAxis = [{ label: "Usage" }];
                         const series = [];
 
                         for (const category of props.categories) {

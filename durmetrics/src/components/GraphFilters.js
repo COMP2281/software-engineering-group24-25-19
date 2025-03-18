@@ -17,7 +17,8 @@ const GraphFilters = ({ setData, setRenderGraph }) => {
         const currentYear = new Date().getFullYear();
         // Generate an array of years from 2017 to the current year
         const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) => currentYear - i);
-        const categories = ["Electricity (kWh)", "Electricity (£)", "Gas (kWh)", "Gas (£)"];
+
+        const categories = ["Electricity (kWh)", "Gas (kWh)", "Carbon Emissions", "kWh per HDD"];
         const charts = ["Line", "Bar", "Pie"];
         const [sites, setSites] = useState(["test"]);
 
