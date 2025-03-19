@@ -43,7 +43,7 @@ const EmissionFactorConfiguration = (props) => {
                         <div className="upload-title">Upload Emission Factor Data</div>
                         <div className="panel-bar" />
                         <div className="ef-info">
-                                Emission factors affect data in the kWh per HDD sheet on the Tables page.
+                                Emission factors affect data in the Carbon Emissions sheet on the Tables page.
                         </div>
                         <div className="upload-config-item">
                                 <div className="upload-config-label">Select Data Year</div>
